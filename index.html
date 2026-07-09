@@ -658,6 +658,21 @@
             opacity: 0.5;
         }
 
+        .conveyor-belt {
+            stroke-dasharray: 6, 4;
+            stroke-dashoffset: 0;
+        }
+
+        .moving .conveyor-belt {
+            animation: conveyorMove 0.8s linear infinite;
+        }
+
+        @keyframes conveyorMove {
+            to {
+                stroke-dashoffset: -20;
+            }
+        }
+
         .scara-link-outer {
             fill: url(#linkGrad);
             stroke: var(--border-glow);
@@ -2613,22 +2628,11 @@
                                 <!-- Embossed dots will render dynamically here -->
                                 <g id="embossedDotsGroup"></g>
                             </g>
-                            
-                            <!-- Friction Rollers (Paper Feed Mechanism) -->
-                            <!-- Top Roller -->
-                            <g id="topRollerGroup">
-                                <rect x="-10" y="25" width="220" height="10" rx="2" fill="#334155" stroke="#1e293b" />
-                                <circle cx="10" cy="30" r="8" fill="#475569" />
-                                <circle cx="190" cy="30" r="8" fill="#475569" />
-                                <!-- Stepper Motor for Feed -->
-                                <rect x="-30" y="15" width="20" height="26" rx="3" fill="#151a2d" stroke="#2e375a" />
-                                <circle cx="-20" cy="28" r="6" fill="#475569" />
-                            </g>
-                            <!-- Bottom Roller -->
-                            <g id="bottomRollerGroup">
-                                <rect x="-10" y="195" width="220" height="10" rx="2" fill="#334155" stroke="#1e293b" />
-                                <circle cx="10" cy="200" r="8" fill="#475569" />
-                                <circle cx="190" cy="200" r="8" fill="#475569" />
+                            <!-- Active sheet under embossing (retains alignment guides) -->
+                            <g id="embossingPaperSheet" opacity="0">
+                                <rect x="10" y="10" width="180" height="200" rx="2" fill="#f4efe2" stroke="#babfae" />
+                                <!-- Embossed dots will render dynamically here -->
+                                <g id="embossedDotsGroup"></g>
                             </g>
                         </g>
 
@@ -2644,6 +2648,37 @@
                         <!-- CARRIED SHEET (Dynamic paper carried by SCARA arm gripper - retained as empty hidden shell to prevent errors) -->
                         <g id="carriedPaperSheet" opacity="0" display="none">
                             <rect x="-90" y="-100" width="180" height="200" rx="2" fill="#f4efe2" stroke="#babfae" />
+                        </g>
+
+                        <!-- CONVEYOR SYSTEM (Bridges Input -> SCARA -> Output Trays) -->
+                        <g id="conveyorSystem">
+                            <!-- Left Conveyor Belt (X = 140 to 400) -->
+                            <!-- Top Belt Band -->
+                            <rect x="140" y="290" width="260" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
+                            <line x1="140" y1="300" x2="400" y2="300" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
+                            <!-- Bottom Belt Band -->
+                            <rect x="140" y="390" width="260" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
+                            <line x1="140" y1="400" x2="400" y2="400" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
+                            
+                            <!-- Left Pulley Wheels -->
+                            <circle cx="150" cy="300" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="150" cy="400" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="390" cy="300" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="390" cy="400" r="8" fill="#475569" stroke="#1e293b" />
+
+                            <!-- Right Conveyor Belt (X = 400 to 660) -->
+                            <!-- Top Belt Band -->
+                            <rect x="400" y="290" width="260" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
+                            <line x1="400" y1="300" x2="660" y2="300" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
+                            <!-- Bottom Belt Band -->
+                            <rect x="400" y="390" width="260" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
+                            <line x1="400" y1="400" x2="660" y2="400" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
+                            
+                            <!-- Right Pulley Wheels -->
+                            <circle cx="410" cy="300" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="410" cy="400" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="650" cy="300" r="8" fill="#475569" stroke="#1e293b" />
+                            <circle cx="650" cy="400" r="8" fill="#475569" stroke="#1e293b" />
                         </g>
 
                         <!-- SCARA ROBOTIC ARM ASSEMBLY -->
@@ -3570,6 +3605,7 @@
         embossedDotsGroup: document.getElementById('embossedDotsGroup'),
         outputPaperStack: document.getElementById('outputPaperStack'),
         carriedPaperSheet: document.getElementById('carriedPaperSheet'),
+        conveyorSystem: document.getElementById('conveyorSystem'),
         
         // Telemetry Data Readout
         telemTool: document.getElementById('telemTool'),
@@ -3927,10 +3963,13 @@
         }, 120 / simulationSpeed);
     }
 
-    /* Helper to animate paper sheet moving via rollers */
+    /* Helper to animate paper sheet moving via conveyor */
     function animatePaper(fromX, toX, duration, callback) {
         const startTime = performance.now();
         DOM.embossingPaperSheet.setAttribute('opacity', '1');
+        if (DOM.conveyorSystem) {
+            DOM.conveyorSystem.classList.add('moving');
+        }
         function step(time) {
             const elapsed = time - startTime;
             const progress = Math.min(elapsed / (duration / simulationSpeed), 1);
@@ -3939,6 +3978,9 @@
             if (progress < 1) {
                 requestAnimationFrame(step);
             } else {
+                if (DOM.conveyorSystem) {
+                    DOM.conveyorSystem.classList.remove('moving');
+                }
                 callback();
             }
         }
@@ -4838,21 +4880,42 @@
             window.threeModel.pins.push(pMesh);
         }
         
-        // 3D Paper Friction Feed Rollers
-        const rollerMat = new THREE.MeshStandardMaterial({ color: 0x475569, roughness: 0.5, metalness: 0.8 });
-        const rollerTop = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 180, 16), rollerMat);
-        rollerTop.rotation.z = Math.PI / 2;
-        rollerTop.position.set(0, 8 + 4, 140 - 70); 
-        scene.add(rollerTop);
+        // 3D Conveyor Belts (Bridges Input -> SCARA -> Output Trays)
+        const conveyorMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
+        const pulleyMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8, roughness: 0.3 });
         
-        const rollerBottom = new THREE.Mesh(new THREE.CylinderGeometry(6, 6, 180, 16), rollerMat);
-        rollerBottom.rotation.z = Math.PI / 2;
-        rollerBottom.position.set(0, 8 + 4, 140 + 70);
-        scene.add(rollerBottom);
+        // Left Conveyor Belt Assembly (Input -> SCARA Bed)
+        const leftBelt = new THREE.Mesh(new THREE.BoxGeometry(100, 4, 160), conveyorMat);
+        leftBelt.position.set(-110, 8 + 2, 140);
+        scene.add(leftBelt);
         
-        const rollerMotor = new THREE.Mesh(new THREE.BoxGeometry(20, 20, 20), metalDark);
-        rollerMotor.position.set(-100, 8 + 4, 140 - 70);
-        scene.add(rollerMotor);
+        const leftPulley1 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
+        leftPulley1.rotation.x = Math.PI / 2;
+        leftPulley1.position.set(-160, 8 + 2, 140);
+        scene.add(leftPulley1);
+        
+        const leftPulley2 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
+        leftPulley2.rotation.x = Math.PI / 2;
+        leftPulley2.position.set(-60, 8 + 2, 140);
+        scene.add(leftPulley2);
+        
+        // Right Conveyor Belt Assembly (SCARA Bed -> Output)
+        const rightBelt = new THREE.Mesh(new THREE.BoxGeometry(100, 4, 160), conveyorMat);
+        rightBelt.position.set(110, 8 + 2, 140);
+        scene.add(rightBelt);
+        
+        const rightPulley1 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
+        rightPulley1.rotation.x = Math.PI / 2;
+        rightPulley1.position.set(60, 8 + 2, 140);
+        scene.add(rightPulley1);
+        
+        const rightPulley2 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
+        rightPulley2.rotation.x = Math.PI / 2;
+        rightPulley2.position.set(160, 8 + 2, 140);
+        scene.add(rightPulley2);
+
+        // Cache pulleys for render loop animation
+        window.threeModel.pulleys = [leftPulley1, leftPulley2, rightPulley1, rightPulley2];
         
         // Update function for parallel arm joint rotations
         window.threeModel.updateArmJoints = function(t1, t1_o, t2, t2_o) {
@@ -4917,6 +4980,13 @@
         function animate() {
             requestAnimationFrame(animate);
             controls.update();
+            
+            // Spin 3D conveyor pulleys during loading or ejecting phases
+            if (window.threeModel && window.threeModel.pulleys && (cycleState === 'roller_loading' || cycleState === 'ejecting_paper')) {
+                window.threeModel.pulleys.forEach(p => {
+                    p.rotation.y += 0.04;
+                });
+            }
             
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             const degX = Math.round(90 - THREE.MathUtils.radToDeg(spherical.phi));
