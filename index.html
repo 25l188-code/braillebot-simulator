@@ -2565,6 +2565,8 @@
                         <div>TOOL: <span class="active-value" id="telemTool">IDLE</span></div>
                         <div>COORD: <span class="mono active-value" id="telemCoord">X:000.0, Y:000.0 mm</span></div>
                         <div>Z-AXIS: <span class="mono active-value" id="telemZ">UP (15.0 mm)</span></div>
+                        <div>OPTO: <span class="mono active-value" id="telemOpto">HIGH (Halt)</span></div>
+                        <div>MOTOR: <span class="mono active-value" id="telemLock">RELEASED</span></div>
                     </div>
 
                     <svg class="scara-canvas" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
@@ -3611,6 +3613,8 @@
         telemTool: document.getElementById('telemTool'),
         telemCoord: document.getElementById('telemCoord'),
         telemZ: document.getElementById('telemZ'),
+        telemOpto: document.getElementById('telemOpto'),
+        telemLock: document.getElementById('telemLock'),
         telemTheta1: document.getElementById('telemTheta1'),
         telemTheta2: document.getElementById('telemTheta2'),
         telemForce: document.getElementById('telemForce'),
@@ -4016,13 +4020,28 @@
         DOM.headerStatusText.innerText = "PAPER FEED PHASE";
         DOM.telemStatusText.innerText = "FEED STAGE";
         
+        DOM.telemOpto.innerText = "LOW (Active / Moving)";
+        DOM.telemOpto.style.color = "var(--accent)";
+        DOM.telemLock.innerText = "RELEASED (Feeding)";
+        DOM.telemLock.style.color = "var(--text-dim)";
+        
         log("[SYS] Activating stepper motor. Friction rollers loading paper...");
+        log("[SYS] Stepper motor active. Optocoupler LED lit. Signal: LOW (SCARA locked out).");
         animatePaper(-240, 0, 1000, () => {
             // Stage 2: Align Page
             cycleState = 'aligning_paper';
             updateStepperProgress(1);
             DOM.headerStatusText.innerText = "PAPER ALIGNMENT";
             DOM.telemStatusText.innerText = "ALIGNING";
+            
+            DOM.telemOpto.innerText = "HIGH (Halt)";
+            DOM.telemOpto.style.color = "var(--success)";
+            DOM.telemLock.innerText = "LOCKED (Hold Torque)";
+            DOM.telemLock.style.color = "var(--accent-bright)";
+            
+            log("[SYS] Stepper motor halted. Optocoupler LED dark. Signal: HIGH.");
+            log("[SYS] Settle delay (15ms braking cycle) active...");
+            log("[SYS] Sheet settled. Activating 5-bar SCARA print stroke.");
             log("[SYS] Paper detected by optical alignment guides. Lock established.");
             
             setTimeout(() => {
@@ -4064,6 +4083,11 @@
                 DOM.telemStatusText.innerText = "EJECTING PAGE";
                 updateStepperProgress(4);
                 
+                DOM.telemOpto.innerText = "LOW (Active / Moving)";
+                DOM.telemOpto.style.color = "var(--accent)";
+                DOM.telemLock.innerText = "RELEASED (Feeding)";
+                DOM.telemLock.style.color = "var(--text-dim)";
+                
                 log("[SYS] Embossing complete. Activating output rollers to eject sheet...");
                 
                 // Return arm to home while paper ejects
@@ -4097,6 +4121,11 @@
                         DOM.textToEmboss.disabled = false;
                         DOM.langEngBtn.disabled = false;
                         DOM.langHindiBtn.disabled = false;
+                        
+                        DOM.telemOpto.innerText = "HIGH (Halt)";
+                        DOM.telemOpto.style.color = "var(--success)";
+                        DOM.telemLock.innerText = "RELEASED";
+                        DOM.telemLock.style.color = "var(--text-dim)";
                         
                         DOM.headerStatusLed.className = "status-indicator";
                         DOM.headerStatusLed.style.backgroundColor = "var(--success)";
@@ -4202,6 +4231,10 @@
         DOM.telemTool.innerText = "IDLE";
         DOM.telemTool.style.color = "var(--text-dim)";
         DOM.telemForce.innerHTML = `0.0<span class="units">N</span>`;
+        DOM.telemOpto.innerText = "HIGH (Halt)";
+        DOM.telemOpto.style.color = "var(--success)";
+        DOM.telemLock.innerText = "RELEASED";
+        DOM.telemLock.style.color = "var(--text-dim)";
         DOM.telemStatusText.innerText = "IDLE";
         DOM.telemProgressPct.innerText = '0%';
         DOM.telemProgressFill.style.width = '0%';
