@@ -770,7 +770,7 @@
             scene = new THREE.Scene();
             scene.fog = new THREE.FogExp2(0x0b0c10, 0.0015);
 
-            camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 380) / window.innerHeight, 1, 1000);
+            camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 380) / window.innerHeight, 0.05, 1000);
 
             renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
             renderer.setSize(window.innerWidth - 380, window.innerHeight);
@@ -1347,43 +1347,81 @@
             cameraTween = requestAnimationFrame(animTween);
         }
 
-        function setCameraView(preset) {
-            const targetPos = new THREE.Vector3();
-            const targetLookAt = new THREE.Vector3();
-            if (preset === 'wide') {
-                targetPos.set(0, 45, 95);
-                targetLookAt.set(0, -5, 0);
-            } else if (preset === 'conveyor') {
-                targetPos.set(-45, 15, 30);
-                targetLookAt.set(-45, -5, 0);
-            } else if (preset === 'scara') {
-                targetPos.set(20, 25, 45);
-                targetLookAt.set(20, 5, -10);
-            } else if (preset === 'roller') {
-                targetPos.set(-75, 12, 22);
-                targetLookAt.set(-75, 4.5, 0);
-            } else if (preset === 'effector') {
-                const effPos = new THREE.Vector3();
-                machineObjects.endEffector.getWorldPosition(effPos);
-                targetPos.set(effPos.x, effPos.y + 6, effPos.z + 14);
-                targetLookAt.copy(effPos);
-            } else if (preset === 'opto') {
-                // Focus on the SCARA optocoupler sensor opto2
-                targetPos.set(20, -3.0, 22.0);
-                targetLookAt.set(20, -7.5, 9.0);
-            } else if (preset === 'cutter') {
-                targetPos.set(-17, 10, 18);
-                targetLookAt.set(-17, 2, 0);
+        function focusOnBox(box, marginFactor = 1.4, customDirection = null) {
+            const sphere = new THREE.BoundingSphere();
+            box.getBoundingSphere(sphere);
+            const center = sphere.center;
+            const radius = sphere.radius;
+
+            const fovRad = (camera.fov * Math.PI) / 180;
+            const aspect = camera.aspect;
+            const halfFov = fovRad / 2;
+            let distance = (radius * marginFactor) / Math.sin(halfFov);
+            
+            if (aspect < 1) {
+                distance = distance / aspect;
             }
+
+            // Cap the minimum zoom distance to prevent clipping through the object
+            const minDistance = radius + 2.0;
+            if (distance < minDistance) {
+                distance = minDistance;
+            }
+
+            // Standard pleasant viewing angle: isometric from front-right-top
+            const direction = customDirection || new THREE.Vector3(0.5, 0.6, 0.85).normalize();
+            
+            const targetPos = new THREE.Vector3().copy(center).addScaledVector(direction, distance);
+            const targetLookAt = new THREE.Vector3().copy(center);
+
             tweenCameraTo(targetPos, targetLookAt);
+        }
+
+        function focusOnObject(targetObject, marginFactor = 1.4, customDirection = null) {
+            if (!targetObject) return;
+            const box = new THREE.Box3().setFromObject(targetObject);
+            focusOnBox(box, marginFactor, customDirection);
+        }
+
+        function setCameraView(preset) {
+            if (preset === 'wide') {
+                // Calculate bounding box of all structural components
+                const box = new THREE.Box3();
+                Object.values(machineObjects).forEach(obj => {
+                    if (obj) {
+                        box.expandByObject(obj);
+                    }
+                });
+                // Slightly wider margin factor for wide preset view
+                focusOnBox(box, 1.3, new THREE.Vector3(0.0, 0.6, 1.0).normalize());
+            } else if (preset === 'conveyor') {
+                // Conveyor + cutter close-up
+                if (machineObjects.conveyorTicks) {
+                    focusOnObject(machineObjects.conveyorTicks, 1.8);
+                }
+            } else if (preset === 'scara') {
+                // Focus on SCARA base and linkage arms
+                if (machineObjects.motorHousingL) {
+                    focusOnObject(machineObjects.motorHousingL, 3.2);
+                }
+            } else if (preset === 'roller') {
+                // Zoom to paper roll feeder
+                focusOnObject(machineObjects.paperRoll, 1.6);
+            } else if (preset === 'effector') {
+                // Zoom to dynamic end-effector casing
+                focusOnObject(machineObjects.endEffector, 2.0);
+            } else if (preset === 'opto') {
+                // Zoom to optocoupler 2
+                focusOnObject(machineObjects.opto2, 2.2);
+            } else if (preset === 'cutter') {
+                // Zoom to guillotine cutter
+                focusOnObject(machineObjects.guillotineBlade, 2.0);
+            }
         }
 
         function zoomToOpto(optoMesh) {
             if (!autoZoomEnabled) return;
-            const targetLookAt = new THREE.Vector3();
-            optoMesh.getWorldPosition(targetLookAt);
-            const targetPos = new THREE.Vector3(targetLookAt.x, targetLookAt.y + 8, targetLookAt.z + 18);
-            tweenCameraTo(targetPos, targetLookAt);
+            focusOnObject(optoMesh, 2.2);
         }
 
         // ----------------------------------------------------
