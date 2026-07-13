@@ -1073,6 +1073,135 @@
             box-shadow: inset 0 2px 8px rgba(0,0,0,0.5);
         }
 
+        /* Bowden Cable Simulator Panel */
+        .bowden-mechanism-box {
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .bowden-title {
+            font-size: 1.3rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--text-bright);
+            border-left: 3px solid var(--accent);
+            padding-left: 0.75rem;
+        }
+
+        .bowden-sim-container {
+            width: 100%;
+            background: #070913;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+            overflow: hidden;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.6);
+        }
+
+        #bowdenSvg {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* SVG Bowden Simulator Styles */
+        .cable-sheath {
+            stroke: #1a2230;
+            stroke-width: 6;
+            fill: none;
+            stroke-linecap: round;
+        }
+
+        .cable-wire {
+            stroke: #4f5d75;
+            stroke-width: 1.5;
+            fill: none;
+            stroke-linecap: round;
+            transition: stroke 0.25s ease;
+        }
+
+        .cable-glow {
+            stroke: var(--accent);
+            stroke-width: 2.5;
+            fill: none;
+            stroke-linecap: round;
+            opacity: 0;
+            stroke-dasharray: 6 12;
+            transition: opacity 0.25s ease;
+        }
+
+        .solenoid-plunger {
+            fill: #7f8c8d;
+            transition: transform 0.15s ease-out;
+        }
+
+        .solenoid-coil {
+            fill: #b87333;
+            transition: fill 0.25s ease;
+        }
+
+        .print-pin {
+            fill: #0c1020;
+            stroke: #2a3545;
+            stroke-width: 2;
+            r: 5;
+            transition: all 0.25s ease;
+            transition-delay: 0.12s; /* Force travel delay */
+        }
+
+        .bowden-svg-label {
+            font-family: var(--font-sans);
+            font-size: 11px;
+            font-weight: 600;
+            fill: var(--accent);
+            letter-spacing: 0.03em;
+        }
+
+        /* Active dot animations */
+        .dot-active .cable-wire {
+            stroke: var(--accent-bright);
+        }
+
+        .dot-active .cable-glow {
+            opacity: 0.95;
+            animation: flowPulse 1.2s linear infinite;
+        }
+
+        .dot-active .solenoid-plunger {
+            transform: translateX(6px); /* push plunger in */
+            fill: var(--accent-bright);
+        }
+
+        .dot-active .solenoid-coil {
+            fill: #e67e22; /* Copper turns orange hot/excited */
+        }
+
+        .dot-active .print-pin {
+            fill: var(--amber);
+            stroke: var(--text-bright);
+            r: 7.5;
+            filter: drop-shadow(0 0 5px var(--amber));
+        }
+
+        .bowden-caption {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            line-height: 1.5;
+            font-style: italic;
+        }
+
+        @keyframes flowPulse {
+            from { stroke-dashoffset: 0; }
+            to { stroke-dashoffset: -36; }
+        }
+
         /* ==========================================================================
            8. ADI COMPONENTS SHOWCASE
            ========================================================================== */
@@ -3130,6 +3259,127 @@
                 </div>
             </div>
         </div>
+
+        <!-- Solenoid + Bowden Cable Actuation Simulator -->
+        <div class="bowden-mechanism-box">
+            <h3 class="bowden-title">How the Pins Actually Move: Solenoid + Bowden Cable Mechanism</h3>
+            <div class="bowden-sim-container">
+                <svg id="bowdenSvg" viewBox="0 0 800 280" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background -->
+                    <rect width="800" height="280" rx="8" fill="#070913" />
+                    
+                    <!-- Grid Lines overlay for a tech aesthetic -->
+                    <g opacity="0.15">
+                        <line x1="0" y1="40" x2="800" y2="40" stroke="var(--border)" stroke-dasharray="2 4" />
+                        <line x1="0" y1="80" x2="800" y2="80" stroke="var(--border)" stroke-dasharray="2 4" />
+                        <line x1="0" y1="120" x2="800" y2="120" stroke="var(--border)" stroke-dasharray="2 4" />
+                        <line x1="0" y1="160" x2="800" y2="160" stroke="var(--border)" stroke-dasharray="2 4" />
+                        <line x1="0" y1="200" x2="800" y2="200" stroke="var(--border)" stroke-dasharray="2 4" />
+                        <line x1="0" y1="240" x2="800" y2="240" stroke="var(--border)" stroke-dasharray="2 4" />
+                    </g>
+                    
+                    <!-- Bowden Cable Paths and Wires -->
+                    <!-- Dot 1 -->
+                    <g id="bowdenDot_1" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 40 C 250 40, 450 115, 642.5 115" />
+                        <path class="cable-wire" d="M 140 40 C 250 40, 450 115, 642.5 115" />
+                        <path class="cable-glow" d="M 140 40 C 250 40, 450 115, 642.5 115" />
+                        <!-- Solenoid Body -->
+                        <g class="solenoid-actuator" transform="translate(100, 40)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <!-- Print Pin -->
+                        <circle class="print-pin" cx="642.5" cy="115" />
+                    </g>
+
+                    <!-- Dot 2 -->
+                    <g id="bowdenDot_2" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 80 C 250 80, 450 135, 642.5 135" />
+                        <path class="cable-wire" d="M 140 80 C 250 80, 450 135, 642.5 135" />
+                        <path class="cable-glow" d="M 140 80 C 250 80, 450 135, 642.5 135" />
+                        <g class="solenoid-actuator" transform="translate(100, 80)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <circle class="print-pin" cx="642.5" cy="135" />
+                    </g>
+
+                    <!-- Dot 3 -->
+                    <g id="bowdenDot_3" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 120 C 250 120, 450 155, 642.5 155" />
+                        <path class="cable-wire" d="M 140 120 C 250 120, 450 155, 642.5 155" />
+                        <path class="cable-glow" d="M 140 120 C 250 120, 450 155, 642.5 155" />
+                        <g class="solenoid-actuator" transform="translate(100, 120)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <circle class="print-pin" cx="642.5" cy="155" />
+                    </g>
+
+                    <!-- Dot 4 -->
+                    <g id="bowdenDot_4" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 160 C 250 160, 450 115, 657.5 115" />
+                        <path class="cable-wire" d="M 140 160 C 250 160, 450 115, 657.5 115" />
+                        <path class="cable-glow" d="M 140 160 C 250 160, 450 115, 657.5 115" />
+                        <g class="solenoid-actuator" transform="translate(100, 160)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <circle class="print-pin" cx="657.5" cy="115" />
+                    </g>
+
+                    <!-- Dot 5 -->
+                    <g id="bowdenDot_5" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 200 C 250 200, 450 135, 657.5 135" />
+                        <path class="cable-wire" d="M 140 200 C 250 200, 450 135, 657.5 135" />
+                        <path class="cable-glow" d="M 140 200 C 250 200, 450 135, 657.5 135" />
+                        <g class="solenoid-actuator" transform="translate(100, 200)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <circle class="print-pin" cx="657.5" cy="135" />
+                    </g>
+
+                    <!-- Dot 6 -->
+                    <g id="bowdenDot_6" class="bowden-element-group">
+                        <path class="cable-sheath" d="M 140 240 C 250 240, 450 155, 657.5 155" />
+                        <path class="cable-wire" d="M 140 240 C 250 240, 450 155, 657.5 155" />
+                        <path class="cable-glow" d="M 140 240 C 250 240, 450 155, 657.5 155" />
+                        <g class="solenoid-actuator" transform="translate(100, 240)">
+                            <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
+                            <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
+                            <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
+                        </g>
+                        <circle class="print-pin" cx="657.5" cy="155" />
+                    </g>
+
+                    <!-- Leader Lines and Labels -->
+                    <g class="bowden-label-group">
+                        <!-- Solenoid Bank Label -->
+                        <line x1="100" y1="15" x2="100" y2="28" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 2" />
+                        <circle cx="100" cy="28" r="2.5" fill="var(--accent)" />
+                        <text class="bowden-svg-label" x="100" y="10" text-anchor="middle">SOLENOID BANK — oversized actuators, spread at mechanical pitch</text>
+
+                        <!-- Bowden Cables Label -->
+                        <line x1="380" y1="265" x2="380" y2="190" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 2" />
+                        <circle cx="380" cy="190" r="2.5" fill="var(--accent)" />
+                        <text class="bowden-svg-label" x="380" y="275" text-anchor="middle">BOWDEN CABLES — push-pull transfer over the offset distance</text>
+
+                        <!-- Print Head Label -->
+                        <line x1="650" y1="75" x2="650" y2="105" stroke="var(--accent)" stroke-width="1" stroke-dasharray="2 2" />
+                        <circle cx="650" cy="105" r="2.5" fill="var(--accent)" />
+                        <text class="bowden-svg-label" x="650" y="68" text-anchor="middle">PRINT HEAD — standard Braille pitch</text>
+                    </g>
+                </svg>
+            </div>
+            <p class="bowden-caption">Real solenoids are too wide to fit at Braille pitch — Bowden cables let the actuators sit apart while the pins stay correctly spaced.</p>
+        </div>
     </section>
 
     <!-- ====== SECTION 3: ADI COMPONENTS SHOWCASE ====== -->
@@ -4634,6 +4884,18 @@
             }
         }
         DOM.learningLetter.innerText = letter;
+        
+        // Update Bowden Simulator states
+        for (let i = 1; i <= 6; i++) {
+            const groupEl = document.getElementById(`bowdenDot_${i}`);
+            if (groupEl) {
+                if (activeDots.includes(i)) {
+                    groupEl.classList.add('dot-active');
+                } else {
+                    groupEl.classList.remove('dot-active');
+                }
+            }
+        }
     }
 
     DOM.dotBtns.forEach(btn => {
