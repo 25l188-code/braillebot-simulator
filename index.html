@@ -1,9 +1,9 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrailleBot SCARA Embosser Simulator — ADI Anveshan 2026</title>
+    <title>BrailleBot SCARA Embosser Simulator â€” ADI Anveshan 2026</title>
     <meta name="description" content="A world-class interactive simulation of the ADI SCARA robot-based Braille embosser for the ADI Anveshan Fellowship 2026.">
     <!-- Three.js and OrbitControls Libraries for 3D View -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -2830,7 +2830,7 @@
     <!-- ====== CINEMATIC INTRO OVERLAY ====== -->
     <div id="introOverlay">
         <canvas id="introParticles"></canvas>
-        <a class="intro-skip" id="introSkip">Skip Intro →</a>
+        <a class="intro-skip" id="introSkip">Skip Intro â†’</a>
 
         <div class="intro-title-container">
             <div class="intro-title" id="introTitle">
@@ -2893,7 +2893,7 @@
     <!-- ====== HEADER ====== -->
     <header class="app-header">
         <div class="header-logo-group">
-            <div class="logo-symbol">⠃</div>
+            <div class="logo-symbol">â ƒ</div>
             <div class="logo-text-group">
                 <h1>BrailleBot Simulator</h1>
                 <p>ADI SCARA Braille Embosser</p>
@@ -2911,7 +2911,6 @@
     <!-- ====== STICKY NAVIGATION ====== -->
     <nav class="sticky-nav" id="stickyNav">
         <a href="#team" class="active">Our Team</a>
-        <a href="#simulator">Simulator</a>
         <a href="#howItWorks">How It Works</a>
         <a href="#components">ADI Components</a>
         <a href="#isometric">3D Visualizer</a>
@@ -2940,8 +2939,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">🔗 GitHub</a>
-                    <a href="#">💼 LinkedIn</a>
+                    <a href="#">ðŸ”— GitHub</a>
+                    <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
             </div>
 
@@ -2957,8 +2956,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">🔗 GitHub</a>
-                    <a href="#">💼 LinkedIn</a>
+                    <a href="#">ðŸ”— GitHub</a>
+                    <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
             </div>
 
@@ -2974,8 +2973,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">🔗 GitHub</a>
-                    <a href="#">💼 LinkedIn</a>
+                    <a href="#">ðŸ”— GitHub</a>
+                    <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
             </div>
 
@@ -2991,8 +2990,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">🔗 GitHub</a>
-                    <a href="#">💼 LinkedIn</a>
+                    <a href="#">ðŸ”— GitHub</a>
+                    <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
             </div>
 
@@ -3008,8 +3007,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">🔗 GitHub</a>
-                    <a href="#">💼 LinkedIn</a>
+                    <a href="#">ðŸ”— GitHub</a>
+                    <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
             </div>
         </div>
@@ -3045,288 +3044,6 @@
         </div>
     </section>
 
-    <!-- ====== SECTION 1: SIMULATOR ====== -->
-    <section id="simulator" class="content-section">
-        <div class="simulator-grid">
-            
-            <!-- Side Controls Panel -->
-            <aside class="panel">
-                <div class="panel-heading">
-                    <h3>Input Controls</h3>
-                    <span class="mono" style="font-size: 0.75rem; color: var(--text-dim);">v2.1.0</span>
-                </div>
-
-                <div class="language-toggle">
-                    <button class="lang-btn active" id="langEngBtn">English (Grade 1)</button>
-                    <button class="lang-btn" id="langHindiBtn">Bharati Braille</button>
-                </div>
-
-                <div class="input-group">
-                    <label for="textToEmboss" id="inputLabel">English Text</label>
-                    <textarea class="sim-textarea" id="textToEmboss" maxlength="100" placeholder="Type letters to translate..." spellcheck="false"></textarea>
-                    <span class="char-counter" id="charCounter">0 / 100 chars</span>
-                </div>
-
-                <div class="input-group">
-                    <label>Live Translation Preview</label>
-                    <div class="preview-box">
-                        <div class="braille-glyphs" id="brailleLivePreview"></div>
-                        <span class="placeholder-text" id="previewPlaceholder">Braille characters will appear here...</span>
-                    </div>
-                </div>
-
-                <div class="control-buttons">
-                    <button class="btn-main" id="btnRunEmboss">▶ Start Cycle</button>
-                    <button class="btn-sec" id="btnResetAll">⟲ Reset All</button>
-                </div>
-
-                <div class="slider-group">
-                    <div class="slider-header">
-                        <span>Simulation Speed</span>
-                        <span class="slider-val" id="speedValText">1.5x</span>
-                    </div>
-                    <input type="range" class="sim-slider" id="speedControlSlider" min="0.5" max="4" step="0.1" value="1.5">
-                </div>
-
-                <div class="input-group">
-                    <label>System Logs</label>
-                    <div class="console-box" id="sysConsole">
-                        <div class="console-line info">[SYS] BrailleBot Simulator initialized.</div>
-                        <div class="console-line info">[SYS] All ADI subsystems offline (Simulated Mode).</div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main SVG Canvas Area -->
-            <div class="visualization-panel">
-                <div class="canvas-container">
-                    <div class="canvas-bg-grid"></div>
-                    
-                    <div class="canvas-telemetry">
-                        <div>TOOL: <span class="active-value" id="telemTool">IDLE</span></div>
-                        <div>COORD: <span class="mono active-value" id="telemCoord">X:000.0, Y:000.0 mm</span></div>
-                        <div>Z-AXIS: <span class="mono active-value" id="telemZ">UP (15.0 mm)</span></div>
-                        <div>OPTO: <span class="mono active-value" id="telemOpto">HIGH (Halt)</span></div>
-                        <div>MOTOR: <span class="mono active-value" id="telemLock">RELEASED</span></div>
-                    </div>
-
-                    <svg class="scara-canvas" viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
-                        <defs>
-                            <!-- Metallic linear gradient for robotic arm links -->
-                            <linearGradient id="linkGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#1e243b" />
-                                <stop offset="50%" stop-color="#2a3254" />
-                                <stop offset="100%" stop-color="#141829" />
-                            </linearGradient>
-                            
-                            <!-- Shading radial gradient for embossed Braille dots -->
-                            <radialGradient id="embossedDotGrad" cx="30%" cy="30%" r="70%">
-                                <stop offset="0%" stop-color="#ffffff" />
-                                <stop offset="40%" stop-color="#e9e0cd" />
-                                <stop offset="100%" stop-color="#b8ae9a" />
-                            </radialGradient>
-                            
-                            <!-- Subtraction/Glow filters -->
-                            <filter id="laserGlow" x="-50%" y="-50%" width="200%" height="200%">
-                                <feGaussianBlur stdDeviation="3" result="blur" />
-                                <feMerge>
-                                    <feMergeNode in="blur" />
-                                    <feMergeNode in="SourceGraphic" />
-                                </feMerge>
-                            </filter>
-                        </defs>
-
-                        <!-- REACHABLE WORKSPACE BOUNDARY -->
-                        <circle cx="400" cy="80" r="380" class="scara-workspace" />
-                        <circle cx="400" cy="80" r="120" class="scara-workspace" />
-
-                        <!-- CONVEYOR SYSTEM (Bridges Input -> SCARA -> Output Trays - Stop at Bed edges 300 & 500) -->
-                        <g id="conveyorSystem">
-                            <!-- Left Conveyor Belt (X = 140 to 300) -->
-                            <!-- Top Belt Band -->
-                            <rect x="140" y="290" width="160" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
-                            <line x1="140" y1="300" x2="300" y2="300" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
-                            <!-- Bottom Belt Band -->
-                            <rect x="140" y="390" width="160" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
-                            <line x1="140" y1="400" x2="300" y2="400" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
-                            
-                            <!-- Left Pulley Wheels -->
-                            <circle cx="150" cy="300" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="150" cy="400" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="290" cy="300" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="290" cy="400" r="8" fill="#475569" stroke="#1e293b" />
-
-                            <!-- Right Conveyor Belt (X = 500 to 660) -->
-                            <!-- Top Belt Band -->
-                            <rect x="500" y="290" width="160" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
-                            <line x1="500" y1="300" x2="660" y2="300" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
-                            <!-- Bottom Belt Band -->
-                            <rect x="500" y="390" width="160" height="20" rx="2" fill="#151724" stroke="#2e375a" stroke-width="1.5" />
-                            <line x1="500" y1="400" x2="660" y2="400" stroke="#38bdf8" stroke-width="1.5" class="conveyor-belt" />
-                            
-                            <!-- Right Pulley Wheels -->
-                            <circle cx="510" cy="300" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="510" cy="400" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="650" cy="300" r="8" fill="#475569" stroke="#1e293b" />
-                            <circle cx="650" cy="400" r="8" fill="#475569" stroke="#1e293b" />
-                        </g>
-
-                        <!-- INPUT TRAY (LEFT) -->
-                        <g transform="translate(60, 240)">
-                            <!-- Tray shadow/border -->
-                            <rect x="0" y="0" width="160" height="230" rx="4" class="tray-border" />
-                            <text x="80" y="220" text-anchor="middle" class="tray-label">INPUT TRAY</text>
-                            
-                            <!-- Input Paper stack representation -->
-                            <g id="inputPaperStack">
-                                <rect x="5" y="10" width="150" height="200" rx="2" fill="#d9d5c5" stroke="#9a9686" />
-                                <rect x="5" y="8" width="150" height="200" rx="2" fill="#e9e5d5" stroke="#aaae9e" />
-                                <rect x="5" y="6" width="150" height="200" rx="2" fill="#f4efe2" stroke="#babfae" id="inputPaperSheet" />
-                            </g>
-                        </g>
-
-                        <!-- EMBOSSING BED (CENTER) -->
-                        <g transform="translate(300, 240)">
-                            <rect x="0" y="0" width="200" height="230" rx="6" fill="#0c0e18" stroke="#1f253d" stroke-width="2" />
-                            <text x="100" y="220" text-anchor="middle" class="tray-label">EMBOSSING BED</text>
-                            
-                            <!-- Aligning Guides -->
-                            <line x1="10" y1="10" x2="30" y2="10" stroke="var(--border)" stroke-width="2" />
-                            <line x1="10" y1="10" x2="10" y2="30" stroke="var(--border)" stroke-width="2" />
-                            <line x1="190" y1="10" x2="170" y2="10" stroke="var(--border)" stroke-width="2" />
-                            <line x1="190" y1="10" x2="190" y2="30" stroke="var(--border)" stroke-width="2" />
-                            
-                            <!-- Active sheet under embossing -->
-                            <g id="embossingPaperSheet" opacity="0">
-                                <rect x="10" y="10" width="180" height="200" rx="2" fill="#f4efe2" stroke="#babfae" />
-                                <!-- Embossed dots will render dynamically here -->
-                                <g id="embossedDotsGroup"></g>
-                            </g>
-                            <!-- Active sheet under embossing (retains alignment guides) -->
-                            <g id="embossingPaperSheet" opacity="0">
-                                <rect x="10" y="10" width="180" height="200" rx="2" fill="#f4efe2" stroke="#babfae" />
-                                <!-- Embossed dots will render dynamically here -->
-                                <g id="embossedDotsGroup"></g>
-                            </g>
-                        </g>
-
-                        <!-- OUTPUT TRAY (RIGHT) -->
-                        <g transform="translate(580, 240)">
-                            <rect x="0" y="0" width="160" height="230" rx="4" class="tray-border" />
-                            <text x="80" y="220" text-anchor="middle" class="tray-label">OUTPUT TRAY</text>
-                            
-                            <!-- Stacking Sheets -->
-                            <g id="outputPaperStack"></g>
-                        </g>
-
-                        <!-- CARRIED SHEET (Dynamic paper carried by SCARA arm gripper - retained as empty hidden shell to prevent errors) -->
-                        <g id="carriedPaperSheet" opacity="0" display="none">
-                            <rect x="-90" y="-100" width="180" height="200" rx="2" fill="#f4efe2" stroke="#babfae" />
-                        </g>
-
-                        <!-- SCARA ROBOTIC ARM ASSEMBLY -->
-                        <!-- Left Arm (Pivot at 350, 80) -->
-                        <g id="scaraLeftArm">
-                            <!-- Left Inner Link (L1 = 200px) -->
-                            <polygon points="335,80 345,65 535,185 525,200" class="scara-link-outer" id="polyLeft1" />
-                            <polygon points="342,80 348,72 528,187 522,195" class="scara-link-inner" id="polyLeft1Inner" />
-                            
-                            <!-- Left Elbow Joint -->
-                            <circle cx="530" cy="200" r="16" class="scara-joint-cap" id="elbowLeftJointCap" />
-                            <circle cx="530" cy="200" r="5" class="scara-joint-bolt" id="elbowLeftJointBolt" />
-                            
-                            <!-- Left Outer Link (L2 = 180px) -->
-                            <polygon points="522,200 527,190 735,290 730,300" class="scara-link-outer" id="polyLeft2" />
-                            <polygon points="527,200 530,195 728,292 725,297" class="scara-link-inner" id="polyLeft2Inner" />
-                        </g>
-
-                        <!-- Right Arm (Pivot at 450, 80) -->
-                        <g id="scaraRightArm">
-                            <!-- Right Inner Link (L1 = 200px) -->
-                            <polygon points="435,80 445,65 635,185 625,200" class="scara-link-outer" id="polyRight1" />
-                            <polygon points="442,80 448,72 628,187 622,195" class="scara-link-inner" id="polyRight1Inner" />
-                            
-                            <!-- Right Elbow Joint -->
-                            <circle cx="630" cy="200" r="16" class="scara-joint-cap" id="elbowRightJointCap" />
-                            <circle cx="630" cy="200" r="5" class="scara-joint-bolt" id="elbowRightJointBolt" />
-                            
-                            <!-- Right Outer Link (L2 = 180px) -->
-                            <polygon points="622,200 627,190 735,290 730,300" class="scara-link-outer" id="polyRight2" />
-                            <polygon points="627,200 630,195 728,292 725,297" class="scara-link-inner" id="polyRight2Inner" />
-                        </g>
-
-                        <!-- Symmetrical Base Mounting structure -->
-                        <rect x="325" y="45" width="150" height="70" rx="5" fill="#111422" stroke="var(--border)" stroke-width="2" />
-                        <!-- Left Base Motor center -->
-                        <circle cx="350" cy="80" r="24" fill="#1f253d" stroke="var(--border)" stroke-width="2" />
-                        <circle cx="350" cy="80" r="14" class="scara-joint-cap" />
-                        <circle cx="350" cy="80" r="4" class="scara-joint-bolt" />
-                        
-                        <!-- Right Base Motor center -->
-                        <circle cx="450" cy="80" r="24" fill="#1f253d" stroke="var(--border)" stroke-width="2" />
-                        <circle cx="450" cy="80" r="14" class="scara-joint-cap" />
-                        <circle cx="450" cy="80" r="4" class="scara-joint-bolt" />
-
-                        <!-- End-Effector Joint (where outer arms meet) -->
-                        <circle cx="730" cy="300" r="12" class="scara-joint-cap" id="eeJointCap" />
-                        
-                        <!-- 6-Pin End-Effector Head -->
-                        <g id="endEffectorHead" transform="translate(730,300)">
-                            <!-- 6-pin head block -->
-                            <rect x="-10" y="-12" width="20" height="24" rx="3" class="end-effector-solenoid" />
-                            
-                            <!-- 6 pins layout inside the block -->
-                            <circle cx="-4" cy="-6" r="2.2" fill="#151a2d" id="embossPin1" stroke="#3a4670" stroke-width="0.5" />
-                            <circle cx="-4" cy="0" r="2.2" fill="#151a2d" id="embossPin2" stroke="#3a4670" stroke-width="0.5" />
-                            <circle cx="-4" cy="6" r="2.2" fill="#151a2d" id="embossPin3" stroke="#3a4670" stroke-width="0.5" />
-                            <circle cx="4" cy="-6" r="2.2" fill="#151a2d" id="embossPin4" stroke="#3a4670" stroke-width="0.5" />
-                            <circle cx="4" cy="0" r="2.2" fill="#151a2d" id="embossPin5" stroke="#3a4670" stroke-width="0.5" />
-                            <circle cx="4" cy="6" r="2.2" fill="#151a2d" id="embossPin6" stroke="#3a4670" stroke-width="0.5" />
-                            
-                            <!-- Hidden legacy elements to prevent JS errors -->
-                            <circle cx="0" cy="0" r="0" fill="none" id="suctionIndicator" display="none" />
-                            <circle cx="0" cy="0" r="0" fill="none" id="embosserPinTip" display="none" />
-                            <circle cx="0" cy="0" r="0" fill="none" id="embosserPulseRing" display="none" />
-                            <circle cx="0" cy="0" r="0" fill="none" id="sideMagnet" display="none" />
-                        </g>
-
-                        <!-- Shoulder Joint (rendered on top) -->
-                        <circle cx="400" cy="80" r="18" class="scara-joint-cap" />
-                        <circle cx="400" cy="80" r="5" class="scara-joint-bolt" />
-                    </svg>
-                </div>
-
-                <!-- Telemetry Row -->
-                <div class="telemetry-row">
-                    <div class="telemetry-card highlight-accent">
-                        <span class="telem-title">Motor 1 (Shoulder)</span>
-                        <div class="telem-val" id="telemTheta1">00.0<span class="units">deg</span></div>
-                    </div>
-                    <div class="telemetry-card highlight-accent">
-                        <span class="telem-title">Motor 2 (Elbow)</span>
-                        <div class="telem-val" id="telemTheta2">00.0<span class="units">deg</span></div>
-                    </div>
-                    <div class="telemetry-card highlight-cyan">
-                        <span class="telem-title">Solenoid Force</span>
-                        <div class="telem-val" id="telemForce">0.0<span class="units">N</span></div>
-                    </div>
-                    <div class="telemetry-card highlight-success">
-                        <span class="telem-title">System Status</span>
-                        <div class="telem-val" style="font-size: 1.05rem;" id="telemStatusText">IDLE</div>
-                    </div>
-                    <div class="progress-card">
-                        <div class="progress-meta">
-                            <span>Embossing Progress</span>
-                            <span id="telemProgressPct">0%</span>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" id="telemProgressFill"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
 
     <!-- ====== SECTION 2: HOW IT WORKS ====== -->
     <section id="howItWorks" class="content-section">
@@ -3338,25 +3055,25 @@
         <div class="pipeline-cards-grid">
             <div class="pipeline-card">
                 <div class="pipeline-card-num">1</div>
-                <div class="pipeline-card-icon">⌨</div>
+                <div class="pipeline-card-icon">âŒ¨</div>
                 <h3>Text Input</h3>
                 <p>The companion app reads digital ASCII character inputs or scans speech using voice recognition modules.</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">2</div>
-                <div class="pipeline-card-icon">⠗</div>
+                <div class="pipeline-card-icon">â —</div>
                 <h3>Grade 1 Translation</h3>
                 <p>Digital characters map directly to 6-dot cell configurations using localized languages (English/Bharati).</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">3</div>
-                <div class="pipeline-card-icon">📐</div>
+                <div class="pipeline-card-icon">ðŸ“</div>
                 <h3>Coordinate Mapping</h3>
                 <p>Cells translate to absolute cartesian coordinates (X, Y in mm) based on ISO-standard Braille dimensions.</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">4</div>
-                <div class="pipeline-card-icon">🦾</div>
+                <div class="pipeline-card-icon">ðŸ¦¾</div>
                 <h3>SCARA Path Plan</h3>
                 <p>ADI's ADSP-CM408F computes inverse kinematics and optimizes trajectories using trapezoidal velocity profiles.</p>
             </div>
@@ -3378,7 +3095,7 @@
                 <div style="display: flex; align-items: center; gap: 2rem;">
                     <div>
                         <span class="mono" style="font-size: 0.8rem; color: var(--text-dim);">Unicode Symbol</span>
-                        <div class="braille-result-display" id="learningGlyph">⠀</div>
+                        <div class="braille-result-display" id="learningGlyph">â €</div>
                     </div>
                     <div>
                         <span class="mono" style="font-size: 0.8rem; color: var(--text-dim);">Mapped Letter</span>
@@ -3537,7 +3254,7 @@
                 <div class="slider-group">
                     <div class="slider-header">
                         <span>Z-Axis Rotation</span>
-                        <span class="slider-val" id="isoRotZVal">-45°</span>
+                        <span class="slider-val" id="isoRotZVal">-45Â°</span>
                     </div>
                     <input type="range" class="sim-slider" id="isoRotZSlider" min="-180" max="180" value="-45">
                 </div>
@@ -3545,7 +3262,7 @@
                 <div class="slider-group">
                     <div class="slider-header">
                         <span>X-Axis Rotation</span>
-                        <span class="slider-val" id="isoRotXVal">60°</span>
+                        <span class="slider-val" id="isoRotXVal">60Â°</span>
                     </div>
                     <input type="range" class="sim-slider" id="isoRotXSlider" min="15" max="80" value="60">
                 </div>
@@ -3557,14 +3274,14 @@
     <section id="productionSim" class="content-section">
         <div class="section-title-group">
             <h2>6-SPEED Production Line Simulation</h2>
-            <p>Interactive 3D simulation of the full Braille book-printing pipeline — FEED → CUT → ADVANCE → EMBOSS → PICK → PLACE</p>
+            <p>Interactive 3D simulation of the full Braille book-printing pipeline â€” FEED â†’ CUT â†’ ADVANCE â†’ EMBOSS â†’ PICK â†’ PLACE</p>
         </div>
 
         <div class="production-sim-wrapper">
             <div class="production-sim-toolbar">
-                <span class="production-sim-badge">⚡ LIVE 3D SIMULATION</span>
+                <span class="production-sim-badge">âš¡ LIVE 3D SIMULATION</span>
                 <button onclick="document.getElementById('productionSimFrame').requestFullscreen()" class="production-sim-fullscreen-btn" title="Press Escape to exit fullscreen">
-                    ⛶ Fullscreen
+                    â›¶ Fullscreen
                 </button>
             </div>
             <div class="production-sim-container">
@@ -3588,7 +3305,7 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-num" id="statCost">₹15,000</div>
+                <div class="stat-num" id="statCost">â‚¹15,000</div>
                 <div class="stat-lbl">Projected Cost</div>
                 <p class="stat-desc">Low material cost of components and mechanical framework</p>
             </div>
@@ -3628,21 +3345,21 @@
                         <td>Mechanical Typewriter</td>
                         <td>Mechanical Lockout</td>
                         <td>Manual Typing</td>
-                        <td>₹40,000</td>
+                        <td>â‚¹40,000</td>
                     </tr>
                     <tr>
                         <td>Index Everest-D</td>
                         <td>Heavy Industrial Embosser</td>
                         <td>0.1 mm Belt Driver</td>
                         <td>120 characters/sec</td>
-                        <td>₹8,00,000</td>
+                        <td>â‚¹8,00,000</td>
                     </tr>
                     <tr class="highlighted-row">
                         <td>BrailleBot SCARA</td>
                         <td>ADI Mixed-Signal Robot</td>
                         <td>0.08 mm Close-Loop SCARA</td>
                         <td>30 characters/sec</td>
-                        <td>₹15,000</td>
+                        <td>â‚¹15,000</td>
                     </tr>
                 </tbody>
             </table>
@@ -3663,28 +3380,28 @@
                 
                 <div class="alignment-criteria-list">
                     <div class="criteria-item">
-                        <div class="criteria-check">✓</div>
+                        <div class="criteria-check">âœ“</div>
                         <div class="criteria-text">
                             <h4>Pick &amp; Place Operations</h4>
                             <p>Automated sheet pickup from the input paper tray and alignment placing on the central embossing bed.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">✓</div>
+                        <div class="criteria-check">âœ“</div>
                         <div class="criteria-text">
                             <h4>Precision Insertion (Embossing)</h4>
                             <p>Direct solenoid force control driven by precision DAC vectors to punch neat Braille dot geometry without tearing paper fibers.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">✓</div>
+                        <div class="criteria-check">âœ“</div>
                         <div class="criteria-text">
                             <h4>Geometric Drawing</h4>
                             <p>Drawing detailed character grids along complex coordinates via high-precision closed-loop inverse kinematics.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">✓</div>
+                        <div class="criteria-check">âœ“</div>
                         <div class="criteria-text">
                             <h4>Sorting &amp; Stack Routing</h4>
                             <p>Sorting finished pages into the output stack, separating empty or misaligned sheets using force-feedback signals.</p>
@@ -3726,7 +3443,7 @@
         <div class="team-modal-content">
             <button class="team-modal-close" id="closeTeamModal">&times;</button>
             <div class="team-modal-header">
-                <div class="team-modal-avatar" id="modalMemberAvatar">👤</div>
+                <div class="team-modal-avatar" id="modalMemberAvatar">ðŸ‘¤</div>
                 <div class="team-modal-title">
                     <h4 id="modalMemberName">Member Name</h4>
                     <div class="team-role" id="modalMemberRole">Role Title</div>
@@ -3753,7 +3470,7 @@
     <!-- ====== FOOTER ====== -->
     <footer class="app-footer">
         <div class="footer-logo-block">
-            <span class="logo-sym">⠃</span>
+            <span class="logo-sym">â ƒ</span>
             <h4>BrailleBot SCARA</h4>
         </div>
         <div class="footer-links">
@@ -3786,17 +3503,17 @@
     };
 
     const BHARATI_BRAILLE_MAP = {
-        'अ': [1],         'आ': [3,4,5],     'इ': [2],         'ई': [3,5],
-        'उ': [1,3,6],     'ऊ': [1,2,5,6],   'ए': [1,5],       'ऐ': [3,4],
-        'ओ': [1,3,5],     'औ': [2,4,6],
-        'क': [1,3],       'ख': [4,6],       'ग': [1,2,4,5],   'घ': [1,2,6],
-        'च': [1,4],       'छ': [1,6],       'ज': [2,4,5],     'झ': [3,5,6],
-        'ट': [2,3,4,5,6], 'ठ': [2,4,5,6],   'ड': [1,2,4,6],   'ढ': [1,2,3,4,5,6],
-        'त': [2,3,4,5],   'थ': [1,4,5,6],   'द': [1,2,4],     'ध': [2,3,4,6],
-        'न': [1,3,4,5],   'प': [1,2,3,4],   'फ': [2,3,5],     'ब': [1,2],
-        'भ': [4,5],       'म': [1,3,4],     'य': [1,3,4,5,6], 'र': [1,2,3,5],
-        'ल': [1,2,3],     'व': [1,2,3,6],   'श': [1,4,6],     'ष': [1,2,3,4,6],
-        'स': [2,3,4],     'ह': [1,2,5],     ' ': []
+        'à¤…': [1],         'à¤†': [3,4,5],     'à¤‡': [2],         'à¤ˆ': [3,5],
+        'à¤‰': [1,3,6],     'à¤Š': [1,2,5,6],   'à¤': [1,5],       'à¤': [3,4],
+        'à¤“': [1,3,5],     'à¤”': [2,4,6],
+        'à¤•': [1,3],       'à¤–': [4,6],       'à¤—': [1,2,4,5],   'à¤˜': [1,2,6],
+        'à¤š': [1,4],       'à¤›': [1,6],       'à¤œ': [2,4,5],     'à¤': [3,5,6],
+        'à¤Ÿ': [2,3,4,5,6], 'à¤ ': [2,4,5,6],   'à¤¡': [1,2,4,6],   'à¤¢': [1,2,3,4,5,6],
+        'à¤¤': [2,3,4,5],   'à¤¥': [1,4,5,6],   'à¤¦': [1,2,4],     'à¤§': [2,3,4,6],
+        'à¤¨': [1,3,4,5],   'à¤ª': [1,2,3,4],   'à¤«': [2,3,5],     'à¤¬': [1,2],
+        'à¤­': [4,5],       'à¤®': [1,3,4],     'à¤¯': [1,3,4,5,6], 'à¤°': [1,2,3,5],
+        'à¤²': [1,2,3],     'à¤µ': [1,2,3,6],   'à¤¶': [1,4,6],     'à¤·': [1,2,3,4,6],
+        'à¤¸': [2,3,4],     'à¤¹': [1,2,5],     ' ': []
     };
 
     const DOT_POSITIONS = {
@@ -3827,12 +3544,12 @@
             part: "TMC5160",
             name: "High-Power Stepper Controller",
             category: "Motor Driver",
-            desc: "Premium driver and controller IC designed for multi-phase stepper motors. Uses StealthChop2™ for near-silent operation and SpreadCycle™ for dynamic torque delivery, providing the SCARA arm with extremely smooth step coordinates and zero noise.",
+            desc: "Premium driver and controller IC designed for multi-phase stepper motors. Uses StealthChop2â„¢ for near-silent operation and SpreadCycleâ„¢ for dynamic torque delivery, providing the SCARA arm with extremely smooth step coordinates and zero noise.",
             specs: {
                 "Microsteps": "Up to 256 per step",
                 "Supply Voltage": "8V to 60V DC",
                 "RMS Phase Current": "Up to 20A",
-                "Features": "StealthChop2™, StallGuard4™",
+                "Features": "StealthChop2â„¢, StallGuard4â„¢",
                 "Interface": "SPI / UART"
             },
             signalFunc: (t) => {
@@ -3844,7 +3561,7 @@
             part: "TMC2209",
             name: "Low-Noise Stepper Driver",
             category: "Motor Driver",
-            desc: "Highly integrated stepper driver using StallGuard4™ for sensorless homing and load detection. Integrated into the document loading feed tray to control the roller step feed with high efficiency and thermal defense.",
+            desc: "Highly integrated stepper driver using StallGuard4â„¢ for sensorless homing and load detection. Integrated into the document loading feed tray to control the roller step feed with high efficiency and thermal defense.",
             specs: {
                 "Microsteps": "Up to 256",
                 "Supply Voltage": "4.75V to 28V",
@@ -3861,8 +3578,8 @@
             desc: "Ultra-low noise, high-stability 3-axis accelerometer used on the end-effector to analyze stamp resonance. Detects structural vibrations during embossing, feeding diagnostic telemetry back to the controller to confirm dot quality.",
             specs: {
                 "Resolution": "20-bit digital output",
-                "Noise Density": "22 µg/√Hz",
-                "Measurement Ranges": "±2g, ±4g, ±8g",
+                "Noise Density": "22 Âµg/âˆšHz",
+                "Measurement Ranges": "Â±2g, Â±4g, Â±8g",
                 "Interface": "SPI / I2C",
                 "Package": "Hermetic LCC"
             },
@@ -3876,7 +3593,7 @@
             specs: {
                 "Resolution": "16-bit",
                 "Throughput": "200 kSPS",
-                "Input Impedance": "1 MΩ analog buffer",
+                "Input Impedance": "1 MÎ© analog buffer",
                 "Analog Inputs": "8 bipolar channels",
                 "Sampling Mode": "Simultaneous"
             },
@@ -3889,8 +3606,8 @@
             desc: "Quad channel high relative accuracy voltage output DAC. Provides precise analog references to set current limits on drivers and dictate the exact voltage vectors driving the embossing solenoid magnet.",
             specs: {
                 "Resolution": "14-bit",
-                "Relative Accuracy": "±1 LSB max INL",
-                "Reference Noise": "0.1 Hz to 10 Hz: 6 µV p-p",
+                "Relative Accuracy": "Â±1 LSB max INL",
+                "Reference Noise": "0.1 Hz to 10 Hz: 6 ÂµV p-p",
                 "Interface": "SPI (50 MHz)",
                 "Output Channels": "4 buffered channels"
             },
@@ -3905,7 +3622,7 @@
             part: "ADuM4160",
             name: "USB Port Digital Isolator",
             category: "Digital Isolator",
-            desc: "Industrial grade USB 2.0 digital isolator using iCoupler® technology. Protects control electronics and laptops from power spikes or motor noise generated by high-power solenoid pulses.",
+            desc: "Industrial grade USB 2.0 digital isolator using iCouplerÂ® technology. Protects control electronics and laptops from power spikes or motor noise generated by high-power solenoid pulses.",
             specs: {
                 "Isolation Voltage": "Up to 5000V rms",
                 "USB Speed": "1.5 Mbps & 12 Mbps",
@@ -3938,7 +3655,7 @@
             category: "Power Regulation",
             desc: "Linear regulator offering PSRR performance above 76dB. Cleans power inputs feeding the 16-bit analog sampling channels of the AD7606 ADC, ensuring precise sensor tracking.",
             specs: {
-                "Noise Density": "0.8 nV/√Hz",
+                "Noise Density": "0.8 nV/âˆšHz",
                 "PSRR": "76dB at 1 MHz",
                 "Dropout Voltage": "260 mV typical",
                 "Output Current": "500 mA maximum",
@@ -3950,13 +3667,13 @@
             part: "ADT7420",
             name: "16-Bit Digital Temperature Sensor",
             category: "Thermal Sensor",
-            desc: "Digital temperature sensor with ±0.2°C accuracy. Positioned directly near high-power MOSFETs and driver packages to dynamically throttle speeds if thermal boundaries are crossed.",
+            desc: "Digital temperature sensor with Â±0.2Â°C accuracy. Positioned directly near high-power MOSFETs and driver packages to dynamically throttle speeds if thermal boundaries are crossed.",
             specs: {
-                "Accuracy": "±0.25°C max",
+                "Accuracy": "Â±0.25Â°C max",
                 "Resolution": "16-bit",
-                "Temperature Range": "-40°C to +150°C",
+                "Temperature Range": "-40Â°C to +150Â°C",
                 "Interface": "I2C",
-                "Power Consumption": "70 µW micro-power"
+                "Power Consumption": "70 ÂµW micro-power"
             },
             signalFunc: (t) => 25.0 + 5.0 * Math.sin(t * 0.01)
         }
@@ -4810,8 +4527,8 @@
         
         // Adjust visualizer limits labels
         if (component.category === "Thermal Sensor") {
-            DOM.sigValMin.innerText = "Min: -40°C";
-            DOM.sigValMax.innerText = "Max: 150°C";
+            DOM.sigValMin.innerText = "Min: -40Â°C";
+            DOM.sigValMax.innerText = "Max: 150Â°C";
         } else if (component.category === "Processor / DSP") {
             DOM.sigValMin.innerText = "Min: 0V";
             DOM.sigValMax.innerText = "Max: 3.3V";
@@ -4956,7 +4673,7 @@
             for (let i = 0; i < sanitized.length; i++) {
                 const char = sanitized[i];
                 if (char === ' ') {
-                    glyphs.push('⠀'); // Empty space cell
+                    glyphs.push('â €'); // Empty space cell
                     continue;
                 }
                 const dots = langMap[char] || [];
@@ -4991,7 +4708,7 @@
         DOM.langEngBtn.classList.remove('active');
         DOM.inputLabel.innerText = "Hindi Text (Devanagari)";
         DOM.textToEmboss.value = '';
-        DOM.textToEmboss.placeholder = "देवनागरी अक्षर लिखें (उदा: क ख ग)...";
+        DOM.textToEmboss.placeholder = "à¤¦à¥‡à¤µà¤¨à¤¾à¤—à¤°à¥€ à¤…à¤•à¥à¤·à¤° à¤²à¤¿à¤–à¥‡à¤‚ (à¤‰à¤¦à¤¾: à¤• à¤– à¤—)...";
         handleSystemReset();
     });
 
@@ -5063,7 +4780,7 @@
         member1: {
             name: "Lead Motion Engineer",
             role: "Motion & Kinematics",
-            bio: "Designed and implemented the Inverse Kinematics (IK) motion engine on the ADSP-CM408F processor, mapping cartesian dot coordinates into smooth joint angles. Configured the TMC5160 drivers to run high-torque stepper motors silently using StealthChop2™.",
+            bio: "Designed and implemented the Inverse Kinematics (IK) motion engine on the ADSP-CM408F processor, mapping cartesian dot coordinates into smooth joint angles. Configured the TMC5160 drivers to run high-torque stepper motors silently using StealthChop2â„¢.",
             subsystem: "Motion Planning & Control",
             parts: "ADSP-CM408F, TMC5160",
             task: "Trajectory & Kinematics Code",
@@ -5144,7 +4861,7 @@
     // Simulated Social Impact Counter animators on load
     function animateCounters() {
         const counters = [
-            { id: 'statCost', endVal: 15000, prefix: '₹', suffix: '' },
+            { id: 'statCost', endVal: 15000, prefix: 'â‚¹', suffix: '' },
             { id: 'statCheaper', endVal: 97, prefix: '', suffix: '%' },
             { id: 'statUsers', endVal: 7.6, prefix: '', suffix: 'M' }
         ];
@@ -5502,7 +5219,7 @@
         // Bind sliders to controls
         DOM.isoRotZSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
-            DOM.isoRotZVal.innerText = val + '°';
+            DOM.isoRotZVal.innerText = val + 'Â°';
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             spherical.theta = THREE.MathUtils.degToRad(val + 90); 
             camera.position.setFromSpherical(spherical);
@@ -5510,7 +5227,7 @@
         });
         DOM.isoRotXSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
-            DOM.isoRotXVal.innerText = val + '°';
+            DOM.isoRotXVal.innerText = val + 'Â°';
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             spherical.phi = THREE.MathUtils.degToRad(90 - val);
             camera.position.setFromSpherical(spherical);
@@ -5535,12 +5252,12 @@
             
             if (degX >= 15 && degX <= 80) {
                 DOM.isoRotXSlider.value = degX;
-                DOM.isoRotXVal.innerText = degX + '°';
+                DOM.isoRotXVal.innerText = degX + 'Â°';
             }
             let normalizedZ = ((degZ + 180) % 360) - 180;
             if (normalizedZ < -180) normalizedZ += 360;
             DOM.isoRotZSlider.value = Math.round(normalizedZ);
-            DOM.isoRotZVal.innerText = Math.round(normalizedZ) + '°';
+            DOM.isoRotZVal.innerText = Math.round(normalizedZ) + 'Â°';
 
             renderer.render(scene, camera);
         }
