@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -3777,125 +3777,127 @@
     };
 
     /* ==========================================================================
-       3. DOM ELEMENT CACHING
+       3. DOM ELEMENT CACHING & SAFETY WRAPPERS
        ========================================================================== */
+    const getSafe = (id) => document.getElementById(id) || document.createElement('div');
+
     const DOM = {
-        langEngBtn: document.getElementById('langEngBtn'),
-        langHindiBtn: document.getElementById('langHindiBtn'),
-        inputLabel: document.getElementById('inputLabel'),
-        textToEmboss: document.getElementById('textToEmboss'),
-        charCounter: document.getElementById('charCounter'),
-        brailleLivePreview: document.getElementById('brailleLivePreview'),
-        previewPlaceholder: document.getElementById('previewPlaceholder'),
-        btnRunEmboss: document.getElementById('btnRunEmboss'),
-        btnResetAll: document.getElementById('btnResetAll'),
-        speedControlSlider: document.getElementById('speedControlSlider'),
-        speedValText: document.getElementById('speedValText'),
-        sysConsole: document.getElementById('sysConsole'),
+        langEngBtn: getSafe('langEngBtn'),
+        langHindiBtn: getSafe('langHindiBtn'),
+        inputLabel: getSafe('inputLabel'),
+        textToEmboss: getSafe('textToEmboss'),
+        charCounter: getSafe('charCounter'),
+        brailleLivePreview: getSafe('brailleLivePreview'),
+        previewPlaceholder: getSafe('previewPlaceholder'),
+        btnRunEmboss: getSafe('btnRunEmboss'),
+        btnResetAll: getSafe('btnResetAll'),
+        speedControlSlider: getSafe('speedControlSlider'),
+        speedValText: getSafe('speedValText'),
+        sysConsole: getSafe('sysConsole'),
         
         // Pipeline UI
-        stepProgressFill: document.getElementById('stepProgressFill'),
+        stepProgressFill: getSafe('stepProgressFill'),
         stepNodes: [
-            document.getElementById('stepNode1'),
-            document.getElementById('stepNode2'),
-            document.getElementById('stepNode3'),
-            document.getElementById('stepNode4'),
-            document.getElementById('stepNode5')
+            getSafe('stepNode1'),
+            getSafe('stepNode2'),
+            getSafe('stepNode3'),
+            getSafe('stepNode4'),
+            getSafe('stepNode5')
         ],
         
         // SVG Arm Links (Updated for 5-Bar Parallel SCARA)
-        scaraLink1: document.getElementById('scaraLeftArm'),
-        polyLeft1: document.getElementById('polyLeft1'),
-        polyLeft1Inner: document.getElementById('polyLeft1Inner'),
-        elbowLeftJointCap: document.getElementById('elbowLeftJointCap'),
-        elbowLeftJointBolt: document.getElementById('elbowLeftJointBolt'),
-        scaraLink2: document.getElementById('scaraRightArm'),
-        polyLeft2: document.getElementById('polyLeft2'),
-        polyLeft2Inner: document.getElementById('polyLeft2Inner'),
+        scaraLink1: getSafe('scaraLeftArm'),
+        polyLeft1: getSafe('polyLeft1'),
+        polyLeft1Inner: getSafe('polyLeft1Inner'),
+        elbowLeftJointCap: getSafe('elbowLeftJointCap'),
+        elbowLeftJointBolt: getSafe('elbowLeftJointBolt'),
+        scaraLink2: getSafe('scaraRightArm'),
+        polyLeft2: getSafe('polyLeft2'),
+        polyLeft2Inner: getSafe('polyLeft2Inner'),
         
-        polyRight1: document.getElementById('polyRight1'),
-        polyRight1Inner: document.getElementById('polyRight1Inner'),
-        elbowRightJointCap: document.getElementById('elbowRightJointCap'),
-        elbowRightJointBolt: document.getElementById('elbowRightJointBolt'),
-        polyRight2: document.getElementById('polyRight2'),
-        polyRight2Inner: document.getElementById('polyRight2Inner'),
+        polyRight1: getSafe('polyRight1'),
+        polyRight1Inner: getSafe('polyRight1Inner'),
+        elbowRightJointCap: getSafe('elbowRightJointCap'),
+        elbowRightJointBolt: getSafe('elbowRightJointBolt'),
+        polyRight2: getSafe('polyRight2'),
+        polyRight2Inner: getSafe('polyRight2Inner'),
         
-        eeJointCap: document.getElementById('eeJointCap'),
-        endEffectorHead: document.getElementById('endEffectorHead'),
-        suctionIndicator: document.getElementById('suctionIndicator'),
-        embosserPinTip: document.getElementById('embosserPinTip'),
-        embosserPulseRing: document.getElementById('embosserPulseRing'),
+        eeJointCap: getSafe('eeJointCap'),
+        endEffectorHead: getSafe('endEffectorHead'),
+        suctionIndicator: getSafe('suctionIndicator'),
+        embosserPinTip: getSafe('embosserPinTip'),
+        embosserPulseRing: getSafe('embosserPulseRing'),
         
         // SVG Paper Sheets
-        inputPaperSheet: document.getElementById('inputPaperSheet'),
-        embossingPaperSheet: document.getElementById('embossingPaperSheet'),
-        embossedDotsGroup: document.getElementById('embossedDotsGroup'),
-        outputPaperStack: document.getElementById('outputPaperStack'),
-        carriedPaperSheet: document.getElementById('carriedPaperSheet'),
-        conveyorSystem: document.getElementById('conveyorSystem'),
+        inputPaperSheet: getSafe('inputPaperSheet'),
+        embossingPaperSheet: getSafe('embossingPaperSheet'),
+        embossedDotsGroup: getSafe('embossedDotsGroup'),
+        outputPaperStack: getSafe('outputPaperStack'),
+        carriedPaperSheet: getSafe('carriedPaperSheet'),
+        conveyorSystem: getSafe('conveyorSystem'),
         
         // Telemetry Data Readout
-        telemTool: document.getElementById('telemTool'),
-        telemCoord: document.getElementById('telemCoord'),
-        telemZ: document.getElementById('telemZ'),
-        telemOpto: document.getElementById('telemOpto'),
-        telemLock: document.getElementById('telemLock'),
-        telemTheta1: document.getElementById('telemTheta1'),
-        telemTheta2: document.getElementById('telemTheta2'),
-        telemForce: document.getElementById('telemForce'),
-        telemStatusText: document.getElementById('telemStatusText'),
-        telemProgressPct: document.getElementById('telemProgressPct'),
-        telemProgressFill: document.getElementById('telemProgressFill'),
-        headerStatusLed: document.getElementById('headerStatusLed'),
-        headerStatusText: document.getElementById('headerStatusText'),
+        telemTool: getSafe('telemTool'),
+        telemCoord: getSafe('telemCoord'),
+        telemZ: getSafe('telemZ'),
+        telemOpto: getSafe('telemOpto'),
+        telemLock: getSafe('telemLock'),
+        telemTheta1: getSafe('telemTheta1'),
+        telemTheta2: getSafe('telemTheta2'),
+        telemForce: getSafe('telemForce'),
+        telemStatusText: getSafe('telemStatusText'),
+        telemProgressPct: getSafe('telemProgressPct'),
+        telemProgressFill: getSafe('telemProgressFill'),
+        headerStatusLed: getSafe('headerStatusLed'),
+        headerStatusText: getSafe('headerStatusText'),
         
         // Dynamic Braille Learning mini-app
         dotBtns: [
-            document.getElementById('dotBtn1'),
-            document.getElementById('dotBtn2'),
-            document.getElementById('dotBtn3'),
-            document.getElementById('dotBtn4'),
-            document.getElementById('dotBtn5'),
-            document.getElementById('dotBtn6')
+            getSafe('dotBtn1'),
+            getSafe('dotBtn2'),
+            getSafe('dotBtn3'),
+            getSafe('dotBtn4'),
+            getSafe('dotBtn5'),
+            getSafe('dotBtn6')
         ],
-        learningGlyph: document.getElementById('learningGlyph'),
-        learningLetter: document.getElementById('learningLetter'),
+        learningGlyph: getSafe('learningGlyph'),
+        learningLetter: getSafe('learningLetter'),
         
         // ADI Components Showcase
-        adiPartsGrid: document.getElementById('adiPartsGrid'),
-        partSearchInput: document.getElementById('partSearchInput'),
-        partDetailBox: document.getElementById('partDetailBox'),
-        detailPartNum: document.getElementById('detailPartNum'),
-        detailPartName: document.getElementById('detailPartName'),
-        detailPartDesc: document.getElementById('detailPartDesc'),
-        detailSpecsList: document.getElementById('detailSpecsList'),
-        simulatedSignalPath: document.getElementById('simulatedSignalPath'),
-        sigValMin: document.getElementById('sigValMin'),
-        sigValMax: document.getElementById('sigValMax'),
+        adiPartsGrid: getSafe('adiPartsGrid'),
+        partSearchInput: getSafe('partSearchInput'),
+        partDetailBox: getSafe('partDetailBox'),
+        detailPartNum: getSafe('detailPartNum'),
+        detailPartName: getSafe('detailPartName'),
+        detailPartDesc: getSafe('detailPartDesc'),
+        detailSpecsList: getSafe('detailSpecsList'),
+        simulatedSignalPath: getSafe('simulatedSignalPath'),
+        sigValMin: getSafe('sigValMin'),
+        sigValMax: getSafe('sigValMax'),
         diagramNodes: document.querySelectorAll('.diagram-node'),
         
         // Isometric Blueprint 3D view
-        isoViewport: document.getElementById('isoViewport'),
-        isoRotZSlider: document.getElementById('isoRotZSlider'),
-        isoRotZVal: document.getElementById('isoRotZVal'),
-        isoRotXSlider: document.getElementById('isoRotXSlider'),
-        isoRotXVal: document.getElementById('isoRotXVal'),
-        isoLink1: document.getElementById('isoLink1'),
-        isoLink2: document.getElementById('isoLink2'),
-        isoPaperDots: document.getElementById('isoPaperDots'),
-        isoPlungerPin: document.getElementById('isoPlungerPin'),
+        isoViewport: getSafe('isoViewport'),
+        isoRotZSlider: getSafe('isoRotZSlider'),
+        isoRotZVal: getSafe('isoRotZVal'),
+        isoRotXSlider: getSafe('isoRotXSlider'),
+        isoRotXVal: getSafe('isoRotXVal'),
+        isoLink1: getSafe('isoLink1'),
+        isoLink2: getSafe('isoLink2'),
+        isoPaperDots: getSafe('isoPaperDots'),
+        isoPlungerPin: getSafe('isoPlungerPin'),
 
         // Team modal components
         teamCards: document.querySelectorAll('.team-card'),
-        teamModal: document.getElementById('teamModal'),
-        closeTeamModal: document.getElementById('closeTeamModal'),
-        modalMemberAvatar: document.getElementById('modalMemberAvatar'),
-        modalMemberName: document.getElementById('modalMemberName'),
-        modalMemberRole: document.getElementById('modalMemberRole'),
-        modalMemberBio: document.getElementById('modalMemberBio'),
-        modalMemberSubsystem: document.getElementById('modalMemberSubsystem'),
-        modalMemberParts: document.getElementById('modalMemberParts'),
-        modalMemberTask: document.getElementById('modalMemberTask')
+        teamModal: getSafe('teamModal'),
+        closeTeamModal: getSafe('closeTeamModal'),
+        modalMemberAvatar: getSafe('modalMemberAvatar'),
+        modalMemberName: getSafe('modalMemberName'),
+        modalMemberRole: getSafe('modalMemberRole'),
+        modalMemberBio: getSafe('modalMemberBio'),
+        modalMemberSubsystem: getSafe('modalMemberSubsystem'),
+        modalMemberParts: getSafe('modalMemberParts'),
+        modalMemberTask: getSafe('modalMemberTask')
     };
 
     /* ==========================================================================
