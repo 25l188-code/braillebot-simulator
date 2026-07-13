@@ -447,10 +447,16 @@
             <!-- Scene Bookmarks -->
             <div class="control-group">
                 <h3>CAMERA VIEW BOOKMARKS</h3>
-                <div class="btn-row">
+                <div class="btn-row" style="margin-bottom: 0.5rem;">
                     <button onclick="setCameraView('wide')">WIDE</button>
                     <button onclick="setCameraView('conveyor')">FEED/CUT</button>
                     <button onclick="setCameraView('scara')">SCARA</button>
+                </div>
+                <div class="btn-row">
+                    <button onclick="setCameraView('roller')">ROLLER</button>
+                    <button onclick="setCameraView('effector')">EFFECTOR</button>
+                    <button onclick="setCameraView('opto')">OPTO</button>
+                    <button onclick="setCameraView('cutter')">CUTTER</button>
                 </div>
             </div>
 
@@ -1353,6 +1359,21 @@
             } else if (preset === 'scara') {
                 targetPos.set(20, 25, 45);
                 targetLookAt.set(20, 5, -10);
+            } else if (preset === 'roller') {
+                targetPos.set(-75, 12, 22);
+                targetLookAt.set(-75, 4.5, 0);
+            } else if (preset === 'effector') {
+                const effPos = new THREE.Vector3();
+                machineObjects.endEffector.getWorldPosition(effPos);
+                targetPos.set(effPos.x, effPos.y + 6, effPos.z + 14);
+                targetLookAt.copy(effPos);
+            } else if (preset === 'opto') {
+                // Focus on the SCARA optocoupler sensor opto2
+                targetPos.set(20, -3.0, 22.0);
+                targetLookAt.set(20, -7.5, 9.0);
+            } else if (preset === 'cutter') {
+                targetPos.set(-17, 10, 18);
+                targetLookAt.set(-17, 2, 0);
             }
             tweenCameraTo(targetPos, targetLookAt);
         }
