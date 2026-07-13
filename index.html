@@ -2485,6 +2485,8 @@
             padding: 6px 14px;
             border-radius: 6px;
             border: 1px solid var(--border);
+            background: transparent;
+            cursor: pointer;
             transition: all 0.25s ease;
         }
         .production-sim-fullscreen-btn:hover {
@@ -3561,9 +3563,9 @@
         <div class="production-sim-wrapper">
             <div class="production-sim-toolbar">
                 <span class="production-sim-badge">⚡ LIVE 3D SIMULATION</span>
-                <a href="6speed-simulation.html" target="_blank" class="production-sim-fullscreen-btn" title="Open in fullscreen">
+                <button onclick="document.getElementById('productionSimFrame').requestFullscreen()" class="production-sim-fullscreen-btn" title="Press Escape to exit fullscreen">
                     ⛶ Fullscreen
-                </a>
+                </button>
             </div>
             <div class="production-sim-container">
                 <iframe 
