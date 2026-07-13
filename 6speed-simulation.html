@@ -816,93 +816,42 @@
             const endEffectorGroup = new THREE.Group();
 
             // 1. Vertical carriage stem/spline connection (Brass bushing + thin cylinder stem)
-            // Spline connection stem goes from hub Y = 17 down to toolPlate Y = 0
+            // Spline connection stem goes from hub Y = 17 down to casing Y = 0
             const stemMat = new THREE.MeshStandardMaterial({ color: 0xa0aab5, metalness: 0.9, roughness: 0.1 });
             const stemGeo = new THREE.CylinderGeometry(0.4, 0.4, 4.5, 16);
             const stem = new THREE.Mesh(stemGeo, stemMat);
-            stem.position.set(0, 2.25, 0); // local offset above toolPlate Y=0
+            stem.position.set(0, 2.25, 0); // local offset above casing Y=0
             stem.castShadow = true;
             endEffectorGroup.add(stem);
 
             const bushingGeo = new THREE.CylinderGeometry(0.8, 0.8, 2.5, 16);
             const bushingMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.15 }); // brass
             const bushing = new THREE.Mesh(bushingGeo, bushingMat);
-            bushing.position.set(0, 1.25, 0); // sits on top of toolPlate Y=0
+            bushing.position.set(0, 1.25, 0); // sits on top of casing Y=0
             bushing.castShadow = true;
             endEffectorGroup.add(bushing);
 
-            // 2. toolPlate: Single box mesh, 9cm x 2cm x 1cm (length x depth x thickness)
-            // Three.js coordinates: width is X (length = 9.0), thickness is Y (height = 1.0), depth is Z (width = 2.0)
-            const toolPlateGeo = new THREE.BoxGeometry(9.0, 1.0, 2.0);
-            const toolPlate = new THREE.Mesh(toolPlateGeo, frameMat);
-            toolPlate.position.set(0, 0, 0);
-            toolPlate.castShadow = true;
-            endEffectorGroup.add(toolPlate);
+            // 2. Single end-effector casing: cylinders/box representing the rigid housing
+            // anthracite casing, centered at (0, -1.5, 0) under the stem
+            const casingGeo = new THREE.CylinderGeometry(1.6, 1.6, 3.0, 24);
+            const casingMat = new THREE.MeshStandardMaterial({ color: 0x222222, metalness: 0.8, roughness: 0.3 });
+            const casing = new THREE.Mesh(casingGeo, casingMat);
+            casing.position.set(0, -1.5, 0);
+            casing.castShadow = true;
+            endEffectorGroup.add(casing);
 
-            // 3. headA (Vacuum Gripper): mounted under the plate at local coordinates (3.5, -0.5, 0)
-            const headA = new THREE.Group();
-            headA.position.set(3.5, -0.5, 0);
-            endEffectorGroup.add(headA);
+            // 3. Suction lip: molded soft rubber ring at the bottom of the casing Y = -3.0
+            const lipGeo = new THREE.CylinderGeometry(1.5, 1.5, 0.2, 24, 1, false);
+            const lipMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+            const lip = new THREE.Mesh(lipGeo, lipMat);
+            lip.position.set(0, -1.6, 0); // aligns at bottom of casing mesh
+            lip.castShadow = true;
+            casing.add(lip);
 
-            const gripperBaseGeo = new THREE.CylinderGeometry(0.9, 0.9, 2.5, 16);
-            const gripperMat = new THREE.MeshStandardMaterial({ color: 0x45a29e, metalness: 0.6, roughness: 0.4 });
-            const gripperBase = new THREE.Mesh(gripperBaseGeo, gripperMat);
-            gripperBase.position.y = -1.25; // extends down
-            gripperBase.castShadow = true;
-            headA.add(gripperBase);
-
-            const suctionCupGeo = new THREE.CylinderGeometry(1.2, 0.8, 1.0, 16);
-            const suctionCupMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
-            const suctionCup = new THREE.Mesh(suctionCupGeo, suctionCupMat);
-            suctionCup.position.y = -3.0; // extends down to local Y = -4.0 relative to toolPlate
-            suctionCup.castShadow = true;
-            headA.add(suctionCup);
-
-            // Suction visibility indicators
-            machineObjects.suctionGroup = new THREE.Group();
-            machineObjects.suctionGroup.position.set(0, -3.6, 0);
-            headA.add(machineObjects.suctionGroup);
-
-            for (let i = 0; i < 3; i++) {
-                const ringGeo = new THREE.RingGeometry(0.2 + i * 0.3, 0.3 + i * 0.3, 16);
-                const ringMat = new THREE.MeshBasicMaterial({ color: 0x66fcf1, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
-                const ring = new THREE.Mesh(ringGeo, ringMat);
-                ring.rotation.x = Math.PI / 2;
-                ring.position.y = -i * 0.3;
-                machineObjects.suctionGroup.add(ring);
-            }
-            machineObjects.suctionGroup.visible = false;
-
-            // Flexible hose running from headA (+3.5, -0.5, 0) back to center guide bushing (0, 1.25, 0)
-            const hoseCurve = new THREE.QuadraticBezierCurve3(
-                new THREE.Vector3(3.5, 0, 0),
-                new THREE.Vector3(2.0, 2.2, 0),
-                new THREE.Vector3(0.4, 1.25, 0)
-            );
-            const hoseGeo = new THREE.TubeGeometry(hoseCurve, 16, 0.15, 8, false);
-            const hoseMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 });
-            const vacuumHose = new THREE.Mesh(hoseGeo, hoseMat);
-            vacuumHose.castShadow = true;
-            endEffectorGroup.add(vacuumHose);
-
-            // 4. headB (Solenoid): mounted under the plate at local coordinates (-3.5, -0.5, 0)
-            const headB = new THREE.Group();
-            headB.position.set(-3.5, -0.5, 0);
-            endEffectorGroup.add(headB);
-
-            const embossBaseGeo = new THREE.BoxGeometry(2.5, 3.5, 2.0);
-            const embossBaseMat = new THREE.MeshStandardMaterial({ color: 0x3a2c16, metalness: 0.7, roughness: 0.3 });
-            const embossBase = new THREE.Mesh(embossBaseGeo, embossBaseMat);
-            embossBase.position.y = -1.75;
-            embossBase.castShadow = true;
-            headB.add(embossBase);
-
-            // Six solenoids cylinders
+            // Six solenoids cylinders embedded on the underside
             machineObjects.solenoidPins = [];
-            const pinGeo = new THREE.CylinderGeometry(0.15, 0.15, 2.0, 8);
+            const pinGeo = new THREE.CylinderGeometry(0.12, 0.12, 1.5, 8);
             const pinMat = new THREE.MeshStandardMaterial({ color: 0xf5a623, metalness: 0.9, roughness: 0.2 });
-            const coilGeo = new THREE.CylinderGeometry(0.25, 0.25, 1.2, 12);
-            const coilMat = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.8, roughness: 0.3 }); // copper!
 
             const rowZ = [-0.6, 0.6];
             const colX = [-0.6, 0.0, 0.6];
@@ -910,28 +859,38 @@
             rowZ.forEach(zOffset => {
                 colX.forEach(xOffset => {
                     const pinGroup = new THREE.Group();
-                    pinGroup.position.set(xOffset, -3.5, zOffset);
+                    // Pin base starts at Y = -1.5 (inside casing relative to casing center Y=0)
+                    pinGroup.position.set(xOffset, -1.5, zOffset);
                     
                     const pinMesh = new THREE.Mesh(pinGeo, pinMat);
-                    pinMesh.position.y = 1.0; // retracted height
+                    pinMesh.position.y = 1.0; // retracted height: tip sits flush with underside
                     pinMesh.castShadow = true;
                     pinGroup.add(pinMesh);
                     
-                    headB.add(pinGroup);
+                    casing.add(pinGroup);
                     machineObjects.solenoidPins.push(pinGroup);
-
-                    // Add copper coil inside Head B housing
-                    const coilMesh = new THREE.Mesh(coilGeo, coilMat);
-                    coilMesh.position.set(xOffset, -1.0, zOffset);
-                    coilMesh.castShadow = true;
-                    headB.add(coilMesh);
                 });
             });
 
-            // Target Active Tool light (cyan LED target light under Head B)
+            // Suction visibility indicators (visual rings under the casing)
+            machineObjects.suctionGroup = new THREE.Group();
+            machineObjects.suctionGroup.position.set(0, -1.7, 0); // sits just below the casing underside
+            casing.add(machineObjects.suctionGroup);
+
+            for (let i = 0; i < 3; i++) {
+                const ringGeo = new THREE.RingGeometry(0.2 + i * 0.2, 0.3 + i * 0.2, 16);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x66fcf1, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                ring.position.y = -i * 0.2;
+                machineObjects.suctionGroup.add(ring);
+            }
+            machineObjects.suctionGroup.visible = false;
+
+            // Target Active Tool light (cyan LED target light under casing center)
             const toolLight = new THREE.PointLight(0x66fcf1, 1.2, 20);
-            toolLight.position.set(-3.5, -4.5, 0); // aligned under Head B bottom
-            endEffectorGroup.add(toolLight);
+            toolLight.position.set(0, -1.7, 0); // aligned under casing bottom center
+            casing.add(toolLight);
 
             return endEffectorGroup;
         }
@@ -1218,7 +1177,7 @@
             addLabel(machineObjects.conveyorTicks, "STEP-AND-REPEAT CONVEYOR", -120, 100);
             addLabel(machineObjects.guillotineBlade, "GUILLOTINE CHISEL CUTTER", 0, -140);
             addLabel(machineObjects.motorHousingL, "5-BAR SCARA DRIVE BASE", 120, -120);
-            addLabel(machineObjects.endEffector, "DUAL END-EFFECTOR: HEAD A (VACUUM) / HEAD B (6-PIN EMBOSS)", 180, 120);
+            machineObjects.endEffectorLabel = addLabel(machineObjects.endEffector, "END-EFFECTOR: IDLE / TRAVELING", 180, 120);
             addLabel(machineObjects.opto1, "OPTOCOUPLER ADuM1401 (CONVEYOR)", -120, -60);
             addLabel(machineObjects.opto2, "OPTOCOUPLER ADuM1401 (SCARA)", 120, -60);
         }
@@ -1228,7 +1187,9 @@
             labelEl.className = 'scene-label';
             labelEl.innerText = text;
             UI.canvasContainer.appendChild(labelEl);
-            labels.push({ element: labelEl, target: targetMesh, dx: dx, dy: dy });
+            const labelObj = { element: labelEl, target: targetMesh, dx: dx, dy: dy };
+            labels.push(labelObj);
+            return labelObj;
         }
 
         function updateLabelsPosition() {
@@ -1247,6 +1208,17 @@
             // Determine if active motion is happening based on FSM state
             const stage = productionRun.activeStage;
             const isMoving = isPlaying && stage !== 'IDLE';
+
+            // Dynamically update the live status of the end-effector label text
+            if (machineObjects.endEffectorLabel && machineObjects.endEffectorLabel.element) {
+                if (stage === 'EMBOSS') {
+                    machineObjects.endEffectorLabel.element.innerText = "END-EFFECTOR: EMBOSSING (pins active)";
+                } else if (stage === 'PICK') {
+                    machineObjects.endEffectorLabel.element.innerText = "END-EFFECTOR: SUCTION ACTIVE";
+                } else {
+                    machineObjects.endEffectorLabel.element.innerText = "END-EFFECTOR: IDLE / TRAVELING";
+                }
+            }
 
             const tempV = new THREE.Vector3();
             labels.forEach(label => {
@@ -1274,7 +1246,14 @@
                     if (label.element.innerText.includes("CUTTER")) {
                         if (stage === 'CUT') opacity = 0.1;
                     }
-                    if (label.element.innerText.includes("SCARA") || label.element.innerText.includes("EFFECTOR")) {
+                    if (label.element.innerText.includes("EFFECTOR")) {
+                        // Keep end-effector label fully visible during active emboss/pick phases
+                        if (stage === 'EMBOSS' || stage === 'PICK') {
+                            opacity = 1.0;
+                        } else {
+                            opacity = 0.3;
+                        }
+                    } else if (label.element.innerText.includes("SCARA")) {
                         if (['PICK_RAW', 'PLACE_BED', 'EMBOSS', 'PICK_FINISHED', 'PLACE_OUTPUT'].includes(stage)) {
                             opacity = 0.1;
                         }
@@ -1732,22 +1711,20 @@
             const cell = cells[productionRun.cellIndex];
             UI.statusValCell.innerText = `CELL ${productionRun.cellIndex + 1} / ${cells.length} ('${cell.char}')`;
 
-            // Head B (solenoids) target coordinate is local (cell.x, cell.y) on paper
+            // Head B target coordinate (no offset, pins are centered on casing)
             // Paper center is at (1, 0)
-            // Head B offset on end effector is -3.5 (left side)
-            // Target plate coordinate is: (1 + cell.x - (-3.5)) = 1 + cell.x + 3.5
-            const targetX = 1 + cell.x + 3.5;
+            const targetX = 1 + cell.x;
             const targetY = cell.y;
 
             // Travel speed profile
             const travelDuration = 0.4;
             const progress = Math.min(1.0, stageTime / travelDuration);
 
-            // Fetch previous cell coordinates as start
-            let startX = 4.5, startY = 0;
+            // Fetch previous cell coordinates as start (no offset)
+            let startX = 1.0, startY = 0;
             if (productionRun.cellIndex > 0) {
                 const prevCell = cells[productionRun.cellIndex - 1];
-                startX = 1 + prevCell.x + 3.5;
+                startX = 1 + prevCell.x;
                 startY = prevCell.y;
             }
 
@@ -1820,7 +1797,7 @@
         function updateFSMPick() {
             UI.statusValStage.innerText = "PICK PRINTED";
             UI.statusValStage.style.color = "var(--accent)";
-            UI.valActiveHead.innerText = "VACUUM HEAD A";
+            UI.valActiveHead.innerText = "VACUUM SUCTION";
             UI.valActiveHead.style.color = "var(--accent)";
 
             pulseOptocoupler(machineObjects.opto2, true);
@@ -1830,17 +1807,17 @@
             const duration = 1.0;
             const progress = Math.min(1.0, stageTime / duration);
 
-            // Move Head A directly onto finished sheet sitting in the emboss zone (conveyor center X=1).
-            // Head A offset on end effector is +3.5. Target plate carriage center C is (1 - 3.5) = -2.5
-            let startX = -2.5, startY = 0;
-            const targetX = -2.5, targetY = 0;
+            // Move casing center directly onto finished sheet sitting in the emboss zone (conveyor center X=1).
+            // No offset. Target plate carriage center C is (1, 0)
+            let startX = 1.0, startY = 0;
+            const targetX = 1.0, targetY = 0;
             
             // Fetch end of embossing cell coordinates as start
             if (productionRun.pagesData[productionRun.currentPageIndex].brailleCells.length > 0) {
                 const lastCell = productionRun.pagesData[productionRun.currentPageIndex].brailleCells[
                     productionRun.pagesData[productionRun.currentPageIndex].brailleCells.length - 1
                 ];
-                startX = 1 + lastCell.x + 3.5; // Previous plate center C (Head B offset)
+                startX = 1 + lastCell.x; // Previous plate center C (no offset)
                 startY = lastCell.y;
             }
 
@@ -1864,9 +1841,9 @@
                     machineObjects.suctionGroup.visible = true;
                     logConsole("[MCU] Suction active. Finished sheet loaded from conveyor.", 'mcu');
                     
-                    // Attach sheet to end-effector (Head A offset is +3.5)
+                    // Attach sheet flush to casing underside (no offset)
                     machineObjects.endEffector.add(machineObjects.paperSheet);
-                    machineObjects.paperSheet.position.set(3.5, -4.5, 0);
+                    machineObjects.paperSheet.position.set(0, -3.05, 0);
                     machineObjects.paperSheet.rotation.set(0, 0, 0);
                     
                     pulseOptocoupler(machineObjects.opto2, false);
@@ -1890,10 +1867,10 @@
             const duration = 1.5;
             const progress = Math.min(1.0, stageTime / duration);
 
-            // Move to Output stack (X = 43, Y = 0) with Head A (offset +3.5).
-            // Head A coordinates means plate centers at (43 - 3.5 = 39.5, 0).
-            const startX = -2.5, startY = 0; // Starts from conveyor emboss zone center C
-            const targetX = 39.5, targetY = 0;
+            // Move to Output stack (X = 43, Y = 0) with no offset.
+            // Plate carriage center targets exactly (43.0, 0).
+            const startX = 1.0, startY = 0; // Starts from conveyor emboss zone center C
+            const targetX = 43.0, targetY = 0;
 
             const curX = startX + (targetX - startX) * progress;
             const curY = startY + (targetY - startY) * progress;
