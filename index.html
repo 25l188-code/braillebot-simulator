@@ -1208,6 +1208,111 @@
             to { stroke-dashoffset: -36; }
         }
 
+        /* Future Enhancements Section Styles */
+        .enhancements-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .enhancement-card {
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 2.25rem 1.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Unique card backgrounds matching the design prompt images */
+        .card-scara {
+            background: linear-gradient(135deg, #220e0a 0%, #0e0503 100%);
+            border-color: rgba(211, 84, 0, 0.2);
+        }
+        .card-scara:hover {
+            border-color: rgba(211, 84, 0, 0.6);
+            box-shadow: 0 12px 40px rgba(211, 84, 0, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .card-hmi {
+            background: linear-gradient(135deg, #06152a 0%, #020710 100%);
+            border-color: rgba(41, 128, 185, 0.2);
+        }
+        .card-hmi:hover {
+            border-color: rgba(41, 128, 185, 0.6);
+            box-shadow: 0 12px 40px rgba(41, 128, 185, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .card-qr {
+            background: linear-gradient(135deg, #130a24 0%, #05020a 100%);
+            border-color: rgba(142, 68, 173, 0.2);
+        }
+        .card-qr:hover {
+            border-color: rgba(142, 68, 173, 0.6);
+            box-shadow: 0 12px 40px rgba(142, 68, 173, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .card-lang {
+            background: linear-gradient(135deg, #051a14 0%, #010705 100%);
+            border-color: rgba(22, 160, 133, 0.2);
+        }
+        .card-lang:hover {
+            border-color: rgba(22, 160, 133, 0.6);
+            box-shadow: 0 12px 40px rgba(22, 160, 133, 0.25);
+            transform: translateY(-5px);
+        }
+
+        .enhancement-visual {
+            width: 100%;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        .enhancement-visual svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .enhancement-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-bright);
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+
+        .enhancement-desc {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* HMI Interactive Elements inside SVG */
+        .hmi-btn {
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .hmi-btn:hover {
+            filter: brightness(1.3);
+        }
+        .hmi-btn:active {
+            transform: scale(0.92);
+        }
+
         /* ==========================================================================
            8. ADI COMPONENTS SHOWCASE
            ========================================================================== */
@@ -3699,6 +3804,174 @@
         </div>
     </section>
 
+    <!-- ====== SECTION 7: FUTURE ENHANCEMENTS ====== -->
+    <section id="enhancements" class="content-section">
+        <div class="section-title-group">
+            <h2>Future Enhancements Roadmap</h2>
+            <p>Scaling Production, Human Machine Interfaces &amp; Multi-Script Localization</p>
+        </div>
+
+        <div class="enhancements-grid">
+            <!-- Card 1: Dual-arm SCARA -->
+            <div class="enhancement-card card-scara">
+                <div class="enhancement-visual">
+                    <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- SCARA base -->
+                        <rect x="80" y="90" width="40" height="15" rx="3" fill="#3a221d" stroke="#d35400" stroke-width="1.5" />
+                        <!-- Central spline -->
+                        <line x1="100" y1="90" x2="100" y2="40" stroke="#888" stroke-width="3" />
+                        <!-- Central motor hub -->
+                        <circle cx="100" cy="40" r="10" fill="#4e2c25" stroke="#d35400" stroke-width="2" />
+                        <!-- Left Arm -->
+                        <line x1="90" y1="40" x2="45" y2="65" stroke="#d35400" stroke-width="2.5" />
+                        <line x1="45" y1="65" x2="25" y2="65" stroke="#888" stroke-width="1.5" stroke-dasharray="2 2" />
+                        <rect x="15" y="55" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
+                        <circle cx="20" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="25" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="30" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="20" cy="69" r="1.5" fill="#d35400" />
+                        <circle cx="25" cy="69" r="1.5" fill="#d35400" />
+                        <circle cx="30" cy="69" r="1.5" fill="#d35400" />
+                        <path d="M 10 65 L 5 65" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M 8 61 L 5 65 L 8 69" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                        <!-- Right Arm -->
+                        <line x1="110" y1="40" x2="155" y2="65" stroke="#d35400" stroke-width="2.5" />
+                        <line x1="155" y1="65" x2="175" y2="65" stroke="#888" stroke-width="1.5" stroke-dasharray="2 2" />
+                        <rect x="165" y="55" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
+                        <circle cx="170" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="175" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="180" cy="61" r="1.5" fill="#d35400" />
+                        <circle cx="170" cy="69" r="1.5" fill="#d35400" />
+                        <circle cx="175" cy="69" r="1.5" fill="#d35400" />
+                        <circle cx="180" cy="69" r="1.5" fill="#d35400" />
+                        <path d="M 190 65 L 195 65" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" />
+                        <path d="M 192 61 L 195 65 L 192 69" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                    </svg>
+                </div>
+                <h4 class="enhancement-title">Dual-arm SCARA, 30 pins</h4>
+                <p class="enhancement-desc">Printing outward from the middle for twice the speed</p>
+            </div>
+
+            <!-- Card 2: Human Machine Interface -->
+            <div class="enhancement-card card-hmi">
+                <div class="enhancement-visual">
+                    <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Main screen frame -->
+                        <rect x="20" y="10" width="160" height="100" rx="8" fill="#1b2a47" stroke="#2980b9" stroke-width="2" />
+                        <!-- Mock Slider track -->
+                        <rect x="40" y="38" width="120" height="10" rx="5" fill="#0f192b" stroke="#2980b9" stroke-width="1" />
+                        <!-- Interactive Slider Thumb -->
+                        <circle id="hmiSliderThumb" cx="100" cy="43" r="8" fill="#e67e22" stroke="#fff" stroke-width="1.5" style="cursor: pointer;" />
+                        <!-- Interactive Minus Button -->
+                        <g class="hmi-btn" id="hmiBtnMinus">
+                            <circle cx="50" cy="78" r="12" fill="#2c3e50" stroke="#e67e22" stroke-width="1.5" />
+                            <line x1="44" y1="78" x2="56" y2="78" stroke="#e67e22" stroke-width="2" stroke-linecap="round" />
+                        </g>
+                        <!-- Output text block -->
+                        <rect x="74" y="66" width="52" height="24" rx="4" fill="#0f192b" stroke="#4f5d75" stroke-width="1" />
+                        <text id="hmiTextVal" x="100" y="82" font-family="monospace" font-size="11" font-weight="bold" fill="#fff" text-anchor="middle">25 lines</text>
+                        <!-- Interactive Plus Button -->
+                        <g class="hmi-btn" id="hmiBtnPlus">
+                            <circle cx="150" cy="78" r="12" fill="#2c3e50" stroke="#e67e22" stroke-width="1.5" />
+                            <line x1="144" y1="78" x2="156" y2="78" stroke="#e67e22" stroke-width="2" stroke-linecap="round" />
+                            <line x1="150" y1="72" x2="150" y2="84" stroke="#e67e22" stroke-width="2" stroke-linecap="round" />
+                        </g>
+                    </svg>
+                </div>
+                <h4 class="enhancement-title">Human machine interface</h4>
+                <p class="enhancement-desc">Set how many lines fit on each page</p>
+            </div>
+
+            <!-- Card 3: QR code with audio link -->
+            <div class="enhancement-card card-qr">
+                <div class="enhancement-visual">
+                    <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Mock Sheet with QR -->
+                        <rect x="25" y="15" width="55" height="75" rx="3" fill="#1b1429" stroke="#8e44ad" stroke-width="1.5" />
+                        <g transform="translate(32, 22)">
+                            <rect x="0" y="0" width="12" height="12" fill="#8e44ad" />
+                            <rect x="2" y="2" width="8" height="8" fill="#1b1429" />
+                            <rect x="4" y="4" width="4" height="4" fill="#8e44ad" />
+                        </g>
+                        <g transform="translate(56, 22)">
+                            <rect x="0" y="0" width="12" height="12" fill="#8e44ad" />
+                            <rect x="2" y="2" width="8" height="8" fill="#1b1429" />
+                            <rect x="4" y="4" width="4" height="4" fill="#8e44ad" />
+                        </g>
+                        <g transform="translate(32, 46)">
+                            <rect x="0" y="0" width="12" height="12" fill="#8e44ad" />
+                            <rect x="2" y="2" width="8" height="8" fill="#1b1429" />
+                            <rect x="4" y="4" width="4" height="4" fill="#8e44ad" />
+                        </g>
+                        <rect x="56" y="46" width="6" height="6" fill="#8e44ad" />
+                        <rect x="62" y="52" width="6" height="6" fill="#8e44ad" />
+                        <rect x="48" y="38" width="6" height="6" fill="#8e44ad" />
+                        <rect x="48" y="46" width="6" height="6" fill="#8e44ad" />
+                        <!-- Phone Mockup -->
+                        <rect x="115" y="25" width="40" height="75" rx="6" fill="#130a24" stroke="#8e44ad" stroke-width="2" />
+                        <!-- Phone Notch/camera -->
+                        <circle cx="135" cy="31" r="2" fill="#8e44ad" />
+                        <!-- Dashed scanning connection -->
+                        <line x1="68" y1="35" x2="135" y2="31" stroke="#8e44ad" stroke-width="1.5" stroke-dasharray="2 3" opacity="0.8" />
+                        <!-- Audio waves -->
+                        <path d="M 162 50 A 10 10 0 0 1 162 70" stroke="#8e44ad" stroke-width="1.5" fill="none" stroke-linecap="round" />
+                        <path d="M 167 43 A 15 15 0 0 1 167 77" stroke="#8e44ad" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6" />
+                        <path d="M 172 36 A 20 20 0 0 1 172 84" stroke="#8e44ad" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.3" />
+                    </svg>
+                </div>
+                <h4 class="enhancement-title">QR code with audio link</h4>
+                <p class="enhancement-desc">Helps people who don't yet read braille</p>
+            </div>
+
+            <!-- Card 4: Hundreds of local languages -->
+            <div class="enhancement-card card-lang">
+                <div class="enhancement-visual">
+                    <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Connecting lines radiating outward from center -->
+                        <line x1="100" y1="60" x2="45" y2="30" stroke="#16a085" stroke-width="1.5" stroke-dasharray="2 2" />
+                        <line x1="100" y1="60" x2="155" y2="30" stroke="#16a085" stroke-width="1.5" stroke-dasharray="2 2" />
+                        <line x1="100" y1="60" x2="45" y2="90" stroke="#16a085" stroke-width="1.5" stroke-dasharray="2 2" />
+                        <line x1="100" y1="60" x2="155" y2="90" stroke="#16a085" stroke-width="1.5" stroke-dasharray="2 2" />
+                        
+                        <!-- Central Braille pins -->
+                        <g transform="translate(90, 42)">
+                            <circle cx="4" cy="5" r="4.5" fill="#16a085" />
+                            <circle cx="16" cy="5" r="4.5" fill="#16a085" />
+                            <circle cx="4" cy="18" r="4.5" fill="#16a085" />
+                            <circle cx="16" cy="18" r="4.5" fill="#16a085" />
+                            <circle cx="4" cy="31" r="4.5" fill="#16a085" />
+                            <circle cx="16" cy="31" r="4.5" fill="#16a085" />
+                        </g>
+                        
+                        <!-- Floating Script Cards -->
+                        <!-- Top-Left: Devanagari 'अ' -->
+                        <g transform="translate(20, 15)">
+                            <rect x="0" y="0" width="30" height="22" rx="4" fill="#051a14" stroke="#16a085" stroke-width="1" />
+                            <text x="15" y="15" font-family="sans-serif" font-size="12" font-weight="bold" fill="#16a085" text-anchor="middle">अ</text>
+                        </g>
+                        <!-- Top-Right: Tamil 'அ' -->
+                        <g transform="translate(150, 15)">
+                            <rect x="0" y="0" width="30" height="22" rx="4" fill="#051a14" stroke="#16a085" stroke-width="1" />
+                            <text x="15" y="15" font-family="sans-serif" font-size="12" font-weight="bold" fill="#16a085" text-anchor="middle">அ</text>
+                        </g>
+                        <!-- Bottom-Left: Kannada/Telugu 'అ' -->
+                        <g transform="translate(20, 80)">
+                            <rect x="0" y="0" width="30" height="22" rx="4" fill="#051a14" stroke="#16a085" stroke-width="1" />
+                            <text x="15" y="15" font-family="sans-serif" font-size="12" font-weight="bold" fill="#16a085" text-anchor="middle">అ</text>
+                        </g>
+                        <!-- Bottom-Right: Bengali 'অ' -->
+                        <g transform="translate(150, 80)">
+                            <rect x="0" y="0" width="30" height="22" rx="4" fill="#051a14" stroke="#16a085" stroke-width="1" />
+                            <text x="15" y="15" font-family="sans-serif" font-size="12" font-weight="bold" fill="#16a085" text-anchor="middle">অ</text>
+                        </g>
+                    </svg>
+                </div>
+                <h4 class="enhancement-title">Hundreds of local languages</h4>
+                <p class="enhancement-desc">One software layer adapts every script to braille</p>
+            </div>
+        </div>
+    </section>
+
 
 
     <!-- ====== TEAM DETAIL MODAL ====== -->
@@ -5718,6 +5991,39 @@
         // Run Social counters animation on a small delay
         setTimeout(animateCounters, 300);
         
+        // Future Enhancements HMI card interactivity
+        const hmiBtnMinus = document.getElementById('hmiBtnMinus');
+        const hmiBtnPlus = document.getElementById('hmiBtnPlus');
+        const hmiTextVal = document.getElementById('hmiTextVal');
+        const hmiSliderThumb = document.getElementById('hmiSliderThumb');
+        
+        let hmiLines = 25;
+        
+        function updateHmiDisplay() {
+            if (hmiTextVal) hmiTextVal.textContent = `${hmiLines} lines`;
+            if (hmiSliderThumb) {
+                // Slider range: 10 lines (cx=40) to 40 lines (cx=160)
+                const minLines = 10;
+                const maxLines = 40;
+                const percentage = (hmiLines - minLines) / (maxLines - minLines);
+                const newCx = 40 + percentage * 120;
+                hmiSliderThumb.setAttribute('cx', newCx);
+            }
+        }
+        
+        if (hmiBtnMinus) {
+            hmiBtnMinus.addEventListener('click', () => {
+                hmiLines = Math.max(10, hmiLines - 1);
+                updateHmiDisplay();
+            });
+        }
+        if (hmiBtnPlus) {
+            hmiBtnPlus.addEventListener('click', () => {
+                hmiLines = Math.min(40, hmiLines + 1);
+                updateHmiDisplay();
+            });
+        }
+
         log("[SYS] Calibration check finished. All SCARA axes active.");
     });
     </script>
