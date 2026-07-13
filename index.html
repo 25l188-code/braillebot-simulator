@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BrailleBot SCARA Embosser Simulator â€” ADI Anveshan 2026</title>
+    <title>BrailleBot SCARA Embosser Simulator - ADI Anveshan 2026</title>
     <meta name="description" content="A world-class interactive simulation of the ADI SCARA robot-based Braille embosser for the ADI Anveshan Fellowship 2026.">
     <!-- Three.js and OrbitControls Libraries for 3D View -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -3070,7 +3070,7 @@
     <!-- ====== CINEMATIC INTRO OVERLAY ====== -->
     <div id="introOverlay">
         <canvas id="introParticles"></canvas>
-        <a class="intro-skip" id="introSkip">Skip Intro â†’</a>
+        <a class="intro-skip" id="introSkip">Skip Intro &rarr;</a>
 
         <div class="intro-title-container">
             <div class="intro-title" id="introTitle">
@@ -3133,7 +3133,7 @@
     <!-- ====== HEADER ====== -->
     <header class="app-header">
         <div class="header-logo-group">
-            <div class="logo-symbol">â ƒ</div>
+            <div class="logo-symbol">&#10755;</div>
             <div class="logo-text-group">
                 <h1>BrailleBot Simulator</h1>
                 <p>ADI SCARA Braille Embosser</p>
@@ -3179,8 +3179,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">ðŸ”— GitHub</a>
-                    <a href="#">ðŸ’¼ LinkedIn</a>
+                    <a href="#">&#128279; GitHub</a>
+                    <a href="#">&#128188; LinkedIn</a>
                 </div>
             </div>
 
@@ -3196,8 +3196,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">ðŸ”— GitHub</a>
-                    <a href="#">ðŸ’¼ LinkedIn</a>
+                    <a href="#">&#128279; GitHub</a>
+                    <a href="#">&#128188; LinkedIn</a>
                 </div>
             </div>
 
@@ -3213,8 +3213,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">ðŸ”— GitHub</a>
-                    <a href="#">ðŸ’¼ LinkedIn</a>
+                    <a href="#">&#128279; GitHub</a>
+                    <a href="#">&#128188; LinkedIn</a>
                 </div>
             </div>
 
@@ -3230,8 +3230,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">ðŸ”— GitHub</a>
-                    <a href="#">ðŸ’¼ LinkedIn</a>
+                    <a href="#">&#128279; GitHub</a>
+                    <a href="#">&#128188; LinkedIn</a>
                 </div>
             </div>
 
@@ -3247,8 +3247,8 @@
                 <div class="team-role"></div>
                 <p class="team-bio"></p>
                 <div class="team-socials">
-                    <a href="#">ðŸ”— GitHub</a>
-                    <a href="#">ðŸ’¼ LinkedIn</a>
+                    <a href="#">&#128279; GitHub</a>
+                    <a href="#">&#128188; LinkedIn</a>
                 </div>
             </div>
         </div>
@@ -3321,27 +3321,28 @@
         <div class="pipeline-cards-grid">
             <div class="pipeline-card">
                 <div class="pipeline-card-num">1</div>
-                <div class="pipeline-card-icon">âŒ¨</div>
+                <div class="pipeline-card-icon">&#9000;</div>
                 <h3>Text Input</h3>
                 <p>The companion app reads digital ASCII character inputs or scans speech using voice recognition modules.</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">2</div>
-                <div class="pipeline-card-icon">â —</div>
+                <div class="pipeline-card-icon">&#10775;</div>
                 <h3>Grade 1 Translation</h3>
                 <p>Digital characters map directly to 6-dot cell configurations using localized languages (English/Bharati).</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">3</div>
-                <div class="pipeline-card-icon">ðŸ“</div>
+                <div class="pipeline-card-icon">&#128221;</div>
                 <h3>Coordinate Mapping</h3>
                 <p>Cells translate to absolute cartesian coordinates (X, Y in mm) based on ISO-standard Braille dimensions.</p>
             </div>
             <div class="pipeline-card">
                 <div class="pipeline-card-num">4</div>
-                <div class="pipeline-card-icon">ðŸ¦¾</div>
+                <div class="pipeline-card-icon">&#129486;</div>
                 <h3>SCARA Path Plan</h3>
                 <p>ADI's ADSP-CM408F computes inverse kinematics and optimizes trajectories using trapezoidal velocity profiles.</p>
+            </div>rofiles.</p>
             </div>
         </div>
 
@@ -3361,7 +3362,7 @@
                 <div style="display: flex; align-items: center; gap: 2rem;">
                     <div>
                         <span class="mono" style="font-size: 0.8rem; color: var(--text-dim);">Unicode Symbol</span>
-                        <div class="braille-result-display" id="learningGlyph">â €</div>
+                        <div class="braille-result-display" id="learningGlyph">&#10240;</div>
                     </div>
                     <div>
                         <span class="mono" style="font-size: 0.8rem; color: var(--text-dim);">Mapped Letter</span>
@@ -3643,11 +3644,10 @@
                     <h3>3D Calibration controls</h3>
                     <p>Adjust camera angles or toggle between tabs to align the simulation with the physical model coordinates. Verify the length (X) and width (Y) workspace ranges.</p>
                 </div>
-                
                 <div class="slider-group">
                     <div class="slider-header">
                         <span>Z-Axis Rotation</span>
-                        <span class="slider-val" id="isoRotZVal">-45Â°</span>
+                        <span class="slider-val" id="isoRotZVal">-45&deg;</span>
                     </div>
                     <input type="range" class="sim-slider" id="isoRotZSlider" min="-180" max="180" value="-45">
                 </div>
@@ -3655,7 +3655,7 @@
                 <div class="slider-group">
                     <div class="slider-header">
                         <span>X-Axis Rotation</span>
-                        <span class="slider-val" id="isoRotXVal">60Â°</span>
+                        <span class="slider-val" id="isoRotXVal">60&deg;</span>
                     </div>
                     <input type="range" class="sim-slider" id="isoRotXSlider" min="15" max="80" value="60">
                 </div>
@@ -3673,7 +3673,7 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-num" id="statCost">â‚¹15,000</div>
+                <div class="stat-num" id="statCost">&#8377;15,000</div>
                 <div class="stat-lbl">Projected Cost</div>
                 <p class="stat-desc">Low material cost of components and mechanical framework</p>
             </div>
@@ -3713,21 +3713,21 @@
                         <td>Mechanical Typewriter</td>
                         <td>Mechanical Lockout</td>
                         <td>Manual Typing</td>
-                        <td>â‚¹40,000</td>
+                        <td>&#8377;40,000</td>
                     </tr>
                     <tr>
                         <td>Index Everest-D</td>
                         <td>Heavy Industrial Embosser</td>
                         <td>0.1 mm Belt Driver</td>
                         <td>120 characters/sec</td>
-                        <td>â‚¹8,00,000</td>
+                        <td>&#8377;8,00,000</td>
                     </tr>
                     <tr class="highlighted-row">
                         <td>BrailleBot SCARA</td>
                         <td>ADI Mixed-Signal Robot</td>
                         <td>0.08 mm Close-Loop SCARA</td>
                         <td>30 characters/sec</td>
-                        <td>â‚¹15,000</td>
+                        <td>&#8377;15,000</td>
                     </tr>
                 </tbody>
             </table>
@@ -3748,28 +3748,28 @@
                 
                 <div class="alignment-criteria-list">
                     <div class="criteria-item">
-                        <div class="criteria-check">âœ“</div>
+                        <div class="criteria-check">&#10003;</div>
                         <div class="criteria-text">
                             <h4>Pick &amp; Place Operations</h4>
                             <p>Automated sheet pickup from the input paper tray and alignment placing on the central embossing bed.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">âœ“</div>
+                        <div class="criteria-check">&#10003;</div>
                         <div class="criteria-text">
                             <h4>Precision Insertion (Embossing)</h4>
                             <p>Direct solenoid force control driven by precision DAC vectors to punch neat Braille dot geometry without tearing paper fibers.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">âœ“</div>
+                        <div class="criteria-check">&#10003;</div>
                         <div class="criteria-text">
                             <h4>Geometric Drawing</h4>
                             <p>Drawing detailed character grids along complex coordinates via high-precision closed-loop inverse kinematics.</p>
                         </div>
                     </div>
                     <div class="criteria-item">
-                        <div class="criteria-check">âœ“</div>
+                        <div class="criteria-check">&#10003;</div>
                         <div class="criteria-text">
                             <h4>Sorting &amp; Stack Routing</h4>
                             <p>Sorting finished pages into the output stack, separating empty or misaligned sheets using force-feedback signals.</p>
@@ -3979,7 +3979,7 @@
         <div class="team-modal-content">
             <button class="team-modal-close" id="closeTeamModal">&times;</button>
             <div class="team-modal-header">
-                <div class="team-modal-avatar" id="modalMemberAvatar">ðŸ‘¤</div>
+                <div class="team-modal-avatar" id="modalMemberAvatar">&#128100;</div>
                 <div class="team-modal-title">
                     <h4 id="modalMemberName">Member Name</h4>
                     <div class="team-role" id="modalMemberRole">Role Title</div>
@@ -4006,7 +4006,7 @@
     <!-- ====== FOOTER ====== -->
     <footer class="app-footer">
         <div class="footer-logo-block">
-            <span class="logo-sym">â ƒ</span>
+            <span class="logo-sym">&#10755;</span>
             <h4>BrailleBot SCARA</h4>
         </div>
         <div class="footer-links">
@@ -4080,12 +4080,12 @@
             part: "TMC5160",
             name: "High-Power Stepper Controller",
             category: "Motor Driver",
-            desc: "Premium driver and controller IC designed for multi-phase stepper motors. Uses StealthChop2â„¢ for near-silent operation and SpreadCycleâ„¢ for dynamic torque delivery, providing the SCARA arm with extremely smooth step coordinates and zero noise.",
+            desc: "Premium driver and controller IC designed for multi-phase stepper motors. Uses StealthChop2&trade; for near-silent operation and SpreadCycle&trade; for dynamic torque delivery, providing the SCARA arm with extremely smooth step coordinates and zero noise.",
             specs: {
                 "Microsteps": "Up to 256 per step",
                 "Supply Voltage": "8V to 60V DC",
                 "RMS Phase Current": "Up to 20A",
-                "Features": "StealthChop2â„¢, StallGuard4â„¢",
+                "Features": "StealthChop2&trade;, StallGuard4&trade;",
                 "Interface": "SPI / UART"
             },
             signalFunc: (t) => {
@@ -4097,7 +4097,7 @@
             part: "TMC2209",
             name: "Low-Noise Stepper Driver",
             category: "Motor Driver",
-            desc: "Highly integrated stepper driver using StallGuard4â„¢ for sensorless homing and load detection. Integrated into the document loading feed tray to control the roller step feed with high efficiency and thermal defense.",
+            desc: "Highly integrated stepper driver using StallGuard4&trade; for sensorless homing and load detection. Integrated into the document loading feed tray to control the roller step feed with high efficiency and thermal defense.",
             specs: {
                 "Microsteps": "Up to 256",
                 "Supply Voltage": "4.75V to 28V",
@@ -4114,8 +4114,8 @@
             desc: "Ultra-low noise, high-stability 3-axis accelerometer used on the end-effector to analyze stamp resonance. Detects structural vibrations during embossing, feeding diagnostic telemetry back to the controller to confirm dot quality.",
             specs: {
                 "Resolution": "20-bit digital output",
-                "Noise Density": "22 Âµg/âˆšHz",
-                "Measurement Ranges": "Â±2g, Â±4g, Â±8g",
+                "Noise Density": "22 &mu;g/&radic;Hz",
+                "Measurement Ranges": "&plusmn;2g, &plusmn;4g, &plusmn;8g",
                 "Interface": "SPI / I2C",
                 "Package": "Hermetic LCC"
             },
@@ -4129,7 +4129,7 @@
             specs: {
                 "Resolution": "16-bit",
                 "Throughput": "200 kSPS",
-                "Input Impedance": "1 MÎ© analog buffer",
+                "Input Impedance": "1 M&Omega; analog buffer",
                 "Analog Inputs": "8 bipolar channels",
                 "Sampling Mode": "Simultaneous"
             },
@@ -4142,8 +4142,8 @@
             desc: "Quad channel high relative accuracy voltage output DAC. Provides precise analog references to set current limits on drivers and dictate the exact voltage vectors driving the embossing solenoid magnet.",
             specs: {
                 "Resolution": "14-bit",
-                "Relative Accuracy": "Â±1 LSB max INL",
-                "Reference Noise": "0.1 Hz to 10 Hz: 6 ÂµV p-p",
+                "Relative Accuracy": "&plusmn;1 LSB max INL",
+                "Reference Noise": "0.1 Hz to 10 Hz: 6 &mu;V p-p",
                 "Interface": "SPI (50 MHz)",
                 "Output Channels": "4 buffered channels"
             },
@@ -4158,7 +4158,7 @@
             part: "ADuM4160",
             name: "USB Port Digital Isolator",
             category: "Digital Isolator",
-            desc: "Industrial grade USB 2.0 digital isolator using iCouplerÂ® technology. Protects control electronics and laptops from power spikes or motor noise generated by high-power solenoid pulses.",
+            desc: "Industrial grade USB 2.0 digital isolator using iCoupler&reg; technology. Protects control electronics and laptops from power spikes or motor noise generated by high-power solenoid pulses.",
             specs: {
                 "Isolation Voltage": "Up to 5000V rms",
                 "USB Speed": "1.5 Mbps & 12 Mbps",
@@ -4191,7 +4191,7 @@
             category: "Power Regulation",
             desc: "Linear regulator offering PSRR performance above 76dB. Cleans power inputs feeding the 16-bit analog sampling channels of the AD7606 ADC, ensuring precise sensor tracking.",
             specs: {
-                "Noise Density": "0.8 nV/âˆšHz",
+                "Noise Density": "0.8 nV/&radic;Hz",
                 "PSRR": "76dB at 1 MHz",
                 "Dropout Voltage": "260 mV typical",
                 "Output Current": "500 mA maximum",
@@ -4203,13 +4203,13 @@
             part: "ADT7420",
             name: "16-Bit Digital Temperature Sensor",
             category: "Thermal Sensor",
-            desc: "Digital temperature sensor with Â±0.2Â°C accuracy. Positioned directly near high-power MOSFETs and driver packages to dynamically throttle speeds if thermal boundaries are crossed.",
+            desc: "Digital temperature sensor with &plusmn;0.2&deg;C accuracy. Positioned directly near high-power MOSFETs and driver packages to dynamically throttle speeds if thermal boundaries are crossed.",
             specs: {
-                "Accuracy": "Â±0.25Â°C max",
+                "Accuracy": "&plusmn;0.25&deg;C max",
                 "Resolution": "16-bit",
-                "Temperature Range": "-40Â°C to +150Â°C",
+                "Temperature Range": "-40&deg;C to +150&deg;C",
                 "Interface": "I2C",
-                "Power Consumption": "70 ÂµW micro-power"
+                "Power Consumption": "70 &mu;W micro-power"
             },
             signalFunc: (t) => 25.0 + 5.0 * Math.sin(t * 0.01)
         }
@@ -5065,8 +5065,8 @@
         
         // Adjust visualizer limits labels
         if (component.category === "Thermal Sensor") {
-            DOM.sigValMin.innerText = "Min: -40Â°C";
-            DOM.sigValMax.innerText = "Max: 150Â°C";
+            DOM.sigValMin.innerText = "Min: -40\u00B0C";
+            DOM.sigValMax.innerText = "Max: 150\u00B0C";
         } else if (component.category === "Processor / DSP") {
             DOM.sigValMin.innerText = "Min: 0V";
             DOM.sigValMax.innerText = "Max: 3.3V";
@@ -5411,7 +5411,7 @@
     // Simulated Social Impact Counter animators on load
     function animateCounters() {
         const counters = [
-            { id: 'statCost', endVal: 15000, prefix: 'â‚¹', suffix: '' },
+            { id: 'statCost', endVal: 15000, prefix: '\u20B9', suffix: '' },
             { id: 'statCheaper', endVal: 97, prefix: '', suffix: '%' },
             { id: 'statUsers', endVal: 7.6, prefix: '', suffix: 'M' }
         ];
@@ -5769,7 +5769,7 @@
         // Bind sliders to controls
         DOM.isoRotZSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
-            DOM.isoRotZVal.innerText = val + 'Â°';
+            DOM.isoRotZVal.innerText = val + '\u00B0';
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             spherical.theta = THREE.MathUtils.degToRad(val + 90); 
             camera.position.setFromSpherical(spherical);
@@ -5777,7 +5777,7 @@
         });
         DOM.isoRotXSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
-            DOM.isoRotXVal.innerText = val + 'Â°';
+            DOM.isoRotXVal.innerText = val + '\u00B0';
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             spherical.phi = THREE.MathUtils.degToRad(90 - val);
             camera.position.setFromSpherical(spherical);
@@ -5802,12 +5802,12 @@
             
             if (degX >= 15 && degX <= 80) {
                 DOM.isoRotXSlider.value = degX;
-                DOM.isoRotXVal.innerText = degX + 'Â°';
+                DOM.isoRotXVal.innerText = degX + '\u00B0';
             }
             let normalizedZ = ((degZ + 180) % 360) - 180;
             if (normalizedZ < -180) normalizedZ += 360;
             DOM.isoRotZSlider.value = Math.round(normalizedZ);
-            DOM.isoRotZVal.innerText = Math.round(normalizedZ) + 'Â°';
+            DOM.isoRotZVal.innerText = Math.round(normalizedZ) + '\u00B0';
 
             renderer.render(scene, camera);
         }
