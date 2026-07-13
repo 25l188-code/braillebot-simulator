@@ -1147,13 +1147,20 @@
             transition: fill 0.25s ease;
         }
 
-        .print-pin {
-            fill: #0c1020;
+        .pin-nozzle {
+            fill: #151a2d;
             stroke: #2a3545;
-            stroke-width: 2;
-            r: 5;
-            transition: all 0.25s ease;
+            stroke-width: 1.5;
+        }
+
+        .print-pin {
+            stroke: #4f5d75;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            fill: none;
+            transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transition-delay: 0.12s; /* Force travel delay */
+            transform: translateY(0);
         }
 
         .bowden-svg-label {
@@ -1184,9 +1191,8 @@
         }
 
         .dot-active .print-pin {
-            fill: var(--amber);
-            stroke: var(--text-bright);
-            r: 7.5;
+            stroke: var(--amber);
+            transform: translateY(-10px); /* Physically slide up out of the nozzle! */
             filter: drop-shadow(0 0 5px var(--amber));
         }
 
@@ -3281,82 +3287,88 @@
                     <!-- Bowden Cable Paths and Wires -->
                     <!-- Dot 1 -->
                     <g id="bowdenDot_1" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 40 C 250 40, 450 115, 642.5 115" />
-                        <path class="cable-wire" d="M 140 40 C 250 40, 450 115, 642.5 115" />
-                        <path class="cable-glow" d="M 140 40 C 250 40, 450 115, 642.5 115" />
+                        <path class="cable-sheath" d="M 140 40 C 250 40, 450 123, 642.5 123" />
+                        <path class="cable-wire" d="M 140 40 C 250 40, 450 123, 642.5 123" />
+                        <path class="cable-glow" d="M 140 40 C 250 40, 450 123, 642.5 123" />
                         <!-- Solenoid Body -->
                         <g class="solenoid-actuator" transform="translate(100, 40)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <!-- Print Pin -->
-                        <circle class="print-pin" cx="642.5" cy="115" />
+                        <!-- Print Pin (Needle + Nozzle) -->
+                        <rect class="pin-nozzle" x="638.5" y="107" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="642.5" y1="125" x2="642.5" y2="109" />
                     </g>
 
                     <!-- Dot 2 -->
                     <g id="bowdenDot_2" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 80 C 250 80, 450 135, 642.5 135" />
-                        <path class="cable-wire" d="M 140 80 C 250 80, 450 135, 642.5 135" />
-                        <path class="cable-glow" d="M 140 80 C 250 80, 450 135, 642.5 135" />
+                        <path class="cable-sheath" d="M 140 80 C 250 80, 450 143, 642.5 143" />
+                        <path class="cable-wire" d="M 140 80 C 250 80, 450 143, 642.5 143" />
+                        <path class="cable-glow" d="M 140 80 C 250 80, 450 143, 642.5 143" />
                         <g class="solenoid-actuator" transform="translate(100, 80)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <circle class="print-pin" cx="642.5" cy="135" />
+                        <rect class="pin-nozzle" x="638.5" y="127" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="642.5" y1="145" x2="642.5" y2="129" />
                     </g>
 
                     <!-- Dot 3 -->
                     <g id="bowdenDot_3" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 120 C 250 120, 450 155, 642.5 155" />
-                        <path class="cable-wire" d="M 140 120 C 250 120, 450 155, 642.5 155" />
-                        <path class="cable-glow" d="M 140 120 C 250 120, 450 155, 642.5 155" />
+                        <path class="cable-sheath" d="M 140 120 C 250 120, 450 163, 642.5 163" />
+                        <path class="cable-wire" d="M 140 120 C 250 120, 450 163, 642.5 163" />
+                        <path class="cable-glow" d="M 140 120 C 250 120, 450 163, 642.5 163" />
                         <g class="solenoid-actuator" transform="translate(100, 120)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <circle class="print-pin" cx="642.5" cy="155" />
+                        <rect class="pin-nozzle" x="638.5" y="147" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="642.5" y1="165" x2="642.5" y2="149" />
                     </g>
 
                     <!-- Dot 4 -->
                     <g id="bowdenDot_4" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 160 C 250 160, 450 115, 657.5 115" />
-                        <path class="cable-wire" d="M 140 160 C 250 160, 450 115, 657.5 115" />
-                        <path class="cable-glow" d="M 140 160 C 250 160, 450 115, 657.5 115" />
+                        <path class="cable-sheath" d="M 140 160 C 250 160, 450 123, 657.5 123" />
+                        <path class="cable-wire" d="M 140 160 C 250 160, 450 123, 657.5 123" />
+                        <path class="cable-glow" d="M 140 160 C 250 160, 450 123, 657.5 123" />
                         <g class="solenoid-actuator" transform="translate(100, 160)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <circle class="print-pin" cx="657.5" cy="115" />
+                        <rect class="pin-nozzle" x="653.5" y="107" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="657.5" y1="125" x2="657.5" y2="109" />
                     </g>
 
                     <!-- Dot 5 -->
                     <g id="bowdenDot_5" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 200 C 250 200, 450 135, 657.5 135" />
-                        <path class="cable-wire" d="M 140 200 C 250 200, 450 135, 657.5 135" />
-                        <path class="cable-glow" d="M 140 200 C 250 200, 450 135, 657.5 135" />
+                        <path class="cable-sheath" d="M 140 200 C 250 200, 450 143, 657.5 143" />
+                        <path class="cable-wire" d="M 140 200 C 250 200, 450 143, 657.5 143" />
+                        <path class="cable-glow" d="M 140 200 C 250 200, 450 143, 657.5 143" />
                         <g class="solenoid-actuator" transform="translate(100, 200)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <circle class="print-pin" cx="657.5" cy="135" />
+                        <rect class="pin-nozzle" x="653.5" y="127" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="657.5" y1="145" x2="657.5" y2="129" />
                     </g>
 
                     <!-- Dot 6 -->
                     <g id="bowdenDot_6" class="bowden-element-group">
-                        <path class="cable-sheath" d="M 140 240 C 250 240, 450 155, 657.5 155" />
-                        <path class="cable-wire" d="M 140 240 C 250 240, 450 155, 657.5 155" />
-                        <path class="cable-glow" d="M 140 240 C 250 240, 450 155, 657.5 155" />
+                        <path class="cable-sheath" d="M 140 240 C 250 240, 450 163, 657.5 163" />
+                        <path class="cable-wire" d="M 140 240 C 250 240, 450 163, 657.5 163" />
+                        <path class="cable-glow" d="M 140 240 C 250 240, 450 163, 657.5 163" />
                         <g class="solenoid-actuator" transform="translate(100, 240)">
                             <rect x="-40" y="-12" width="60" height="24" rx="3" fill="#1f2833" stroke="var(--border)" stroke-width="1.5" />
                             <rect class="solenoid-coil" x="-32" y="-10" width="44" height="20" fill="#b87333" />
                             <rect class="solenoid-plunger" x="12" y="-4" width="28" height="8" rx="1" fill="#c5c6c7" />
                         </g>
-                        <circle class="print-pin" cx="657.5" cy="155" />
+                        <rect class="pin-nozzle" x="653.5" y="147" width="8" height="18" rx="2" />
+                        <line class="print-pin" x1="657.5" y1="165" x2="657.5" y2="149" />
                     </g>
 
                     <!-- Leader Lines and Labels -->
