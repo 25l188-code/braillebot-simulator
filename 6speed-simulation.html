@@ -1348,7 +1348,7 @@
         }
 
         function focusOnBox(box, marginFactor = 1.4, customDirection = null) {
-            const sphere = new THREE.BoundingSphere();
+            const sphere = new THREE.Sphere();
             box.getBoundingSphere(sphere);
             const center = sphere.center;
             const radius = sphere.radius;
