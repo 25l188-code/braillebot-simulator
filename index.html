@@ -2447,6 +2447,72 @@
         }
 
         /* ==========================================================================
+           6-SPEED PRODUCTION SIMULATION EMBED
+           ========================================================================== */
+        .production-sim-wrapper {
+            margin-top: 2rem;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            background: var(--bg-darker);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5), 0 0 60px rgba(245, 158, 11, 0.05);
+        }
+        .production-sim-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 18px;
+            background: var(--bg-panel);
+            border-bottom: 1px solid var(--border);
+        }
+        .production-sim-badge {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            color: var(--accent-bright);
+            background: rgba(245, 158, 11, 0.1);
+            padding: 4px 12px;
+            border-radius: 4px;
+            border: 1px solid rgba(245, 158, 11, 0.25);
+        }
+        .production-sim-fullscreen-btn {
+            font-family: var(--font-sans);
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-decoration: none;
+            padding: 6px 14px;
+            border-radius: 6px;
+            border: 1px solid var(--border);
+            transition: all 0.25s ease;
+        }
+        .production-sim-fullscreen-btn:hover {
+            color: var(--accent-bright);
+            border-color: var(--accent);
+            background: rgba(245, 158, 11, 0.08);
+        }
+        .production-sim-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            background: #000;
+        }
+        .production-sim-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        @media (max-width: 768px) {
+            .production-sim-container {
+                padding-bottom: 75%; /* taller on mobile */
+            }
+        }
+
+        /* ==========================================================================
            CINEMATIC INTRO OVERLAY
            ========================================================================== */
         #introOverlay {
@@ -2847,6 +2913,7 @@
         <a href="#howItWorks">How It Works</a>
         <a href="#components">ADI Components</a>
         <a href="#isometric">3D Visualizer</a>
+        <a href="#productionSim">6-SPEED Production</a>
         <a href="#impact">Social Impact</a>
         <a href="#competition">Anveshan Alignment</a>
     </nav>
@@ -3480,6 +3547,32 @@
                     </div>
                     <input type="range" class="sim-slider" id="isoRotXSlider" min="15" max="80" value="60">
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== SECTION: 6-SPEED PRODUCTION LINE SIMULATION ====== -->
+    <section id="productionSim" class="content-section">
+        <div class="section-title-group">
+            <h2>6-SPEED Production Line Simulation</h2>
+            <p>Interactive 3D simulation of the full Braille book-printing pipeline — FEED → CUT → ADVANCE → EMBOSS → PICK → PLACE</p>
+        </div>
+
+        <div class="production-sim-wrapper">
+            <div class="production-sim-toolbar">
+                <span class="production-sim-badge">⚡ LIVE 3D SIMULATION</span>
+                <a href="6speed-simulation.html" target="_blank" class="production-sim-fullscreen-btn" title="Open in fullscreen">
+                    ⛶ Fullscreen
+                </a>
+            </div>
+            <div class="production-sim-container">
+                <iframe 
+                    src="6speed-simulation.html" 
+                    id="productionSimFrame"
+                    title="6-SPEED Production Line Simulation"
+                    allowfullscreen
+                    loading="lazy"
+                ></iframe>
             </div>
         </div>
     </section>

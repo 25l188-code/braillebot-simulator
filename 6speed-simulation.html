@@ -1,0 +1,2092 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>6 SPEED: Braille Book-Printing Pipeline Simulation</title>
+    <!-- WebGL styling and fonts -->
+    <style>
+        :root {
+            --bg: #0b0c10;
+            --panel: #1f2833;
+            --accent: #66fcf1;
+            --accent-dim: #45a29e;
+            --amber: #f5a623;
+            --orange: #ff5722;
+            --blue: #2196f3;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --text: #c5c6c7;
+            --text-bright: #ffffff;
+            --border: #4f5d75;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+        }
+
+        /* Setup / Configuration Overlay */
+        #setupOverlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(11, 12, 16, 0.95);
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: opacity 0.5s ease;
+        }
+
+        .setup-card {
+            background: var(--panel);
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            width: 500px;
+            max-height: 80vh;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+        }
+
+        .setup-card h2 {
+            color: var(--text-bright);
+            margin-bottom: 1rem;
+            text-align: center;
+            letter-spacing: 1px;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.5rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.2rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        .input-group input[type="number"], .input-group input[type="text"] {
+            width: 100%;
+            padding: 0.6rem;
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            color: var(--text-bright);
+            font-family: inherit;
+        }
+
+        #pageInputsContainer {
+            overflow-y: auto;
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+            padding-right: 0.5rem;
+        }
+
+        .page-entry-row {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(255,255,255,0.03);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent);
+        }
+
+        .page-entry-row span {
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: var(--accent);
+            display: block;
+            margin-bottom: 0.3rem;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: var(--bg);
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn-primary:hover {
+            background: var(--text-bright);
+            box-shadow: 0 0 12px var(--accent);
+        }
+
+        /* Main Workspace Interface */
+        .workspace {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        #canvasContainer {
+            flex-grow: 1;
+            height: 100%;
+            position: relative;
+            background: radial-gradient(circle, #1a2230 0%, #0b0c10 100%);
+        }
+
+        /* Left-side Control & Telemetry Panel */
+        .control-panel {
+            width: 380px;
+            height: 100%;
+            background: rgba(31, 40, 51, 0.95);
+            border-right: 2px solid var(--border);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            z-index: 10;
+            overflow-y: auto;
+            box-shadow: 4px 0 16px rgba(0,0,0,0.3);
+        }
+
+        .panel-header {
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .panel-header h1 {
+            font-size: 1.6rem;
+            color: var(--text-bright);
+            font-weight: 800;
+            letter-spacing: 2px;
+        }
+
+        .panel-header .tagline {
+            font-size: 0.8rem;
+            color: var(--accent-dim);
+            font-style: italic;
+        }
+
+        .status-strip {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.8rem;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: var(--success);
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.8);
+        }
+
+        .status-row {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .status-val {
+            color: var(--text-bright);
+            font-weight: bold;
+        }
+
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            background: rgba(255,255,255,0.02);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .control-group h3 {
+            font-size: 0.95rem;
+            color: var(--text-bright);
+            border-left: 3px solid var(--accent);
+            padding-left: 0.5rem;
+            margin-bottom: 0.2rem;
+        }
+
+        .btn-row {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-row button {
+            flex-grow: 1;
+            background: #2a3545;
+            color: var(--text-bright);
+            border: 1px solid var(--border);
+            padding: 0.6rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.8rem;
+            transition: all 0.2s ease;
+        }
+
+        .btn-row button:hover {
+            background: var(--accent);
+            color: var(--bg);
+        }
+
+        .btn-row button:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .slider-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            font-size: 0.85rem;
+        }
+
+        .slider-row input[type="range"] {
+            flex-grow: 1;
+            cursor: pointer;
+        }
+
+        .checkbox-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+
+        .checkbox-row input {
+            cursor: pointer;
+        }
+
+        /* Telemetry Panel */
+        .telemetry-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+        }
+
+        .telem-card {
+            background: #111;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.6rem;
+            font-family: monospace;
+        }
+
+        .telem-label {
+            font-size: 0.75rem;
+            color: var(--accent-dim);
+            display: block;
+            margin-bottom: 0.2rem;
+            text-transform: uppercase;
+        }
+
+        .telem-value {
+            font-size: 1.05rem;
+            color: var(--text-bright);
+            font-weight: bold;
+        }
+
+        /* Interactive Console logs */
+        .console-box {
+            background: #050508;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            height: 180px;
+            padding: 0.6rem;
+            font-family: monospace;
+            font-size: 0.75rem;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.3rem;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.9);
+        }
+
+        .console-line {
+            color: #88c0d0;
+        }
+
+        .console-line.sys { color: #a3be8c; }
+        .console-line.mcu { color: #ebcb8b; }
+        .console-line.warn { color: #d08770; }
+
+        /* Floating 3D/Screen Labels */
+        .scene-label {
+            position: absolute;
+            background: rgba(11, 12, 16, 0.9);
+            border: 1px solid var(--accent);
+            border-radius: 4px;
+            color: var(--accent);
+            font-family: monospace;
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            pointer-events: none;
+            transform: translate(-50%, -100%);
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+            transition: opacity 0.2s;
+            z-index: 5;
+        }
+
+        /* Custom Hover Tooltip for Optocouplers */
+        #optocouplerTooltip {
+            position: absolute;
+            background: rgba(31, 40, 51, 0.95);
+            border: 2px solid var(--accent);
+            border-radius: 8px;
+            color: var(--text-bright);
+            font-size: 0.85rem;
+            padding: 0.8rem;
+            max-width: 250px;
+            pointer-events: none;
+            display: none;
+            z-index: 200;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+        }
+
+        #optocouplerTooltip h4 {
+            color: var(--accent);
+            margin-bottom: 0.3rem;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+        }
+    </style>
+
+    <!-- Load Three.js and OrbitControls via CDNs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+</head>
+<body>
+
+    <!-- 1. Configuration / Setup Overlay -->
+    <div id="setupOverlay">
+        <div class="setup-card">
+            <h2>6 SPEED: RUN CONFIGURATION</h2>
+            <div class="input-group">
+                <label for="pageCountInput">NUMBER OF PAGES TO EMBOSS (1 - 10)</label>
+                <input type="number" id="pageCountInput" min="1" max="10" value="3">
+            </div>
+            
+            <div id="pageInputsContainer">
+                <!-- Dynamically populated entry rows -->
+            </div>
+
+            <button class="btn-primary" id="btnStartProduction">START PRODUCTION RUN</button>
+        </div>
+    </div>
+
+    <!-- 2. Main Workspace Layout -->
+    <div class="workspace">
+        <!-- Control Panel -->
+        <aside class="control-panel">
+            <div class="panel-header">
+                <h1>6 SPEED</h1>
+                <div class="tagline">SCARA Printhead Pipeline Simulation</div>
+            </div>
+
+            <!-- FSM Status strip -->
+            <div class="status-strip">
+                <div class="status-row">
+                    <span>ACTIVE CYCLE:</span>
+                    <span class="status-val" id="statusValRun">PAGE 0 / 0</span>
+                </div>
+                <div class="status-row">
+                    <span>STAGE:</span>
+                    <span class="status-val" id="statusValStage" style="color: var(--accent);">IDLE</span>
+                </div>
+                <div class="status-row">
+                    <span>CELL INDEX:</span>
+                    <span class="status-val" id="statusValCell">CELL 0/0</span>
+                </div>
+            </div>
+
+            <!-- Simulation Timing Controls -->
+            <div class="control-group">
+                <h3>TIMING CONTROLS</h3>
+                <div class="btn-row">
+                    <button id="btnPlayPause">PAUSE</button>
+                    <button id="btnStep">STEP NEXT</button>
+                    <button id="btnReset">RESET RUN</button>
+                </div>
+                <div class="slider-row">
+                    <label for="speedSlider">SPEED (0.25x - 4x):</label>
+                    <input type="range" id="speedSlider" min="0.25" max="4" step="0.25" value="1.0">
+                    <span id="speedSliderText" style="font-weight: bold; width: 40px; text-align: right;">1.0x</span>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="chkAutoZoom">
+                    <label for="chkAutoZoom">AUTO-ZOOM TO ACTIVE MOTOR ISOLATION</label>
+                </div>
+                <div class="checkbox-row">
+                    <input type="checkbox" id="chkShowLabels" checked>
+                    <label for="chkShowLabels">SHOW DYNAMIC SCENE LABELS</label>
+                </div>
+            </div>
+
+            <!-- Scene Bookmarks -->
+            <div class="control-group">
+                <h3>CAMERA VIEW BOOKMARKS</h3>
+                <div class="btn-row">
+                    <button onclick="setCameraView('wide')">WIDE</button>
+                    <button onclick="setCameraView('conveyor')">FEED/CUT</button>
+                    <button onclick="setCameraView('scara')">SCARA</button>
+                </div>
+            </div>
+
+            <!-- Live Telemetries -->
+            <div class="control-group">
+                <h3>LIVE SYSTEM TELEMETRY</h3>
+                <div class="telemetry-grid">
+                    <div class="telem-card">
+                        <span class="telem-label">SCARA Coordinate</span>
+                        <div class="telem-value" id="valSCARACoord">X:0, Y:0</div>
+                    </div>
+                    <div class="telem-card">
+                        <span class="telem-label">End-Effector Active</span>
+                        <div class="telem-value" id="valActiveHead" style="color: var(--accent);">HEAD A</div>
+                    </div>
+                    <div class="telem-card">
+                        <span class="telem-label">Optocoupler 1 (Conv)</span>
+                        <div class="telem-value" id="valOpto1" style="color: var(--success);">HIGH (Halt)</div>
+                    </div>
+                    <div class="telem-card">
+                        <span class="telem-label">Optocoupler 2 (SCARA)</span>
+                        <div class="telem-value" id="valOpto2" style="color: var(--success);">HIGH (Halt)</div>
+                    </div>
+                    <div class="telem-card">
+                        <span class="telem-label">Stepper Lock Status</span>
+                        <div class="telem-value" id="valStepperLock">LOCKED</div>
+                    </div>
+                    <div class="telem-card">
+                        <span class="telem-label">Emboss Firing Force</span>
+                        <div class="telem-value" id="valEmbossForce">0.0 N</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Logs console -->
+            <div class="control-group" style="flex-grow: 1; margin-bottom: 0;">
+                <h3>SYSTEM LOGS</h3>
+                <div class="console-box" id="simConsole"></div>
+            </div>
+        </aside>
+
+        <!-- 3D Canvas Box -->
+        <main id="canvasContainer">
+            <canvas id="labelCanvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4;"></canvas>
+            <!-- Dynamic Labels will overlay here -->
+        </main>
+    </div>
+
+    <!-- Hover details for ADI Optocoupler module -->
+    <div id="optocouplerTooltip">
+        <h4 id="tooltipTitle">ADuM1401 Optocoupler</h4>
+        <div id="tooltipContent">Galvanic isolation bridge. Prevents high-voltage motor load noise and back-EMF spikes from crossing into microcontroller logic gates.</div>
+    </div>
+
+    <!-- Unified Simulation Code -->
+    <script>
+        // Global error reporting boundary
+        window.addEventListener('error', function(e) {
+            const errDiv = document.createElement('div');
+            errDiv.style.position = 'absolute';
+            errDiv.style.top = '0';
+            errDiv.style.left = '0';
+            errDiv.style.width = '100%';
+            errDiv.style.background = '#e74c3c';
+            errDiv.style.color = '#ffffff';
+            errDiv.style.padding = '20px';
+            errDiv.style.zIndex = '99999';
+            errDiv.style.fontFamily = 'monospace';
+            errDiv.style.fontSize = '14px';
+            errDiv.style.borderBottom = '3px solid #c0392b';
+            errDiv.innerHTML = '<strong>6 SPEED Simulation Error:</strong> ' + e.message + '<br><em>File:</em> ' + e.filename + ' | <em>Line:</em> ' + e.lineno;
+            document.body.appendChild(errDiv);
+        });
+
+        // ----------------------------------------------------
+        // Latin to Grade-1 Braille lookup patterns
+        // Represented as arrays of active dots (1 to 6)
+        // ----------------------------------------------------
+        const BRAILLE_MAP = {
+            'A': [1],        'B': [1, 2],     'C': [1, 4],     'D': [1, 4, 5],  'E': [1, 5],
+            'F': [1, 2, 4],  'G': [1, 2, 4, 5],'H': [1, 2, 5],  'I': [2, 4],     'J': [2, 4, 5],
+            'K': [1, 3],     'L': [1, 2, 3],  'M': [1, 3, 4],  'N': [1, 3, 4, 5],'O': [1, 3, 5],
+            'P': [1, 2, 3, 4],'Q': [1, 2, 3, 4, 5],'R': [1, 2, 3, 5],'S': [2, 3, 4],  'T': [2, 3, 4, 5],
+            'U': [1, 3, 6],  'V': [1, 2, 3, 6],'W': [2, 4, 5, 6],'X': [1, 3, 4, 6],'Y': [1, 3, 4, 5, 6],
+            'Z': [1, 3, 5, 6],' ': []
+        };
+
+        const PRESET_MESSAGES = [
+            "6 SPEED PRINT",
+            "ANVESHAN 2026",
+            "ADI TRINAMIC SCARA",
+            "STEP AND REPEAT",
+            "GALVANIC ISOLATION",
+            "DOUBLE COLUMN PROPOSAL",
+            "NO BACKLASH HARMONIC",
+            "TEST CELL EMISSION",
+            "FREE RTOS FIRMWARE",
+            "PERFORATION CHISEL"
+        ];
+
+        // ----------------------------------------------------
+        // Global variables & elements caching
+        // ----------------------------------------------------
+        const UI = {
+            pageCountInput: document.getElementById('pageCountInput'),
+            pageInputsContainer: document.getElementById('pageInputsContainer'),
+            btnStartProduction: document.getElementById('btnStartProduction'),
+            setupOverlay: document.getElementById('setupOverlay'),
+            statusValRun: document.getElementById('statusValRun'),
+            statusValStage: document.getElementById('statusValStage'),
+            statusValCell: document.getElementById('statusValCell'),
+            btnPlayPause: document.getElementById('btnPlayPause'),
+            btnStep: document.getElementById('btnStep'),
+            btnReset: document.getElementById('btnReset'),
+            speedSlider: document.getElementById('speedSlider'),
+            speedSliderText: document.getElementById('speedSliderText'),
+            chkAutoZoom: document.getElementById('chkAutoZoom'),
+            chkShowLabels: document.getElementById('chkShowLabels'),
+            valSCARACoord: document.getElementById('valSCARACoord'),
+            valActiveHead: document.getElementById('valActiveHead'),
+            valOpto1: document.getElementById('valOpto1'),
+            valOpto2: document.getElementById('valOpto2'),
+            valStepperLock: document.getElementById('valStepperLock'),
+            valEmbossForce: document.getElementById('valEmbossForce'),
+            simConsole: document.getElementById('simConsole'),
+            canvasContainer: document.getElementById('canvasContainer'),
+            labelCanvas: document.getElementById('labelCanvas'),
+            optocouplerTooltip: document.getElementById('optocouplerTooltip')
+        };
+
+        let scene, camera, renderer, controls;
+        let labels = []; // Cache list for DOM labels
+        let simSpeed = 1.0;
+        let isPlaying = true;
+        let autoZoomEnabled = false;
+        let showLabelsEnabled = true;
+        let cameraShake = 0.0;
+
+        // FSM Configuration
+        let productionRun = {
+            totalPages: 3,
+            pagesData: [], // Array of { text: "...", brailleCells: [...] }
+            currentPageIndex: 0,
+            activeStage: 'IDLE', // FSM States: FEED, CUT, ADVANCE, EMBOSS, PICK, PLACE_OUTPUT, FINISHED
+            cellIndex: 0,
+            stepRequested: false
+        };
+
+        // Animation Tween timelines and targets
+        let animClock = new THREE.Clock();
+        let machineObjects = {}; // Cache of 3D meshes
+
+        // ----------------------------------------------------
+        // Page setup interface dynamic initialization
+        // ----------------------------------------------------
+        function initSetupUI() {
+            UI.pageCountInput.addEventListener('input', () => {
+                let count = Math.max(1, Math.min(10, parseInt(UI.pageCountInput.value) || 1));
+                UI.pageCountInput.value = count;
+                renderPageInputRows(count);
+            });
+            
+            renderPageInputRows(3); // Default count
+
+            UI.btnStartProduction.addEventListener('click', () => {
+                let count = parseInt(UI.pageCountInput.value) || 1;
+                productionRun.totalPages = count;
+                productionRun.pagesData = [];
+                
+                for (let i = 0; i < count; i++) {
+                    const txtInput = document.getElementById(`pageText_${i}`);
+                    let text = (txtInput.value || `PAGE ${i+1}`).toUpperCase().replace(/[^A-Z ]/g, "");
+                    if (text === "") text = "6 SPEED";
+                    
+                    // Generate Braille cells data structures inside a 10% margin box
+                    const marginX = 3.6; // 10% of 36mm
+                    const marginY = 2.6; // 10% of 26mm
+                    const cellSpacingX = 4.5;
+                    const cellSpacingY = 6.0;
+                    const cols = Math.floor((36 - 2 * marginX) / cellSpacingX); // max 6 columns
+                    
+                    let brailleCells = [];
+                    let col = 0;
+                    let row = 0;
+                    
+                    text.split("").forEach((char) => {
+                        if (col >= cols) {
+                            col = 0;
+                            row++;
+                        }
+                        
+                        // Hard clamp: do not emboss if exceeding page vertical margins
+                        if (marginY + row * cellSpacingY + cellSpacingY > 26) {
+                            return; 
+                        }
+                        
+                        const localX = -18 + marginX + col * cellSpacingX + cellSpacingX / 2;
+                        const localY = 13 - (marginY + row * cellSpacingY + cellSpacingY / 2);
+                        
+                        brailleCells.push({
+                            char: char,
+                            dots: BRAILLE_MAP[char] || [],
+                            x: localX,
+                            y: localY
+                        });
+                        col++;
+                    });
+                    
+                    productionRun.pagesData.push({
+                        text: text,
+                        brailleCells: brailleCells
+                    });
+                }
+
+                productionRun.currentPageIndex = 0;
+                productionRun.activeStage = 'FEED';
+                productionRun.cellIndex = 0;
+                stageTime = 0;
+                
+                logConsole("Production run started.", 'sys');
+                UI.setupOverlay.style.opacity = '0';
+                setTimeout(() => {
+                    UI.setupOverlay.style.display = 'none';
+                }, 500);
+            });
+
+            // Simulator Control Panel Events
+            UI.btnPlayPause.addEventListener('click', () => {
+                isPlaying = !isPlaying;
+                UI.btnPlayPause.innerText = isPlaying ? "PAUSE" : "PLAY";
+                UI.btnStep.disabled = isPlaying;
+                logConsole(isPlaying ? "Simulation resumed." : "Simulation paused.", 'sys');
+            });
+
+            UI.btnStep.addEventListener('click', () => {
+                productionRun.stepRequested = true;
+            });
+
+            UI.btnReset.addEventListener('click', () => {
+                resetProductionRun();
+            });
+
+            UI.speedSlider.addEventListener('input', () => {
+                simSpeed = parseFloat(UI.speedSlider.value);
+                UI.speedSliderText.innerText = `${simSpeed.toFixed(1)}x`;
+            });
+
+            UI.chkAutoZoom.addEventListener('change', () => {
+                autoZoomEnabled = UI.chkAutoZoom.checked;
+            });
+
+            UI.chkShowLabels.addEventListener('change', () => {
+                showLabelsEnabled = UI.chkShowLabels.checked;
+                toggleLabelsVisibility();
+            });
+        }
+
+        function renderPageInputRows(count) {
+            UI.pageInputsContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const presetMsg = PRESET_MESSAGES[i % PRESET_MESSAGES.length].substring(0, 18);
+                const row = document.createElement('div');
+                row.className = 'page-entry-row';
+                row.innerHTML = `
+                    <span>PAGE #${i + 1} EMBOSS CONTENT</span>
+                    <input type="text" id="pageText_${i}" value="${presetMsg}" maxlength="18">
+                `;
+                UI.pageInputsContainer.appendChild(row);
+            }
+        }
+
+        function logConsole(msg, type = 'info') {
+            const time = new Date().toLocaleTimeString().split(' ')[0];
+            const line = document.createElement('div');
+            line.className = `console-line ${type}`;
+            line.innerText = `[${time}] ${msg}`;
+            UI.simConsole.appendChild(line);
+            UI.simConsole.scrollTop = UI.simConsole.scrollHeight;
+        }
+
+        function resetProductionRun() {
+            productionRun.currentPageIndex = 0;
+            productionRun.activeStage = 'IDLE';
+            productionRun.cellIndex = 0;
+            stageTime = 0;
+            UI.setupOverlay.style.display = 'flex';
+            setTimeout(() => {
+                UI.setupOverlay.style.opacity = '1';
+            }, 50);
+            
+            // Remove dynamically generated paper sheets
+            if (machineObjects.paperSheet) {
+                scene.remove(machineObjects.paperSheet);
+                machineObjects.paperSheet = null;
+            }
+            // Clear stacked output pages
+            if (machineObjects.outputStackGroup) {
+                while(machineObjects.outputStackGroup.children.length > 0) {
+                    machineObjects.outputStackGroup.remove(machineObjects.outputStackGroup.children[0]);
+                }
+            }
+            
+            setCameraView('wide');
+            logConsole("Simulation workspace reset.", 'sys');
+        }
+
+        // ----------------------------------------------------
+        // 3D Scene Initialization
+        // ----------------------------------------------------
+        function init3D() {
+            scene = new THREE.Scene();
+            scene.fog = new THREE.FogExp2(0x0b0c10, 0.0015);
+
+            camera = new THREE.PerspectiveCamera(45, (window.innerWidth - 380) / window.innerHeight, 1, 1000);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false });
+            renderer.setSize(window.innerWidth - 380, window.innerHeight);
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+            UI.canvasContainer.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.maxPolarAngle = Math.PI / 2 - 0.05; // Lock camera from going below floor
+
+            setCameraView('wide');
+
+            // Soft Studio Lighting
+            const ambient = new THREE.AmbientLight(0xffffff, 0.35);
+            scene.add(ambient);
+
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.85);
+            dirLight.position.set(40, 80, 50);
+            dirLight.castShadow = true;
+            dirLight.shadow.mapSize.width = 2048;
+            dirLight.shadow.mapSize.height = 2048;
+            dirLight.shadow.bias = -0.0005;
+            scene.add(dirLight);
+
+            // Floor grid (Shadow Catcher)
+            const floorGeo = new THREE.PlaneGeometry(300, 300);
+            const floorMat = new THREE.MeshStandardMaterial({ color: 0x111622, roughness: 0.8, metalness: 0.2 });
+            const floor = new THREE.Mesh(floorGeo, floorMat);
+            floor.rotation.x = -Math.PI / 2;
+            floor.position.y = -20;
+            floor.receiveShadow = true;
+            scene.add(floor);
+
+            const grid = new THREE.GridHelper(200, 40, 0x4f5d75, 0x222a38);
+            grid.position.y = -19.9;
+            scene.add(grid);
+
+            buildMachineLayout();
+            updateSCARALinkages(20, 0, 5.0); // Park arm at home position with clearance
+            initLabels();
+            setupRaycasting();
+
+            window.addEventListener('resize', onWindowResize);
+        }
+
+        function buildEndEffector(frameMat) {
+            const endEffectorGroup = new THREE.Group();
+
+            // 1. Vertical carriage stem/spline connection (Brass bushing + thin cylinder stem)
+            // Spline connection stem goes from hub Y = 17 down to toolPlate Y = 0
+            const stemMat = new THREE.MeshStandardMaterial({ color: 0xa0aab5, metalness: 0.9, roughness: 0.1 });
+            const stemGeo = new THREE.CylinderGeometry(0.4, 0.4, 4.5, 16);
+            const stem = new THREE.Mesh(stemGeo, stemMat);
+            stem.position.set(0, 2.25, 0); // local offset above toolPlate Y=0
+            stem.castShadow = true;
+            endEffectorGroup.add(stem);
+
+            const bushingGeo = new THREE.CylinderGeometry(0.8, 0.8, 2.5, 16);
+            const bushingMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.15 }); // brass
+            const bushing = new THREE.Mesh(bushingGeo, bushingMat);
+            bushing.position.set(0, 1.25, 0); // sits on top of toolPlate Y=0
+            bushing.castShadow = true;
+            endEffectorGroup.add(bushing);
+
+            // 2. toolPlate: Single box mesh, 9cm x 2cm x 1cm (length x depth x thickness)
+            // Three.js coordinates: width is X (length = 9.0), thickness is Y (height = 1.0), depth is Z (width = 2.0)
+            const toolPlateGeo = new THREE.BoxGeometry(9.0, 1.0, 2.0);
+            const toolPlate = new THREE.Mesh(toolPlateGeo, frameMat);
+            toolPlate.position.set(0, 0, 0);
+            toolPlate.castShadow = true;
+            endEffectorGroup.add(toolPlate);
+
+            // 3. headA (Vacuum Gripper): mounted under the plate at local coordinates (3.5, -0.5, 0)
+            const headA = new THREE.Group();
+            headA.position.set(3.5, -0.5, 0);
+            endEffectorGroup.add(headA);
+
+            const gripperBaseGeo = new THREE.CylinderGeometry(0.9, 0.9, 2.5, 16);
+            const gripperMat = new THREE.MeshStandardMaterial({ color: 0x45a29e, metalness: 0.6, roughness: 0.4 });
+            const gripperBase = new THREE.Mesh(gripperBaseGeo, gripperMat);
+            gripperBase.position.y = -1.25; // extends down
+            gripperBase.castShadow = true;
+            headA.add(gripperBase);
+
+            const suctionCupGeo = new THREE.CylinderGeometry(1.2, 0.8, 1.0, 16);
+            const suctionCupMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.9 });
+            const suctionCup = new THREE.Mesh(suctionCupGeo, suctionCupMat);
+            suctionCup.position.y = -3.0; // extends down to local Y = -4.0 relative to toolPlate
+            suctionCup.castShadow = true;
+            headA.add(suctionCup);
+
+            // Suction visibility indicators
+            machineObjects.suctionGroup = new THREE.Group();
+            machineObjects.suctionGroup.position.set(0, -3.6, 0);
+            headA.add(machineObjects.suctionGroup);
+
+            for (let i = 0; i < 3; i++) {
+                const ringGeo = new THREE.RingGeometry(0.2 + i * 0.3, 0.3 + i * 0.3, 16);
+                const ringMat = new THREE.MeshBasicMaterial({ color: 0x66fcf1, side: THREE.DoubleSide, transparent: true, opacity: 0.8 });
+                const ring = new THREE.Mesh(ringGeo, ringMat);
+                ring.rotation.x = Math.PI / 2;
+                ring.position.y = -i * 0.3;
+                machineObjects.suctionGroup.add(ring);
+            }
+            machineObjects.suctionGroup.visible = false;
+
+            // Flexible hose running from headA (+3.5, -0.5, 0) back to center guide bushing (0, 1.25, 0)
+            const hoseCurve = new THREE.QuadraticBezierCurve3(
+                new THREE.Vector3(3.5, 0, 0),
+                new THREE.Vector3(2.0, 2.2, 0),
+                new THREE.Vector3(0.4, 1.25, 0)
+            );
+            const hoseGeo = new THREE.TubeGeometry(hoseCurve, 16, 0.15, 8, false);
+            const hoseMat = new THREE.MeshStandardMaterial({ color: 0x1a1a1a, roughness: 0.8 });
+            const vacuumHose = new THREE.Mesh(hoseGeo, hoseMat);
+            vacuumHose.castShadow = true;
+            endEffectorGroup.add(vacuumHose);
+
+            // 4. headB (Solenoid): mounted under the plate at local coordinates (-3.5, -0.5, 0)
+            const headB = new THREE.Group();
+            headB.position.set(-3.5, -0.5, 0);
+            endEffectorGroup.add(headB);
+
+            const embossBaseGeo = new THREE.BoxGeometry(2.5, 3.5, 2.0);
+            const embossBaseMat = new THREE.MeshStandardMaterial({ color: 0x3a2c16, metalness: 0.7, roughness: 0.3 });
+            const embossBase = new THREE.Mesh(embossBaseGeo, embossBaseMat);
+            embossBase.position.y = -1.75;
+            embossBase.castShadow = true;
+            headB.add(embossBase);
+
+            // Six solenoids cylinders
+            machineObjects.solenoidPins = [];
+            const pinGeo = new THREE.CylinderGeometry(0.15, 0.15, 2.0, 8);
+            const pinMat = new THREE.MeshStandardMaterial({ color: 0xf5a623, metalness: 0.9, roughness: 0.2 });
+            const coilGeo = new THREE.CylinderGeometry(0.25, 0.25, 1.2, 12);
+            const coilMat = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.8, roughness: 0.3 }); // copper!
+
+            const rowZ = [-0.6, 0.6];
+            const colX = [-0.6, 0.0, 0.6];
+
+            rowZ.forEach(zOffset => {
+                colX.forEach(xOffset => {
+                    const pinGroup = new THREE.Group();
+                    pinGroup.position.set(xOffset, -3.5, zOffset);
+                    
+                    const pinMesh = new THREE.Mesh(pinGeo, pinMat);
+                    pinMesh.position.y = 1.0; // retracted height
+                    pinMesh.castShadow = true;
+                    pinGroup.add(pinMesh);
+                    
+                    headB.add(pinGroup);
+                    machineObjects.solenoidPins.push(pinGroup);
+
+                    // Add copper coil inside Head B housing
+                    const coilMesh = new THREE.Mesh(coilGeo, coilMat);
+                    coilMesh.position.set(xOffset, -1.0, zOffset);
+                    coilMesh.castShadow = true;
+                    headB.add(coilMesh);
+                });
+            });
+
+            // Target Active Tool light (cyan LED target light under Head B)
+            const toolLight = new THREE.PointLight(0x66fcf1, 1.2, 20);
+            toolLight.position.set(-3.5, -4.5, 0); // aligned under Head B bottom
+            endEffectorGroup.add(toolLight);
+
+            return endEffectorGroup;
+        }
+
+        // ----------------------------------------------------
+        // Machine Components 3D modeling
+        // ----------------------------------------------------
+        function buildMachineLayout() {
+            // Main structure bed frame
+            const frameGeo = new THREE.BoxGeometry(180, 2, 60);
+            const frameMat = new THREE.MeshStandardMaterial({ color: 0x242b35, metalness: 0.7, roughness: 0.4 });
+            const bedFrame = new THREE.Mesh(frameGeo, frameMat);
+            bedFrame.position.set(0, -11, 0);
+            bedFrame.receiveShadow = true;
+            scene.add(bedFrame);
+
+            // 1. Paper Roll Station (Far Left: X = -75)
+            const rollSupportGeo = new THREE.BoxGeometry(6, 25, 40);
+            const rollSupport = new THREE.Mesh(rollSupportGeo, frameMat);
+            rollSupport.position.set(-75, 0, 0);
+            scene.add(rollSupport);
+
+            const rollGeo = new THREE.CylinderGeometry(10, 10, 32, 32);
+            const rollMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9 });
+            machineObjects.paperRoll = new THREE.Mesh(rollGeo, rollMat);
+            machineObjects.paperRoll.rotation.x = Math.PI / 2;
+            machineObjects.paperRoll.position.set(-75, 5, 0);
+            machineObjects.paperRoll.castShadow = true;
+            scene.add(machineObjects.paperRoll);
+
+            // Threaded paper guide plate (continuous web path from roll to conveyor)
+            const webGeo = new THREE.BoxGeometry(16, 0.3, 26);
+            const webMat = new THREE.MeshStandardMaterial({ color: 0xfdfbf7, roughness: 0.9 });
+            machineObjects.threadedWeb = new THREE.Mesh(webGeo, webMat);
+            machineObjects.threadedWeb.position.set(-70, -9.59, 0);
+            machineObjects.threadedWeb.receiveShadow = true;
+            scene.add(machineObjects.threadedWeb);
+
+            // 2. Conveyor + Cutting Station (Extended to SCARA and Eject Station: X = -15)
+            const beltGeo = new THREE.BoxGeometry(100, 0.5, 30);
+            const beltMat = new THREE.MeshStandardMaterial({ color: 0x1a1d24, roughness: 0.9, metalness: 0.1 });
+            const conveyorBelt = new THREE.Mesh(beltGeo, beltMat);
+            conveyorBelt.position.set(-15, -10, 0);
+            scene.add(conveyorBelt);
+
+            // Add scrolling tick marks to conveyor belt covering the full length
+            machineObjects.conveyorTicks = new THREE.Group();
+            for (let i = -50; i <= 50; i += 4) {
+                const tickGeo = new THREE.PlaneGeometry(0.5, 29);
+                const tickMat = new THREE.MeshBasicMaterial({ color: 0x4f5d75, side: THREE.DoubleSide });
+                const tick = new THREE.Mesh(tickGeo, tickMat);
+                tick.rotation.x = Math.PI / 2;
+                tick.position.set(i, 0.26, 0);
+                machineObjects.conveyorTicks.add(tick);
+            }
+            machineObjects.conveyorTicks.position.set(-15, -10, 0);
+            scene.add(machineObjects.conveyorTicks);
+
+            // Conveyor Stepper Motor
+            const convMotorGeo = new THREE.BoxGeometry(6, 6, 6);
+            const motorMat = new THREE.MeshStandardMaterial({ color: 0x333b47, metalness: 0.8 });
+            const convMotor = new THREE.Mesh(convMotorGeo, motorMat);
+            convMotor.position.set(-65, -10, -20);
+            scene.add(convMotor);
+
+            // Guillotine structure: Two vertical linear rails on either side of the conveyor belt
+            const railGeo = new THREE.CylinderGeometry(0.6, 0.6, 25, 16);
+            const leftRail = new THREE.Mesh(railGeo, frameMat);
+            leftRail.position.set(-17, 2.5, -16.5);
+            scene.add(leftRail);
+
+            const rightRail = new THREE.Mesh(railGeo, frameMat);
+            rightRail.position.set(-17, 2.5, 16.5);
+            scene.add(rightRail);
+
+            // Crossbar top guide beam
+            const crossbarGeo = new THREE.BoxGeometry(4, 2, 34);
+            const crossbar = new THREE.Mesh(crossbarGeo, frameMat);
+            crossbar.position.set(-17, 15, 0);
+            scene.add(crossbar);
+
+            // Rebuilt full-width cutting blade
+            const bladeGeo = new THREE.BoxGeometry(1.5, 8, 32);
+            const bladeMat = new THREE.MeshStandardMaterial({ color: 0x546e7a, metalness: 0.7, roughness: 0.3 });
+            machineObjects.guillotineBlade = new THREE.Mesh(bladeGeo, bladeMat);
+            machineObjects.guillotineBlade.position.set(-17, 10, 0); // Start high to clear conveyor path
+            scene.add(machineObjects.guillotineBlade);
+
+            // Thin shiny metallic bottom cutting edge highlight
+            const edgeGeo = new THREE.BoxGeometry(1.6, 0.4, 32);
+            const edgeMat = new THREE.MeshStandardMaterial({ color: 0xffffff, metalness: 1.0, roughness: 0.05 });
+            const edgeHighlight = new THREE.Mesh(edgeGeo, edgeMat);
+            edgeHighlight.position.set(0, -4.0, 0); // Position at the very bottom of the blade
+            machineObjects.guillotineBlade.add(edgeHighlight);
+
+            // Visual impact expansion ring at cutting plane
+            const ringGeo = new THREE.RingGeometry(0.1, 4, 32);
+            const ringMat = new THREE.MeshBasicMaterial({ color: 0xffa500, side: THREE.DoubleSide, transparent: true, opacity: 0 });
+            machineObjects.cutImpactRing = new THREE.Mesh(ringGeo, ringMat);
+            machineObjects.cutImpactRing.rotation.x = Math.PI / 2;
+            machineObjects.cutImpactRing.position.set(-17, -9.7, 0);
+            machineObjects.cutImpactRing.visible = false;
+            scene.add(machineObjects.cutImpactRing);
+
+            // 3. Symmetrical 5-Bar Parallel SCARA Drive Base (Elevated on Gantry: Y = 12)
+            // Symmetrical 5-bar parallel linkage arms setup (CNC aerospace-machined aluminum with brass collars)
+            function createLinkageArm(length, width, height) {
+                const armGroup = new THREE.Group();
+                const alumMat = new THREE.MeshStandardMaterial({ color: 0x8892a0, metalness: 0.9, roughness: 0.2 });
+                const brassMat = new THREE.MeshStandardMaterial({ color: 0xd4af37, metalness: 0.9, roughness: 0.15 });
+
+                // Start pivot collar (brass)
+                const startCollar = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, height * 1.4, 16), brassMat);
+                startCollar.position.set(0, 0, 0);
+                startCollar.castShadow = true;
+                armGroup.add(startCollar);
+
+                // End pivot collar (brass)
+                const endCollar = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, height * 1.4, 16), brassMat);
+                endCollar.position.set(0, 0, length);
+                endCollar.castShadow = true;
+                armGroup.add(endCollar);
+
+                // I-Beam connecting structure:
+                // Left side rail
+                const leftRail = new THREE.Mesh(new THREE.BoxGeometry(0.15, height, length - 2.0), alumMat);
+                leftRail.position.set(-width / 2 + 0.08, 0, length / 2);
+                leftRail.castShadow = true;
+                armGroup.add(leftRail);
+
+                // Right side rail
+                const rightRail = new THREE.Mesh(new THREE.BoxGeometry(0.15, height, length - 2.0), alumMat);
+                rightRail.position.set(width / 2 - 0.08, 0, length / 2);
+                rightRail.castShadow = true;
+                armGroup.add(rightRail);
+
+                // Center thin web
+                const web = new THREE.Mesh(new THREE.BoxGeometry(width - 0.3, height * 0.4, length - 2.0), alumMat);
+                web.position.set(0, 0, length / 2);
+                web.castShadow = true;
+                armGroup.add(web);
+                
+                // Add weight-reduction slots (simulated as small dark cylindrical inserts)
+                const holeGeo = new THREE.CylinderGeometry(width * 0.25, width * 0.25, height * 0.5, 12);
+                const holeMat = new THREE.MeshStandardMaterial({ color: 0x111, roughness: 0.9 });
+                for (let i = 0.3; i <= 0.7; i += 0.4) {
+                    const holeIndicator = new THREE.Mesh(holeGeo, holeMat);
+                    holeIndicator.position.set(0, 0, length * i);
+                    armGroup.add(holeIndicator);
+                }
+
+                return armGroup;
+            }
+
+            // Gantry elevated support frame structure
+            const gantrySupportGeo = new THREE.BoxGeometry(6, 26, 6);
+            const gantrySupport = new THREE.Mesh(gantrySupportGeo, frameMat);
+            gantrySupport.position.set(20, 2, -12);
+            scene.add(gantrySupport);
+
+            // Elevated main drive base plate supporting motors (Y = 14)
+            const scaraBasePlateGeo = new THREE.BoxGeometry(18, 2, 6);
+            const scaraBasePlate = new THREE.Mesh(scaraBasePlateGeo, frameMat);
+            scaraBasePlate.position.set(20, 14, -12); // Raised above work surface
+            scene.add(scaraBasePlate);
+
+            // Two side-by-side static motor bodies/pivot pins mounted horizontally
+            const motorCylGeo = new THREE.CylinderGeometry(1.8, 1.8, 3, 16);
+            machineObjects.motorHousingL = new THREE.Mesh(motorCylGeo, frameMat);
+            machineObjects.motorHousingL.position.set(15, 15.5, -12); // Center L: X = 15, Y = 15.5
+            scene.add(machineObjects.motorHousingL);
+
+            machineObjects.motorHousingR = new THREE.Mesh(motorCylGeo, frameMat);
+            machineObjects.motorHousingR.position.set(25, 15.5, -12); // Center R: X = 25, Y = 15.5
+            scene.add(machineObjects.motorHousingR);
+
+            // Symmetrical compact 5-bar parallel arm links sitting flat horizontally at height Y = 17
+            // Sized to match kinematic link length (20.0)
+            machineObjects.leftProximal = createLinkageArm(20.0, 0.9, 0.9);
+            scene.add(machineObjects.leftProximal);
+
+            machineObjects.leftDistal = createLinkageArm(20.0, 0.9, 0.9);
+            scene.add(machineObjects.leftDistal);
+
+            machineObjects.rightProximal = createLinkageArm(20.0, 0.9, 0.9);
+            scene.add(machineObjects.rightProximal);
+
+            machineObjects.rightDistal = createLinkageArm(20.0, 0.9, 0.9);
+            scene.add(machineObjects.rightDistal);
+
+            // Spline vertical shaft connecting linkages to carriage stem (travels down)
+            const splineMat = new THREE.MeshStandardMaterial({ color: 0xa0aab5, metalness: 0.9, roughness: 0.1 });
+            machineObjects.scaraSpline = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 1.0, 16), splineMat);
+            machineObjects.scaraSpline.castShadow = true;
+            scene.add(machineObjects.scaraSpline);
+
+            // 4. Unified carriage end-effector plate assembly
+            machineObjects.endEffector = new THREE.Group();
+            scene.add(machineObjects.endEffector);
+
+            const effectorAssembly = buildEndEffector(frameMat);
+            machineObjects.endEffector.add(effectorAssembly);
+
+            // 5. Output Stacking Tray (Far Right: X = 43)
+            const trayGeo = new THREE.BoxGeometry(40, 2, 30);
+            const tray = new THREE.Mesh(trayGeo, frameMat);
+            tray.position.set(43, -10, 0);
+            scene.add(tray);
+
+            machineObjects.outputStackGroup = new THREE.Group();
+            machineObjects.outputStackGroup.position.set(43, -9, 0);
+            scene.add(machineObjects.outputStackGroup);
+
+            // 6. ADI Optocoupler Modules (ADuM1401)
+            // Module 1 (Conveyor)
+            machineObjects.opto1 = buildOptocouplerModule("OPTO 1 (CONVEYOR)");
+            machineObjects.opto1.position.set(-65, -6, -20);
+            scene.add(machineObjects.opto1);
+
+            // Module 2 (SCARA)
+            machineObjects.opto2 = buildOptocouplerModule("OPTO 2 (SCARA)");
+            machineObjects.opto2.position.set(20, 14, -20);
+            scene.add(machineObjects.opto2);
+        }
+
+        // Build a highly detailed, transparent Optocoupler module
+        function buildOptocouplerModule(name) {
+            const group = new THREE.Group();
+            group.name = name;
+            
+            // Housing Box
+            const housingGeo = new THREE.BoxGeometry(6, 4, 3);
+            const housingMat = new THREE.MeshStandardMaterial({
+                color: 0x4f5d75,
+                metalness: 0.1,
+                roughness: 0.1,
+                transparent: true,
+                opacity: 0.4
+            });
+            const housing = new THREE.Mesh(housingGeo, housingMat);
+            group.add(housing);
+
+            // Separation Line inside
+            const sepGeo = new THREE.PlaneGeometry(0.1, 3.8);
+            const sepMat = new THREE.MeshBasicMaterial({ color: 0xcbd5e1, side: THREE.DoubleSide });
+            const sep = new THREE.Mesh(sepGeo, sepMat);
+            sep.rotation.y = Math.PI / 2;
+            group.add(sep);
+
+            // Orange Led (High Voltage side, left)
+            const ledGeo = new THREE.SphereGeometry(0.4, 8, 8);
+            const orangeLedMat = new THREE.MeshBasicMaterial({ color: 0x552200 }); // Default dim
+            const orangeLed = new THREE.Mesh(ledGeo, orangeLedMat);
+            orangeLed.position.set(-1.8, 0, 0);
+            group.add(orangeLed);
+            group.userData = { orangeLed: orangeLed, blueLed: null };
+
+            // Blue Led (Low Voltage side, right)
+            const blueLedMat = new THREE.MeshBasicMaterial({ color: 0x002255 }); // Default dim
+            const blueLed = new THREE.Mesh(ledGeo, blueLedMat);
+            blueLed.position.set(1.8, 0, 0);
+            group.add(blueLed);
+            group.userData.blueLed = blueLed;
+
+            // Internal labels/leads
+            const leadGeo = new THREE.BoxGeometry(1.5, 0.2, 0.2);
+            const leadMat = new THREE.MeshStandardMaterial({ color: 0xdde, metalness: 0.9 });
+            const lead1 = new THREE.Mesh(leadGeo, leadMat);
+            lead1.position.set(-2.2, -1, 0);
+            group.add(lead1);
+            const lead2 = new THREE.Mesh(leadGeo, leadMat);
+            lead2.position.set(2.2, -1, 0);
+            group.add(lead2);
+
+            return group;
+        }
+
+        // ----------------------------------------------------
+        // Setup Screen Labels dynamically linked to 3D Nodes
+        // ----------------------------------------------------
+        function initLabels() {
+            // High offset configurations (dx, dy) to keep labels from overlapping moving geometry bounding boxes
+            addLabel(machineObjects.paperRoll, "PAPER ROLL FEEDER", -100, -120);
+            addLabel(machineObjects.conveyorTicks, "STEP-AND-REPEAT CONVEYOR", -120, 100);
+            addLabel(machineObjects.guillotineBlade, "GUILLOTINE CHISEL CUTTER", 0, -140);
+            addLabel(machineObjects.motorHousingL, "5-BAR SCARA DRIVE BASE", 120, -120);
+            addLabel(machineObjects.endEffector, "DUAL END-EFFECTOR: HEAD A (VACUUM) / HEAD B (6-PIN EMBOSS)", 180, 120);
+            addLabel(machineObjects.opto1, "OPTOCOUPLER ADuM1401 (CONVEYOR)", -120, -60);
+            addLabel(machineObjects.opto2, "OPTOCOUPLER ADuM1401 (SCARA)", 120, -60);
+        }
+
+        function addLabel(targetMesh, text, dx, dy) {
+            const labelEl = document.createElement('div');
+            labelEl.className = 'scene-label';
+            labelEl.innerText = text;
+            UI.canvasContainer.appendChild(labelEl);
+            labels.push({ element: labelEl, target: targetMesh, dx: dx, dy: dy });
+        }
+
+        function updateLabelsPosition() {
+            const ctx = UI.labelCanvas.getContext('2d');
+            ctx.clearRect(0, 0, UI.labelCanvas.width, UI.labelCanvas.height);
+            
+            if (!showLabelsEnabled) {
+                labels.forEach(label => label.element.style.opacity = '0');
+                return;
+            }
+
+            // Sync canvas resolution to screen size
+            UI.labelCanvas.width = UI.labelCanvas.clientWidth;
+            UI.labelCanvas.height = UI.labelCanvas.clientHeight;
+
+            // Determine if active motion is happening based on FSM state
+            const stage = productionRun.activeStage;
+            const isMoving = isPlaying && stage !== 'IDLE';
+
+            const tempV = new THREE.Vector3();
+            labels.forEach(label => {
+                label.target.getWorldPosition(tempV);
+                tempV.project(camera);
+                
+                if (tempV.z > 1) {
+                    label.element.style.opacity = '0';
+                    return;
+                }
+                
+                const targetX = (tempV.x * 0.5 + 0.5) * UI.labelCanvas.width;
+                const targetY = (tempV.y * -0.5 + 0.5) * UI.labelCanvas.height;
+                
+                const labelX = targetX + label.dx;
+                const labelY = targetY + label.dy;
+
+                // Determine this label's active opacity
+                let opacity = 1.0;
+                if (isMoving) {
+                    opacity = 0.3;
+                    if (label.element.innerText.includes("CONVEYOR") || label.element.innerText.includes("ROLL")) {
+                        if (stage === 'FEED' || stage === 'PLACE_OUTPUT') opacity = 0.1;
+                    }
+                    if (label.element.innerText.includes("CUTTER")) {
+                        if (stage === 'CUT') opacity = 0.1;
+                    }
+                    if (label.element.innerText.includes("SCARA") || label.element.innerText.includes("EFFECTOR")) {
+                        if (['PICK_RAW', 'PLACE_BED', 'EMBOSS', 'PICK_FINISHED', 'PLACE_OUTPUT'].includes(stage)) {
+                            opacity = 0.1;
+                        }
+                    }
+                }
+
+                label.element.style.opacity = opacity;
+                label.element.style.left = `${labelX}px`;
+                label.element.style.top = `${labelY}px`;
+
+                // Draw connecting leader line starting from the target mesh projecting center, 
+                // and ending at the nearest edge/corner of the text label bounding box
+                if (opacity > 0.15) {
+                    const rect = label.element.getBoundingClientRect();
+                    const containerRect = UI.canvasContainer.getBoundingClientRect();
+                    const lx = rect.left - containerRect.left;
+                    const ly = rect.top - containerRect.top;
+                    const w = rect.width;
+                    const h = rect.height;
+
+                    // Calculate nearest point on bounding box
+                    let lineEndX = lx + w / 2;
+                    let lineEndY = ly + h / 2;
+                    if (labelX < targetX) {
+                        lineEndX = lx + w; // Right edge of label
+                    } else if (labelX > targetX) {
+                        lineEndX = lx;     // Left edge of label
+                    }
+                    if (labelY < targetY) {
+                        lineEndY = ly + h; // Bottom edge of label
+                    } else if (labelY > targetY) {
+                        lineEndY = ly;     // Top edge of label
+                    }
+
+                    ctx.beginPath();
+                    ctx.moveTo(targetX, targetY);
+                    ctx.lineTo(lineEndX, lineEndY);
+                    ctx.strokeStyle = 'rgba(102, 252, 241, 0.75)'; // vibrant cyan accent
+                    ctx.lineWidth = 1.5;
+                    ctx.setLineDash([4, 3]); // clean dashed lines
+                    ctx.stroke();
+                }
+            });
+        }
+
+        function toggleLabelsVisibility() {
+            labels.forEach(label => {
+                label.element.style.display = showLabelsEnabled ? 'block' : 'none';
+            });
+            if (!showLabelsEnabled) {
+                const ctx = UI.labelCanvas.getContext('2d');
+                ctx.clearRect(0, 0, UI.labelCanvas.width, UI.labelCanvas.height);
+            }
+        }
+
+        // ----------------------------------------------------
+        // Camera Positioning & Views Preset
+        // ----------------------------------------------------
+        let cameraTween = null;
+        function tweenCameraTo(targetPos, targetLookAt, duration = 700) {
+            if (cameraTween) cancelAnimationFrame(cameraTween);
+            
+            const startPos = camera.position.clone();
+            const startLookAt = controls ? controls.target.clone() : new THREE.Vector3(0, -5, 0);
+            const startTime = performance.now();
+            
+            function animTween(now) {
+                const elapsed = now - startTime;
+                const progress = Math.min(1.0, elapsed / duration);
+                
+                // cubic ease-in-out
+                const t = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+                
+                camera.position.lerpVectors(startPos, targetPos, t);
+                if (controls) {
+                    controls.target.lerpVectors(startLookAt, targetLookAt, t);
+                }
+                
+                if (progress < 1.0) {
+                    cameraTween = requestAnimationFrame(animTween);
+                } else {
+                    cameraTween = null;
+                }
+            }
+            cameraTween = requestAnimationFrame(animTween);
+        }
+
+        function setCameraView(preset) {
+            const targetPos = new THREE.Vector3();
+            const targetLookAt = new THREE.Vector3();
+            if (preset === 'wide') {
+                targetPos.set(0, 45, 95);
+                targetLookAt.set(0, -5, 0);
+            } else if (preset === 'conveyor') {
+                targetPos.set(-45, 15, 30);
+                targetLookAt.set(-45, -5, 0);
+            } else if (preset === 'scara') {
+                targetPos.set(20, 25, 45);
+                targetLookAt.set(20, 5, -10);
+            }
+            tweenCameraTo(targetPos, targetLookAt);
+        }
+
+        function zoomToOpto(optoMesh) {
+            if (!autoZoomEnabled) return;
+            const targetLookAt = new THREE.Vector3();
+            optoMesh.getWorldPosition(targetLookAt);
+            const targetPos = new THREE.Vector3(targetLookAt.x, targetLookAt.y + 8, targetLookAt.z + 18);
+            tweenCameraTo(targetPos, targetLookAt);
+        }
+
+        // ----------------------------------------------------
+        // Raycasting & Hover Handlers for Optocouplers
+        // ----------------------------------------------------
+        let raycaster = new THREE.Raycaster();
+        let mouse = new THREE.Vector2();
+
+        function setupRaycasting() {
+            window.addEventListener('mousemove', (e) => {
+                // Calculate mouse position in normalized device coordinates
+                const xOffset = 380; // panel width
+                if (e.clientX < xOffset) {
+                    UI.optocouplerTooltip.style.display = 'none';
+                    return;
+                }
+                mouse.x = ((e.clientX - xOffset) / (window.innerWidth - xOffset)) * 2 - 1;
+                mouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
+
+                raycaster.setFromCamera(mouse, camera);
+                const intersects = raycaster.intersectObjects([machineObjects.opto1, machineObjects.opto2], true);
+
+                if (intersects.length > 0) {
+                    const intersectedObject = intersects[0].object;
+                    let parentModule = intersectedObject.parent;
+                    while (parentModule && !parentModule.name.startsWith("OPTO")) {
+                        parentModule = parentModule.parent;
+                    }
+                    
+                    if (parentModule) {
+                        UI.tooltipTitle.innerText = parentModule.name;
+                        UI.optocouplerTooltip.style.display = 'block';
+                        UI.optocouplerTooltip.style.left = `${e.clientX + 15}px`;
+                        UI.optocouplerTooltip.style.top = `${e.clientY + 15}px`;
+                    }
+                } else {
+                    UI.optocouplerTooltip.style.display = 'none';
+                }
+            });
+        }
+
+        // ----------------------------------------------------
+        // Symmetrical 5-bar SCARA Kinematics Resolver
+        // ----------------------------------------------------
+        function updateSCARALinkages(targetX, targetY, targetZ) {
+            // Pivots (Motors mounted at Y = 15.5, horizontal linkage plane is Y = 17)
+            // Shoulders moved to Z = -12 so the workspace covers the full conveyor
+            const L1_Shoulder = new THREE.Vector2(15, -12);
+            const R1_Shoulder = new THREE.Vector2(25, -12);
+            
+            // Link Lengths sized to reach full conveyor (X=-2.5 to X=39.5, Z=0)
+            const l_prox = 20.0;
+            const l_dist = 20.0;
+
+            // Target positioning in horizontal plane (X, Z depth)
+            const T = new THREE.Vector2(targetX, targetY);
+
+            // Solve Left Joint angles and elbow position
+            const lSol = solveTwoBarLinkage(L1_Shoulder, T, l_prox, l_dist, true);
+            // Solve Right Joint angles and elbow position
+            const rSol = solveTwoBarLinkage(R1_Shoulder, T, l_prox, l_dist, false);
+
+            if (lSol && rSol) {
+                const linkYHeight = 17.0; // Raised flat linkage height plane
+                const S_L = new THREE.Vector3(15, linkYHeight, -12);
+                const S_R = new THREE.Vector3(25, linkYHeight, -12);
+                
+                const E_L = new THREE.Vector3(lSol.x, linkYHeight, lSol.y);
+                const E_R = new THREE.Vector3(rSol.x, linkYHeight, rSol.y);
+                const C = new THREE.Vector3(targetX, linkYHeight, targetY);
+                
+                // Position and point Left Proximal Link
+                machineObjects.leftProximal.position.copy(S_L);
+                machineObjects.leftProximal.lookAt(E_L);
+                
+                // Position and point Left Distal Link
+                machineObjects.leftDistal.position.copy(E_L);
+                machineObjects.leftDistal.lookAt(C);
+                
+                // Position and point Right Proximal Link
+                machineObjects.rightProximal.position.copy(S_R);
+                machineObjects.rightProximal.lookAt(E_R);
+                
+                // Position and point Right Distal Link
+                machineObjects.rightDistal.position.copy(E_R);
+                machineObjects.rightDistal.lookAt(C);
+
+                // Update spline vertical shaft connecting linkages to carriage stem (travels down to targetZ)
+                if (machineObjects.scaraSpline) {
+                    const splineHeight = Math.max(0.1, Math.abs(linkYHeight - targetZ));
+                    machineObjects.scaraSpline.position.set(targetX, targetZ + splineHeight / 2, targetY);
+                    machineObjects.scaraSpline.scale.set(1, splineHeight, 1);
+                }
+            }
+
+            // Move the fused end-effector plate to matching position
+            machineObjects.endEffector.position.set(targetX, targetZ, targetY);
+            
+            // Update Coordinate telemetry label
+            UI.valSCARACoord.innerText = `X:${targetX.toFixed(1)}, Y:${targetY.toFixed(1)}`;
+        }
+
+        // Intersection of two circles in 2D to solve joint angles
+        function solveTwoBarLinkage(base, target, r1, r2, isLeftArm) {
+            const d = base.distanceTo(target);
+            if (d > r1 + r2 || d < Math.abs(r1 - r2)) return null; // out of reach
+
+            const a = (r1*r1 - r2*r2 + d*d) / (2 * d);
+            const h = Math.sqrt(Math.max(0, r1*r1 - a*a));
+
+            // Pivot target vector direction
+            const dirX = (target.x - base.x) / d;
+            const dirY = (target.y - base.y) / d;
+
+            const midX = base.x + a * dirX;
+            const midY = base.y + a * dirY;
+
+            // Elbow Joint position coordinates
+            let elbowX, elbowY;
+            if (isLeftArm) {
+                elbowX = midX - h * dirY;
+                elbowY = midY + h * dirX;
+            } else {
+                elbowX = midX + h * dirY;
+                elbowY = midY - h * dirX;
+            }
+
+            const theta1 = Math.atan2(elbowY - base.y, elbowX - base.x);
+            
+            // Distal relative angle
+            const distalVectorX = target.x - elbowX;
+            const distalVectorY = target.y - elbowY;
+            const absoluteDistalTheta = Math.atan2(distalVectorY, distalVectorX);
+            const theta2 = absoluteDistalTheta - theta1;
+
+            return { x: elbowX, y: elbowY, theta1: theta1, theta2: theta2 };
+        }
+
+        // ----------------------------------------------------
+        // Finite State Machine (FSM) State Animations
+        // ----------------------------------------------------
+        let stageTime = 0.0;
+        let scaraTarget = new THREE.Vector3(20, 0, 0); // Active SCARA position
+        let paperSheetPosition = new THREE.Vector3(-75, -9.8, 0);
+        let scaraZ = 15.0; // Carriage Z height
+
+        function updateFSM(delta) {
+            if (productionRun.activeStage === 'IDLE') return;
+
+            // Check step logic if paused
+            if (!isPlaying) {
+                if (productionRun.stepRequested) {
+                    productionRun.stepRequested = false; // consume step
+                } else {
+                    return; // paused, wait
+                }
+            }
+
+            stageTime += delta * simSpeed;
+            const activePage = productionRun.pagesData[productionRun.currentPageIndex];
+
+            // 1. Stage: FEED
+            if (productionRun.activeStage === 'FEED') {
+                updateFSMFeed(activePage);
+            }
+            // 2. Stage: CUT
+            else if (productionRun.activeStage === 'CUT') {
+                updateFSMCut();
+            }
+            // 3. Stage: ADVANCE (Conveyor scrolls sheet to emboss zone)
+            else if (productionRun.activeStage === 'ADVANCE') {
+                updateFSMAdvance();
+            }
+            // 4. Stage: EMBOSS
+            else if (productionRun.activeStage === 'EMBOSS') {
+                updateFSMEmboss(activePage);
+            }
+            // 5. Stage: PICK (Arm retrieves sheet with vacuum Head A)
+            else if (productionRun.activeStage === 'PICK') {
+                updateFSMPick();
+            }
+            // 6. Stage: PLACE_OUTPUT
+            else if (productionRun.activeStage === 'PLACE_OUTPUT') {
+                updateFSMPlaceOutput();
+            }
+        }
+
+        // --- Stage Details Animators ---
+        
+        function updateFSMFeed(page) {
+            UI.statusValStage.innerText = "PAPER FEEDING";
+            UI.statusValStage.style.color = "var(--orange)";
+            UI.valActiveHead.innerText = "IDLE";
+            UI.valActiveHead.style.color = "var(--text)";
+            
+            // Pulse Conveyor Optocoupler
+            pulseOptocoupler(machineObjects.opto1, true);
+            UI.valOpto1.innerText = "LOW (Moving)";
+            UI.valOpto1.style.color = "var(--orange)";
+            UI.valStepperLock.innerText = "RELEASED (Feeding)";
+            UI.valStepperLock.style.color = "var(--text)";
+
+            // Spawn new raw paper sheet on cutter position (BoxGeometry for physical thickness)
+            // Checked defensively at every frame in case of a timing reset
+            if (!machineObjects.paperSheet) {
+                const sheetGeo = new THREE.BoxGeometry(36, 0.3, 26);
+                const sheetMat = new THREE.MeshStandardMaterial({ color: 0xfdfbf7, roughness: 0.9 });
+                machineObjects.paperSheet = new THREE.Mesh(sheetGeo, sheetMat);
+                machineObjects.paperSheet.position.set(-35, -9.59, 0);
+                machineObjects.paperSheet.castShadow = true;
+                machineObjects.paperSheet.receiveShadow = true;
+                scene.add(machineObjects.paperSheet);
+                machineObjects.embossedDotsOnSheet = [];
+            }
+
+            // Auto-focus zoom to conveyor opto
+            if (stageTime < 0.1) {
+                logConsole(`[SYS] Page #${productionRun.currentPageIndex + 1}: Conveyor stepper active. Loading paper sheet...`, 'sys');
+                zoomToOpto(machineObjects.opto1);
+            }
+
+            const duration = 2.0; // seconds for feed cycle
+            const progress = Math.min(1.0, stageTime / duration);
+
+            // Step-and-repeat: simulate step ticks
+            const stepTicks = Math.floor(progress * 10) / 10;
+            const xPos = -35 + stepTicks * 36; // Travel from cutter (X=-35) to platen center (X=1)
+            machineObjects.paperSheet.position.x = xPos;
+            
+            // Scroll conveyor ticks
+            machineObjects.conveyorTicks.position.x = -15 - (progress * 10) % 4;
+            // Roll unspool rotate
+            machineObjects.paperRoll.rotation.y = progress * Math.PI;
+
+            if (progress >= 1.0) {
+                // Done feed stage
+                pulseOptocoupler(machineObjects.opto1, false);
+                UI.valOpto1.innerText = "HIGH (Halt)";
+                UI.valOpto1.style.color = "var(--success)";
+                UI.valStepperLock.innerText = "LOCKED (Holding)";
+                UI.valStepperLock.style.color = "var(--success)";
+                
+                logConsole("[SYS] Paper advanced to boundary. Stepper halted. Settle delay active.", 'sys');
+                
+                setTimeout(() => {
+                    productionRun.activeStage = 'CUT';
+                    stageTime = 0;
+                }, 400 / simSpeed); // settle delay simulation
+            }
+        }
+
+        function updateFSMCut() {
+            UI.statusValStage.innerText = "PAPER CUTTING";
+            UI.statusValStage.style.color = "var(--orange)";
+
+            if (stageTime < 0.05) {
+                logConsole("[SYS] Conveyor locked. Actuating vertical guillotine chisel cutter.", 'sys');
+            }
+
+            const duration = 0.8;
+            const progress = stageTime / duration;
+            
+            const startY = 10.0;
+            const contactY = -5.8; // bottom of blade at -9.8 (height is 8)
+            const travel = startY - contactY; // 15.8
+
+            // Sharp drop-down and retraction easing
+            if (progress < 0.15) {
+                // Fast strike down
+                machineObjects.guillotineBlade.position.y = startY - (progress / 0.15) * travel;
+            } else if (progress < 0.25) {
+                // Brief hold & trigger impact
+                machineObjects.guillotineBlade.position.y = contactY;
+                if (!machineObjects.cutImpactRing.visible) {
+                    machineObjects.cutImpactRing.visible = true;
+                    machineObjects.cutImpactRing.scale.set(0.1, 0.1, 0.1);
+                    machineObjects.cutImpactRing.material.opacity = 1.0;
+                    // Trigger camera shake
+                    cameraShake = 0.6;
+                }
+            } else if (progress < 1.0) {
+                // Smooth retraction
+                const retractProg = (progress - 0.25) / 0.75;
+                machineObjects.guillotineBlade.position.y = contactY + retractProg * travel;
+            } else {
+                machineObjects.guillotineBlade.position.y = startY; // Return home
+                machineObjects.cutImpactRing.visible = false;
+                productionRun.activeStage = 'ADVANCE';
+                stageTime = 0;
+                logConsole("[SYS] Sheet separated. Advancing sheet on conveyor to SCARA embossing zone.", 'sys');
+            }
+        }
+
+        function updateFSMAdvance() {
+            UI.statusValStage.innerText = "ADVANCE ZONE";
+            UI.statusValStage.style.color = "var(--orange)";
+            UI.valActiveHead.innerText = "IDLE";
+            UI.valActiveHead.style.color = "var(--text)";
+            
+            // Pulse Conveyor Optocoupler
+            pulseOptocoupler(machineObjects.opto1, true);
+            UI.valOpto1.innerText = "LOW (Moving)";
+            UI.valOpto1.style.color = "var(--orange)";
+            UI.valStepperLock.innerText = "RELEASED (Advancing)";
+            UI.valStepperLock.style.color = "var(--text)";
+            
+            const duration = 2.0; // conveyor advance cycle
+            const progress = Math.min(1.0, stageTime / duration);
+            
+            const stepTicks = Math.floor(progress * 10) / 10;
+            const xPos = -17 + stepTicks * 18; // Move from cutter (X=-17) to emboss zone center (X=1)
+            machineObjects.paperSheet.position.x = xPos;
+            
+            // Scroll conveyor ticks
+            machineObjects.conveyorTicks.position.x = -15 - (progress * 10) % 4;
+            
+            if (progress >= 1.0) {
+                pulseOptocoupler(machineObjects.opto1, false);
+                UI.valOpto1.innerText = "HIGH (Halt)";
+                UI.valOpto1.style.color = "var(--success)";
+                UI.valStepperLock.innerText = "LOCKED (Holding)";
+                UI.valStepperLock.style.color = "var(--success)";
+                
+                productionRun.activeStage = 'EMBOSS';
+                productionRun.cellIndex = 0;
+                stageTime = 0;
+                logConsole("[SYS] Sheet positioned in emboss zone. SCARA starting coordinate traversal.", 'sys');
+            }
+        }
+
+        function updateFSMEmboss(page) {
+            UI.statusValStage.innerText = "EMBOSSING TEXT";
+            UI.statusValStage.style.color = "var(--amber)";
+            UI.valActiveHead.innerText = "EMBOSS HEAD B";
+            UI.valActiveHead.style.color = "var(--amber)";
+
+            const cells = page.brailleCells;
+            if (productionRun.cellIndex >= cells.length) {
+                // Completed page embossing!
+                productionRun.activeStage = 'PICK';
+                stageTime = 0;
+                logConsole("[MCU] Text coordinate traversal complete. Initiating vacuum sheet pick...", 'mcu');
+                return;
+            }
+
+            const cell = cells[productionRun.cellIndex];
+            UI.statusValCell.innerText = `CELL ${productionRun.cellIndex + 1} / ${cells.length} ('${cell.char}')`;
+
+            // Head B (solenoids) target coordinate is local (cell.x, cell.y) on paper
+            // Paper center is at (1, 0)
+            // Head B offset on end effector is -3.5 (left side)
+            // Target plate coordinate is: (1 + cell.x - (-3.5)) = 1 + cell.x + 3.5
+            const targetX = 1 + cell.x + 3.5;
+            const targetY = cell.y;
+
+            // Travel speed profile
+            const travelDuration = 0.4;
+            const progress = Math.min(1.0, stageTime / travelDuration);
+
+            // Fetch previous cell coordinates as start
+            let startX = 4.5, startY = 0;
+            if (productionRun.cellIndex > 0) {
+                const prevCell = cells[productionRun.cellIndex - 1];
+                startX = 1 + prevCell.x + 3.5;
+                startY = prevCell.y;
+            }
+
+            const curX = startX + (targetX - startX) * progress;
+            const curY = startY + (targetY - startY) * progress;
+            
+            // Hold vertical height close to sheet (Z = -4.0, giving ~1.5cm clearance)
+            updateSCARALinkages(curX, curY, -4.0);
+
+            if (progress >= 1.0) {
+                // Strike solenoids
+                const strikeDuration = 0.3;
+                const strikeProgress = (stageTime - travelDuration) / strikeDuration;
+
+                if (strikeProgress < 0.3) {
+                    // Strike Down
+                    const stroke = (strikeProgress / 0.3) * 1.6; // 1.6mm stroke
+                    
+                    // Animate active pins downward
+                    cell.dots.forEach(dot => {
+                        const pin = machineObjects.solenoidPins[dot - 1];
+                        if (pin) pin.children[0].position.y = 1.0 - stroke;
+                    });
+                    
+                    UI.valEmbossForce.innerText = `${(cell.dots.length * 1.5).toFixed(1)} N`;
+                } else if (strikeProgress < 1.0) {
+                    // Retract
+                    const strokeRetract = 1.6 - ((strikeProgress - 0.3) / 0.7) * 1.6;
+                    
+                    cell.dots.forEach(dot => {
+                        const pin = machineObjects.solenoidPins[dot - 1];
+                        if (pin) pin.children[0].position.y = 1.0 - strokeRetract;
+                    });
+                } else {
+                    // Lock active pins back to retracted
+                    cell.dots.forEach(dot => {
+                        const pin = machineObjects.solenoidPins[dot - 1];
+                        if (pin) pin.children[0].position.y = 1.0;
+                    });
+                    
+                    UI.valEmbossForce.innerText = "0.0 N";
+
+                    // Spawn physical 3D embossed dots on the paper sheet representation (BoxGeometry coordinates)
+                    cell.dots.forEach(dot => {
+                        // Dot offset relative to cell center
+                        // Dot 1: (-1.25, 2.5) | Dot 4: (1.25, 2.5)
+                        const offset_x = (dot <= 3) ? -1.25 : 1.25;
+                        const offset_y = ((dot - 1) % 3 === 0) ? 2.5 : (((dot - 1) % 3 === 1) ? 0.0 : -2.5);
+                        
+                        const dotGeo = new THREE.SphereGeometry(0.45, 16, 16);
+                        const dotMat = new THREE.MeshStandardMaterial({ color: 0xffa500, roughness: 0.3, metalness: 0.1 }); // high contrast bright amber
+                        const dotMesh = new THREE.Mesh(dotGeo, dotMat);
+                        dotMesh.scale.set(1, 0.5, 1); // flat bumps
+                        // Position local on non-rotated paper sheet box:
+                        // Local X = width (X)
+                        // Local Y = height (Y = 0.16 is above surface)
+                        // Local Z = depth (Z = cell.y + offset)
+                        dotMesh.position.set(cell.x + offset_x, 0.16, cell.y + offset_y);
+                        
+                        machineObjects.paperSheet.add(dotMesh);
+                    });
+
+                    // Next Cell
+                    productionRun.cellIndex++;
+                    stageTime = 0;
+                }
+            }
+        }
+
+        function updateFSMPick() {
+            UI.statusValStage.innerText = "PICK PRINTED";
+            UI.statusValStage.style.color = "var(--accent)";
+            UI.valActiveHead.innerText = "VACUUM HEAD A";
+            UI.valActiveHead.style.color = "var(--accent)";
+
+            pulseOptocoupler(machineObjects.opto2, true);
+            UI.valOpto2.innerText = "LOW (Moving)";
+            UI.valOpto2.style.color = "var(--orange)";
+
+            const duration = 1.0;
+            const progress = Math.min(1.0, stageTime / duration);
+
+            // Move Head A directly onto finished sheet sitting in the emboss zone (conveyor center X=1).
+            // Head A offset on end effector is +3.5. Target plate carriage center C is (1 - 3.5) = -2.5
+            let startX = -2.5, startY = 0;
+            const targetX = -2.5, targetY = 0;
+            
+            // Fetch end of embossing cell coordinates as start
+            if (productionRun.pagesData[productionRun.currentPageIndex].brailleCells.length > 0) {
+                const lastCell = productionRun.pagesData[productionRun.currentPageIndex].brailleCells[
+                    productionRun.pagesData[productionRun.currentPageIndex].brailleCells.length - 1
+                ];
+                startX = 1 + lastCell.x + 3.5; // Previous plate center C (Head B offset)
+                startY = lastCell.y;
+            }
+
+            const curX = startX + (targetX - startX) * progress;
+            const curY = startY + (targetY - startY) * progress;
+            
+            // Elevated travel height — toolplate hovers with clearance
+            const zH = 0.0 + (progress * 5.0);
+            updateSCARALinkages(curX, curY, zH);
+
+            if (progress >= 1.0) {
+                // Lower down carriage stem to touch the sheet
+                const descDuration = 0.5;
+                const descProgress = (stageTime - duration) / descDuration;
+                if (descProgress < 1.0) {
+                    // Descend from travel height (5.0) down to paper contact (-5.5)
+                    const descZH = 5.0 - (descProgress * (5.0 - (-5.5)));
+                    updateSCARALinkages(targetX, targetY, descZH);
+                } else {
+                    // Activate vacuum
+                    machineObjects.suctionGroup.visible = true;
+                    logConsole("[MCU] Suction active. Finished sheet loaded from conveyor.", 'mcu');
+                    
+                    // Attach sheet to end-effector (Head A offset is +3.5)
+                    machineObjects.endEffector.add(machineObjects.paperSheet);
+                    machineObjects.paperSheet.position.set(3.5, -4.5, 0);
+                    machineObjects.paperSheet.rotation.set(0, 0, 0);
+                    
+                    pulseOptocoupler(machineObjects.opto2, false);
+                    UI.valOpto2.innerText = "HIGH (Halt)";
+                    UI.valOpto2.style.color = "var(--success)";
+                    
+                    productionRun.activeStage = 'PLACE_OUTPUT';
+                    stageTime = 0;
+                }
+            }
+        }
+
+        function updateFSMPlaceOutput() {
+            UI.statusValStage.innerText = "STACKING PAGE";
+            UI.statusValStage.style.color = "var(--accent)";
+
+            pulseOptocoupler(machineObjects.opto2, true);
+            UI.valOpto2.innerText = "LOW (Moving)";
+            UI.valOpto2.style.color = "var(--orange)";
+
+            const duration = 1.5;
+            const progress = Math.min(1.0, stageTime / duration);
+
+            // Move to Output stack (X = 43, Y = 0) with Head A (offset +3.5).
+            // Head A coordinates means plate centers at (43 - 3.5 = 39.5, 0).
+            const startX = -2.5, startY = 0; // Starts from conveyor emboss zone center C
+            const targetX = 39.5, targetY = 0;
+
+            const curX = startX + (targetX - startX) * progress;
+            const curY = startY + (targetY - startY) * progress;
+
+            // Travel profile: lift toolplate up while SCARA travels horizontally
+            const arcHeight = 8;
+            const zH = 0.0 - Math.sin(progress * Math.PI) * arcHeight;
+            updateSCARALinkages(curX, curY, zH);
+
+            if (progress >= 1.0) {
+                // Lower onto output stack
+                const stackCount = machineObjects.outputStackGroup.children.length;
+                const stackZHeight = stackCount * 0.4; // 0.4mm stack spacing
+                const targetReleaseZH = -9.5 + stackZHeight;
+
+                const releaseDuration = 0.5;
+                const relProgress = (stageTime - duration) / releaseDuration;
+                if (relProgress < 1.0) {
+                    const descZH = 5.0 - (relProgress * (5.0 - targetReleaseZH));
+                    updateSCARALinkages(targetX, targetY, descZH);
+                } else {
+                    // Release suction
+                    machineObjects.suctionGroup.visible = false;
+                    logConsole(`[SYS] Page #${productionRun.currentPageIndex + 1} stacked successfully to output tray.`, 'sys');
+                    
+                    // Unparent sheet and place onto stack
+                    machineObjects.outputStackGroup.add(machineObjects.paperSheet);
+                    machineObjects.paperSheet.rotation.set(0, 0, 0);
+                    machineObjects.paperSheet.position.set(0, stackZHeight, 0);
+                    
+                    // Release paper sheet reference so we create a new one next page
+                    machineObjects.paperSheet = null;
+
+                    pulseOptocoupler(machineObjects.opto2, false);
+                    UI.valOpto2.innerText = "HIGH (Halt)";
+                    UI.valOpto2.style.color = "var(--success)";
+
+                    // Advance page index
+                    productionRun.currentPageIndex++;
+                    if (productionRun.currentPageIndex < productionRun.totalPages) {
+                        productionRun.activeStage = 'FEED';
+                        stageTime = 0;
+                    } else {
+                        // Run finished!
+                        productionRun.activeStage = 'IDLE';
+                        logConsole(`[SYS] Production run complete. ${productionRun.totalPages} pages printed successfully.`, 'sys');
+                        
+                        UI.statusValStage.innerText = "FINISHED";
+                        UI.statusValStage.style.color = "var(--success)";
+                        
+                        // Return SCARA back home
+                        moveArmToHome();
+                    }
+                }
+            }
+        }
+
+        // Return SCARA back home smoothly after production complete
+        function moveArmToHome() {
+            let startT = 0;
+            const startX = machineObjects.endEffector.position.x;
+            const startY = machineObjects.endEffector.position.z;
+            const startZ = machineObjects.endEffector.position.y;
+
+            function animateHome() {
+                startT += 0.02 * simSpeed;
+                if (startT < 1.0) {
+                    const curX = startX + (20 - startX) * startT;
+                    const curY = startY + (0 - startY) * startT;
+                    const curZ = startZ + (5.0 - startZ) * startT; // Retract vertical spline to Z = 5.0 rest height
+                    updateSCARALinkages(curX, curY, curZ);
+                    requestAnimationFrame(animateHome);
+                } else {
+                    updateSCARALinkages(20, 0, 5.0);
+                }
+            }
+            animateHome();
+        }
+
+        // Pulse the internal LEDs of the optocouplers to show data flow
+        function pulseOptocoupler(optoMesh, active) {
+            const orangeLed = optoMesh.userData.orangeLed;
+            const blueLed = optoMesh.userData.blueLed;
+            
+            if (active) {
+                // Bright glow
+                orangeLed.material.color.setHex(0xffaa00);
+                setTimeout(() => {
+                    if (blueLed) blueLed.material.color.setHex(0x33aaff);
+                }, 100);
+            } else {
+                // Dim down
+                orangeLed.material.color.setHex(0x552200);
+                if (blueLed) blueLed.material.color.setHex(0x002255);
+            }
+        }
+
+        // ----------------------------------------------------
+        // Animation Loop & Render Setup
+        // ----------------------------------------------------
+        function animate() {
+            requestAnimationFrame(animate);
+
+            let delta = animClock.getDelta();
+            if (delta > 0.1) delta = 0.1; // Limit spike delays
+
+            // Dynamically scale paper web (threadedWeb) so it bridges the paper roll and the moving paperSheet
+            if (machineObjects.threadedWeb) {
+                if (machineObjects.paperSheet && machineObjects.paperSheet.parent === scene) {
+                    const rightEdge = machineObjects.paperSheet.position.x - 18; // Left edge of the sheet
+                    const leftEdge = -75; // Center of paper roll spindle
+                    const width = rightEdge - leftEdge;
+                    if (width > 0) {
+                        machineObjects.threadedWeb.visible = true;
+                        machineObjects.threadedWeb.scale.x = width / 16.0; // scale based on initial Box width of 16
+                        machineObjects.threadedWeb.position.x = leftEdge + width / 2;
+                    } else {
+                        machineObjects.threadedWeb.visible = false;
+                    }
+                } else {
+                    // No active sheet on conveyor, or sheet is parented under SCARA (picked up!)
+                    // Keep web extended up to the cutter at X = -17
+                    const rightEdge = -17;
+                    const leftEdge = -75;
+                    const width = rightEdge - leftEdge;
+                    machineObjects.threadedWeb.visible = true;
+                    machineObjects.threadedWeb.scale.x = width / 16.0;
+                    machineObjects.threadedWeb.position.x = leftEdge + width / 2;
+                }
+            }
+
+            updateFSM(delta);
+            
+            if (controls) controls.update();
+
+            // Animate impact ring expansion and fading
+            if (machineObjects.cutImpactRing && machineObjects.cutImpactRing.visible) {
+                const scaleSpeed = 30.0 * delta * simSpeed;
+                machineObjects.cutImpactRing.scale.x += scaleSpeed;
+                machineObjects.cutImpactRing.scale.y += scaleSpeed;
+                machineObjects.cutImpactRing.scale.z += scaleSpeed;
+                
+                const fadeSpeed = 3.0 * delta * simSpeed;
+                machineObjects.cutImpactRing.material.opacity = Math.max(0, machineObjects.cutImpactRing.material.opacity - fadeSpeed);
+                if (machineObjects.cutImpactRing.material.opacity <= 0) {
+                    machineObjects.cutImpactRing.visible = false;
+                }
+            }
+
+            updateLabelsPosition();
+            
+            // Apply camera shake if active
+            const origCamPos = camera.position.clone();
+            if (cameraShake > 0) {
+                camera.position.x += (Math.random() - 0.5) * cameraShake * 1.5;
+                camera.position.y += (Math.random() - 0.5) * cameraShake * 1.5;
+                camera.position.z += (Math.random() - 0.5) * cameraShake * 1.5;
+                cameraShake = Math.max(0, cameraShake - delta * 3.0);
+            }
+
+            renderer.render(scene, camera);
+
+            // Restore camera position for next orbit update
+            camera.position.copy(origCamPos);
+
+            // Update UI status strip
+            if (productionRun.activeStage !== 'IDLE') {
+                UI.statusValRun.innerText = `PAGE ${productionRun.currentPageIndex + 1} / ${productionRun.totalPages}`;
+            } else {
+                UI.statusValRun.innerText = "RUN IDLE";
+                UI.statusValStage.innerText = "IDLE";
+                UI.statusValStage.style.color = "var(--text-dim)";
+                UI.statusValCell.innerText = "CELL 0/0";
+            }
+        }
+
+        function onWindowResize() {
+            const xOffset = 380;
+            camera.aspect = (window.innerWidth - xOffset) / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth - xOffset, window.innerHeight);
+        }
+
+        // ----------------------------------------------------
+        // Initialize Entry Point
+        // ----------------------------------------------------
+        window.onload = () => {
+            initSetupUI();
+            init3D();
+            animate();
+            logConsole("System diagnostic complete. Symmetrical 5-bar parallel arms operational.", 'sys');
+            logConsole("TMC2209 and TMC5160 drivers active. ADuM1401 isolators verified.", 'sys');
+        };
+    </script>
+</body>
+</html>
