@@ -2911,10 +2911,10 @@
     <!-- ====== STICKY NAVIGATION ====== -->
     <nav class="sticky-nav" id="stickyNav">
         <a href="#team" class="active">Our Team</a>
+        <a href="#productionSim">6-SPEED Production</a>
         <a href="#howItWorks">How It Works</a>
         <a href="#components">ADI Components</a>
         <a href="#isometric">3D Visualizer</a>
-        <a href="#productionSim">6-SPEED Production</a>
         <a href="#impact">Social Impact</a>
         <a href="#competition">Anveshan Alignment</a>
     </nav>
@@ -3010,6 +3010,32 @@
                     <a href="#">ðŸ”— GitHub</a>
                     <a href="#">ðŸ’¼ LinkedIn</a>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ====== SECTION: 6-SPEED PRODUCTION LINE SIMULATION ====== -->
+    <section id="productionSim" class="content-section">
+        <div class="section-title-group">
+            <h2>6-SPEED Production Line Simulation</h2>
+            <p>Interactive 3D simulation of the full Braille book-printing pipeline — FEED → CUT → ADVANCE → EMBOSS → PICK → PLACE</p>
+        </div>
+
+        <div class="production-sim-wrapper">
+            <div class="production-sim-toolbar">
+                <span class="production-sim-badge">⚡ LIVE 3D SIMULATION</span>
+                <button onclick="document.getElementById('productionSimFrame').requestFullscreen()" class="production-sim-fullscreen-btn" title="Press Escape to exit fullscreen">
+                    ⛶ Fullscreen
+                </button>
+            </div>
+            <div class="production-sim-container">
+                <iframe 
+                    src="6speed-simulation.html" 
+                    id="productionSimFrame"
+                    title="6-SPEED Production Line Simulation"
+                    allowfullscreen
+                    loading="lazy"
+                ></iframe>
             </div>
         </div>
     </section>
@@ -3270,31 +3296,6 @@
         </div>
     </section>
 
-    <!-- ====== SECTION: 6-SPEED PRODUCTION LINE SIMULATION ====== -->
-    <section id="productionSim" class="content-section">
-        <div class="section-title-group">
-            <h2>6-SPEED Production Line Simulation</h2>
-            <p>Interactive 3D simulation of the full Braille book-printing pipeline â€” FEED â†’ CUT â†’ ADVANCE â†’ EMBOSS â†’ PICK â†’ PLACE</p>
-        </div>
-
-        <div class="production-sim-wrapper">
-            <div class="production-sim-toolbar">
-                <span class="production-sim-badge">âš¡ LIVE 3D SIMULATION</span>
-                <button onclick="document.getElementById('productionSimFrame').requestFullscreen()" class="production-sim-fullscreen-btn" title="Press Escape to exit fullscreen">
-                    â›¶ Fullscreen
-                </button>
-            </div>
-            <div class="production-sim-container">
-                <iframe 
-                    src="6speed-simulation.html" 
-                    id="productionSimFrame"
-                    title="6-SPEED Production Line Simulation"
-                    allowfullscreen
-                    loading="lazy"
-                ></iframe>
-            </div>
-        </div>
-    </section>
 
     <!-- ====== SECTION 5: IMPACT & COMPARISON ====== -->
     <section id="impact" class="content-section">
