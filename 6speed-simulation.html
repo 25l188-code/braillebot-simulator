@@ -1415,8 +1415,28 @@
                     focusOnObject(machineObjects.conveyorTicks, 1.8);
                 }
             } else if (preset === 'scara') {
-                // Focus on SCARA base and linkage arms
-                if (machineObjects.motorHousingL) {
+                // Focus on the entire 5-bar SCARA linkage mechanism
+                const box = new THREE.Box3();
+                const scaraParts = [
+                    machineObjects.motorHousingL,
+                    machineObjects.motorHousingR,
+                    machineObjects.leftProximal,
+                    machineObjects.leftDistal,
+                    machineObjects.rightProximal,
+                    machineObjects.rightDistal,
+                    machineObjects.scaraSpline,
+                    machineObjects.endEffector
+                ];
+                let hasParts = false;
+                scaraParts.forEach(part => {
+                    if (part) {
+                        box.expandByObject(part);
+                        hasParts = true;
+                    }
+                });
+                if (hasParts && !box.isEmpty()) {
+                    focusOnBox(box, 1.4);
+                } else if (machineObjects.motorHousingL) {
                     focusOnObject(machineObjects.motorHousingL, 3.2);
                 }
             } else if (preset === 'roller') {
