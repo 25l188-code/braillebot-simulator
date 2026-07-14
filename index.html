@@ -2063,6 +2063,171 @@
             border-left: 3px solid var(--accent);
         }
 
+        /* Interactive BOM Explorer */
+        .bom-explorer-container {
+            margin-top: 3rem;
+            background: var(--bg-panel);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .bom-explorer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .bom-explorer-title {
+            text-align: left;
+        }
+
+        .bom-explorer-title h3 {
+            font-size: 1.4rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.5rem;
+            color: var(--text-bright);
+        }
+
+        .bom-explorer-title p {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        .bom-filter-bar {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .bom-filter-btn {
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            color: var(--text-muted);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .bom-filter-btn:hover {
+            border-color: var(--accent);
+            color: var(--text-bright);
+        }
+
+        .bom-filter-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #fff;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        .bom-search-box {
+            position: relative;
+            width: 250px;
+        }
+
+        .bom-search-input {
+            width: 100%;
+            background: var(--bg-body);
+            border: 1px solid var(--border);
+            color: var(--text-bright);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+
+        .bom-search-input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 5px var(--accent);
+        }
+
+        /* Budget progress bar */
+        .bom-budget-summary {
+            margin-top: 1.5rem;
+            padding: 1.2rem;
+            background: rgba(245, 158, 11, 0.02);
+            border: 1px solid rgba(245, 158, 11, 0.1);
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .bom-budget-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .bom-budget-meta span.lbl {
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-transform: uppercase;
+        }
+
+        .bom-budget-meta span.val {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+        }
+
+        .bom-progress-container {
+            flex: 1;
+            min-width: 200px;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .bom-progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+
+        .bom-progress-track {
+            height: 8px;
+            background: var(--bg-body);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .bom-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent) 0%, var(--accent-bright) 100%);
+            width: 0%;
+            transition: width 0.8s ease-in-out;
+        }
+
+        /* Badges */
+        .badge-bom-subsystem {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 700;
+            border-radius: 4px;
+            text-transform: uppercase;
+            text-align: center;
+        }
+
+        .badge-bom-subsystem.adi { background: rgba(0, 229, 255, 0.1); color: var(--cyan); border: 1px solid rgba(0, 229, 255, 0.2); }
+        .badge-bom-subsystem.actuators { background: rgba(230, 126, 34, 0.1); color: #e67e22; border: 1px solid rgba(230, 126, 34, 0.2); }
+        .badge-bom-subsystem.mechanics { background: rgba(155, 89, 182, 0.1); color: #9b59b6; border: 1px solid rgba(155, 89, 182, 0.2); }
+        .badge-bom-subsystem.electrical { background: rgba(46, 204, 113, 0.1); color: #2ecc71; border: 1px solid rgba(46, 204, 113, 0.2); }
+        .badge-bom-subsystem.bowden { background: rgba(241, 196, 15, 0.1); color: #f1c40f; border: 1px solid rgba(241, 196, 15, 0.2); }
+
         /* ==========================================================================
            11. ADI ANVESHAN 2026 COMPETITION ALIGNMENT
            ========================================================================== */
@@ -3730,6 +3895,61 @@
                     </tr>
                 </tbody>
             </table>
+        </div>
+
+        <!-- Interactive Bill of Materials (BOM) Explorer -->
+        <div class="bom-explorer-container">
+            <div class="bom-explorer-header">
+                <div class="bom-explorer-title">
+                    <h3>Detailed Bill of Materials</h3>
+                    <p>Interactive component allocation, pricing metrics, and budget tracing</p>
+                </div>
+                <div class="bom-search-box">
+                    <input type="text" class="bom-search-input" id="bomSearchInput" placeholder="Search components...">
+                </div>
+                <div class="bom-filter-bar" id="bomFilterBar">
+                    <button class="bom-filter-btn active" data-filter="all">All</button>
+                    <button class="bom-filter-btn" data-filter="adi">ADI Silicon</button>
+                    <button class="bom-filter-btn" data-filter="actuators">Actuators / Sensors</button>
+                    <button class="bom-filter-btn" data-filter="mechanics">Mechanics</button>
+                    <button class="bom-filter-btn" data-filter="electrical">Power / Cables</button>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table class="comparison-table" style="width: 100%;">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">#</th>
+                            <th style="width: 130px;">Subsystem</th>
+                            <th>Part / Item Name</th>
+                            <th style="width: 60px; text-align: center;">Qty</th>
+                            <th style="width: 120px; text-align: right;">Unit Price (Rs.)</th>
+                            <th style="width: 120px; text-align: right;">Line Total (Rs.)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="bomTableBody">
+                        <!-- rows dynamically generated by Javascript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Budget summary bar -->
+            <div class="bom-budget-summary">
+                <div class="bom-budget-meta">
+                    <span class="lbl">Category Subtotal</span>
+                    <span class="val" id="bomSubtotalVal">&#8377;19,540</span>
+                </div>
+                <div class="bom-progress-container">
+                    <div class="bom-progress-label">
+                        <span>Allocation percentage of total budget</span>
+                        <span id="bomAllocationPercent">100%</span>
+                    </div>
+                    <div class="bom-progress-track">
+                        <div class="bom-progress-bar" id="bomProgressBar" style="width: 100%;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
@@ -6194,6 +6414,107 @@
         setInterval(triggerAutoDualPrint, 8000);
         // Initial run delay of 3 seconds on load
         setTimeout(triggerAutoDualPrint, 3000);
+
+        // Interactive BOM Explorer Logic
+        const BOM_ITEMS = [
+            { id: 1, type: "adi", subsystem: "Main controller", part: "MAX32672 (Cortex-M4F MCU)", qty: 1, price: 350, total: 350 },
+            { id: 2, type: "adi", subsystem: "Needle solenoid driver", part: "MAX22200 (8-ch solenoid driver)", qty: 1, price: 400, total: 400 },
+            { id: 3, type: "actuators", subsystem: "Needle solenoids", part: "24V Push-type DC Solenoid", qty: 6, price: 650, total: 3900 },
+            { id: 4, type: "adi", subsystem: "SCARA joint driver (light)", part: "TMC2209 (2-phase stepper driver)", qty: 2, price: 480, total: 960 },
+            { id: 5, type: "adi", subsystem: "SCARA joint driver (heavy)", part: "TMC5160A (high-power stepper driver)", qty: 1, price: 1600, total: 1600 },
+            { id: 6, type: "actuators", subsystem: "SCARA joint actuator", part: "NEMA 23 Hybrid Stepper Motor (2-2.5 Nm)", qty: 2, price: 1900, total: 3800 },
+            { id: 7, type: "adi", subsystem: "Vibration / impact sensing", part: "ADXL355 (precision MEMS accelerometer)", qty: 1, price: 1500, total: 1500 },
+            { id: 8, type: "adi", subsystem: "Power regulation", part: "ADP5054 (quad buck regulator)", qty: 1, price: 450, total: 450 },
+            { id: 9, type: "adi", subsystem: "USB isolation", part: "ADuM4160 (isolated USB-UART)", qty: 1, price: 550, total: 550 },
+            { id: 10, type: "actuators", subsystem: "Roller motor sensing", part: "IR LED + Phototransistor Optocoupler", qty: 1, price: 40, total: 40 },
+            { id: 11, type: "actuators", subsystem: "Homing / limit sensing", part: "Omron SS-5GL2 Limit Switch", qty: 2, price: 200, total: 400 },
+            { id: 12, type: "mechanics", subsystem: "Mechanical - bearings", part: "608ZZ Deep Groove Ball Bearing", qty: 4, price: 45, total: 180 },
+            { id: 13, type: "electrical", subsystem: "Power supply", part: "Mean Well LRS-350-24 SMPS (24V 14.6A 350W)", qty: 1, price: 2100, total: 2100 },
+            { id: 14, type: "mechanics", subsystem: "Mechanical - frame", part: "SCARA Frame (Acrylic/PETG/Aluminium)", qty: 1, price: 2200, total: 2200 },
+            { id: 15, type: "electrical", subsystem: "Communication", part: "USB Type-C Connector", qty: 2, price: 35, total: 70 },
+            { id: 16, type: "electrical", subsystem: "Development", part: "JTAG/SWD Header", qty: 1, price: 50, total: 50 },
+            { id: 17, type: "bowden", subsystem: "Bowden cable", part: "Steel Push Wire, 0.8mm piano wire (6 sets)", qty: 6, price: 25, total: 150 },
+            { id: 18, type: "bowden", subsystem: "Bowden cable", part: "PTFE Guide Tube, 2mm ID (6 runs)", qty: 6, price: 30, total: 180 },
+            { id: 19, type: "bowden", subsystem: "Bowden cable", part: "3D-Printed Guide Block, 2x3 grid", qty: 1, price: 300, total: 300 },
+            { id: 20, type: "bowden", subsystem: "Bowden cable", part: "Precision Ground Punch Pins (set of 6)", qty: 6, price: 60, total: 360 }
+        ];
+
+        let bomActiveFilter = 'all';
+        let bomActiveSearch = '';
+
+        function renderBOMTable() {
+            const bomTableBody = document.getElementById('bomTableBody');
+            const bomSubtotalVal = document.getElementById('bomSubtotalVal');
+            const bomAllocationPercent = document.getElementById('bomAllocationPercent');
+            const bomProgressBar = document.getElementById('bomProgressBar');
+            if (!bomTableBody) return;
+
+            bomTableBody.innerHTML = '';
+            let subtotal = 0;
+
+            BOM_ITEMS.forEach(item => {
+                let matchesFilter = false;
+                if (bomActiveFilter === 'all') matchesFilter = true;
+                else if (bomActiveFilter === 'adi' && item.type === 'adi') matchesFilter = true;
+                else if (bomActiveFilter === 'actuators' && item.type === 'actuators') matchesFilter = true;
+                else if (bomActiveFilter === 'mechanics' && (item.type === 'mechanics' || item.type === 'bowden')) matchesFilter = true;
+                else if (bomActiveFilter === 'electrical' && item.type === 'electrical') matchesFilter = true;
+
+                const matchesSearch = item.part.toLowerCase().includes(bomActiveSearch.toLowerCase()) || 
+                                      item.subsystem.toLowerCase().includes(bomActiveSearch.toLowerCase());
+
+                if (matchesFilter && matchesSearch) {
+                    subtotal += item.total;
+
+                    let badgeClass = item.type;
+                    let displayType = item.type === 'adi' ? 'ADI Silicon' : 
+                                      item.type === 'actuators' ? 'Actuator' : 
+                                      item.type === 'mechanics' ? 'Mechanics' : 
+                                      item.type === 'bowden' ? 'Bowden Link' : 'Electrical';
+
+                    bomTableBody.innerHTML += `
+                        <tr>
+                            <td>${item.id}</td>
+                            <td><span class="badge-bom-subsystem ${badgeClass}">${displayType}</span></td>
+                            <td style="font-weight: 500;">${item.part}<br><span style="font-size:0.75rem; color:var(--text-dim);">${item.subsystem}</span></td>
+                            <td style="text-align: center;">${item.qty}</td>
+                            <td style="text-align: right;">&#8377;${item.price.toLocaleString()}</td>
+                            <td style="text-align: right; font-weight: 700; color: var(--text-bright);">&#8377;${item.total.toLocaleString()}</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            if (bomSubtotalVal) bomSubtotalVal.innerHTML = `&#8377;${subtotal.toLocaleString()}`;
+            
+            const totalBudget = 19540;
+            const percent = Math.round((subtotal / totalBudget) * 100);
+            if (bomAllocationPercent) bomAllocationPercent.textContent = `${percent}%`;
+            if (bomProgressBar) bomProgressBar.style.width = `${percent}%`;
+        }
+
+        // Search binder
+        const bomSearchInput = document.getElementById('bomSearchInput');
+        if (bomSearchInput) {
+            bomSearchInput.addEventListener('input', (e) => {
+                bomActiveSearch = e.target.value;
+                renderBOMTable();
+            });
+        }
+
+        // Filter button binders
+        const bomFilterBtns = document.querySelectorAll('#bomFilterBar .bom-filter-btn');
+        bomFilterBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                bomFilterBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                bomActiveFilter = btn.getAttribute('data-filter');
+                renderBOMTable();
+            });
+        });
+
+        // Initialize table render
+        renderBOMTable();
 
         log("[SYS] Calibration check finished. All SCARA axes active.");
     });
