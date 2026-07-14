@@ -4785,7 +4785,7 @@
  
         // Apply cumulative rotations to 3D Three.js Blueprint model
         if (window.threeModel && window.threeModel.updateArmJoints) {
-            window.threeModel.updateArmJoints(ik.theta1, angleLeftOuter, ik.theta2, angleRightOuter);
+            window.threeModel.updateArmJoints(ik.elbowL_x, ik.elbowL_y, ik.elbowR_x, ik.elbowR_y, x, y);
         }
     }
 
@@ -4928,7 +4928,7 @@
             activeDots.forEach(idx => {
                 const pMesh = window.threeModel.pins[idx - 1];
                 if (pMesh) {
-                    pMesh.position.y = -80 - 32;
+                    pMesh.position.y = -45;
                 }
             });
         }
@@ -4952,7 +4952,7 @@
             if (window.threeModel && window.threeModel.pins) {
                 window.threeModel.pins.forEach(pMesh => {
                     if (pMesh) {
-                        pMesh.position.y = -80 - 15;
+                        pMesh.position.y = -28;
                     }
                 });
             }
@@ -5785,189 +5785,158 @@
             metalness: 0.6 
         });
 
-        // 1. Base Plate: 460 x 8 x 260
-        const baseGeo = new THREE.BoxGeometry(460, 8, 260);
+        // 1. Base Plate: 300 x 10 x 200 (Y=10 is thick, top surface at Y = 0)
+        const baseGeo = new THREE.BoxGeometry(300, 10, 200);
         const base = new THREE.Mesh(baseGeo, acrylicBaseMat);
-        base.position.set(0, 4, 0);
+        base.position.set(0, -5, 0);
         scene.add(base);
 
         // Corner standoffs
         const cornerStandoffs = [
-            [-215, -115], [215, -115], [-215, 115], [215, 115]
+            [-140, -90], [140, -90], [-140, 90], [140, 90]
         ];
         cornerStandoffs.forEach(([x, z]) => {
             const foot = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 20, 16), metalSilver);
-            foot.position.set(x, -6, z);
+            foot.position.set(x, -20, z); // sits under base plate
             scene.add(foot);
         });
 
-        // 2. Power Supply (Mean Well LRS-350-24), rear-middle
-        const psu = new THREE.Mesh(new THREE.BoxGeometry(100, 45, 220), metalSilver);
-        psu.position.set(30, 8 + 22.5, -10); 
+        // 2. Power Supply (Mean Well LRS-350-24), rear-left
+        const psu = new THREE.Mesh(new THREE.BoxGeometry(60, 20, 80), metalSilver);
+        psu.position.set(-100, 10, -50); 
         scene.add(psu);
 
-        // 3. Controller Board (green PCB), middle-left
-        const pcb = new THREE.Mesh(new THREE.BoxGeometry(80, 4, 120), pcbGreen);
-        pcb.position.set(-70, 8 + 2, -140);
+        // 3. Controller Board (green PCB), rear-center
+        const pcb = new THREE.Mesh(new THREE.BoxGeometry(60, 4, 80), pcbGreen);
+        pcb.position.set(0, 2, -60);
         scene.add(pcb);
         // Chip blocks on PCB
-        [[-80, -160], [-60, -160], [-70, -110]].forEach(([x, z], i) => {
-            const size = (i === 2) ? 24 : 16;
-            const chip = new THREE.Mesh(new THREE.BoxGeometry(size, 6, size), metalDark);
-            chip.position.set(x, 8 + 4 + 3, z);
+        [[-15, -60], [15, -60], [0, -40]].forEach(([x, z], i) => {
+            const size = (i === 2) ? 14 : 10;
+            const chip = new THREE.Mesh(new THREE.BoxGeometry(size, 4, size), metalDark);
+            chip.position.set(x, 4 + 2, z);
             scene.add(chip);
         });
 
-        // 4. Paper Bed (160 x 160 mm), front-right
+        // 4. Paper Bed (160 x 160 mm), front-center
         const paper = new THREE.Mesh(new THREE.BoxGeometry(160, 2, 160), paperMat);
-        paper.position.set(0, 8 + 1, 140);
+        paper.position.set(0, 1, 140);
         scene.add(paper);
 
-        // 5. Symmetrical Column Support Towers
-        const colGeo = new THREE.BoxGeometry(60, 220, 60);
-        const columnLeft = new THREE.Mesh(colGeo, acrylicMat);
-        columnLeft.position.set(-50, 8 + 110, -90);
-        scene.add(columnLeft);
-        
-        const columnRight = new THREE.Mesh(colGeo, acrylicMat);
-        columnRight.position.set(50, 8 + 110, -90);
-        scene.add(columnRight);
-
-        // Stacked NEMA23 Motors (horizontal, extending symmetrically)
-        const motorLeft = new THREE.Mesh(new THREE.BoxGeometry(55, 55, 55), metalDark);
-        motorLeft.position.set(-97.5, 8 + 60, -90);
+        // 5. Fixed Motors A & B
+        // Motor A (Left): centered at (-60, 20, 0)
+        const motorLeft = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
+        motorLeft.position.set(-60, 20, 0);
         scene.add(motorLeft);
-        const couplerLeft = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 15, 12), metalSilver);
-        couplerLeft.rotation.z = Math.PI / 2;
-        couplerLeft.position.set(-67.5, 8 + 60, -90);
-        scene.add(couplerLeft);
+        const shaftLeft = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
+        shaftLeft.position.set(-60, 45, 0);
+        scene.add(shaftLeft);
 
-        const motorRight = new THREE.Mesh(new THREE.BoxGeometry(55, 55, 55), metalDark);
-        motorRight.position.set(97.5, 8 + 60, -90);
+        // Motor B (Right): centered at (+60, 20, 0)
+        const motorRight = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
+        motorRight.position.set(60, 20, 0);
         scene.add(motorRight);
-        const couplerRight = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 15, 12), metalSilver);
-        couplerRight.rotation.z = Math.PI / 2;
-        couplerRight.position.set(67.5, 8 + 60, -90);
-        scene.add(couplerRight);
+        const shaftRight = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
+        shaftRight.position.set(60, 45, 0);
+        scene.add(shaftRight);
 
-        // 6. Symmetrical Left & Right Arms Hierarchy (5-bar parallel)
-        const leftShoulderGroup = new THREE.Group();
-        leftShoulderGroup.position.set(-50, 8 + 220, -90);
-        scene.add(leftShoulderGroup);
+        // 6. Linkages (5-bar parallel)
+        // Proximal links: 200mm long x 20mm wide x 8mm thick, operating at Z=40 (Y=40 in 3D)
+        const proxLinkGeo = new THREE.BoxGeometry(1, 8, 20); // unit length in X
+        const leftProxLink = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        scene.add(leftProxLink);
         
-        const leftUpperArmGroup = new THREE.Group();
-        leftShoulderGroup.add(leftUpperArmGroup);
-        
-        const rightShoulderGroup = new THREE.Group();
-        rightShoulderGroup.position.set(50, 8 + 220, -90);
-        scene.add(rightShoulderGroup);
-        
-        const rightUpperArmGroup = new THREE.Group();
-        rightShoulderGroup.add(rightUpperArmGroup);
+        const rightProxLink = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        scene.add(rightProxLink);
 
-        const UPPER_ARM_LEN = 200;
-        const LOWER_ARM_LEN = 180;
+        // Distal links: 180mm long x 18mm wide x 8mm thick, operating at Z=40 (Y=40)
+        const distLinkGeo = new THREE.BoxGeometry(1, 8, 18); // unit length in X
+        const leftDistLink = new THREE.Mesh(distLinkGeo, acrylicMat);
+        scene.add(leftDistLink);
         
-        // Left Arm Linkages
-        const leftUpperLink = new THREE.Mesh(new THREE.BoxGeometry(UPPER_ARM_LEN, 16, 24), acrylicMat);
-        leftUpperLink.position.set(UPPER_ARM_LEN / 2, 8, 0);
-        leftUpperArmGroup.add(leftUpperLink);
-        
-        const leftElbowGroup = new THREE.Group();
-        leftElbowGroup.position.set(UPPER_ARM_LEN, 16, 0);
-        leftUpperArmGroup.add(leftElbowGroup);
-        
-        const leftLowerLink = new THREE.Mesh(new THREE.BoxGeometry(LOWER_ARM_LEN, 12, 18), acrylicMat);
-        leftLowerLink.position.set(LOWER_ARM_LEN / 2, 6, 0);
-        leftElbowGroup.add(leftLowerLink);
-        
-        // Right Arm Linkages
-        const rightUpperLink = new THREE.Mesh(new THREE.BoxGeometry(UPPER_ARM_LEN, 16, 24), acrylicMat);
-        rightUpperLink.position.set(UPPER_ARM_LEN / 2, 8, 0);
-        rightUpperArmGroup.add(rightUpperLink);
-        
-        const rightElbowGroup = new THREE.Group();
-        rightElbowGroup.position.set(UPPER_ARM_LEN, 16, 0);
-        rightUpperArmGroup.add(rightElbowGroup);
-        
-        const rightLowerLink = new THREE.Mesh(new THREE.BoxGeometry(LOWER_ARM_LEN, 12, 18), acrylicMat);
-        rightLowerLink.position.set(LOWER_ARM_LEN / 2, 6, 0);
-        rightElbowGroup.add(rightLowerLink);
-        
-        // 7. End-Effector Group (Attached to the right arm end, where left arm meets)
+        const rightDistLink = new THREE.Mesh(distLinkGeo, acrylicMat);
+        scene.add(rightDistLink);
+
+        // 7. Carriage Hub
+        const carriageHub = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 15, 24), metalSilver);
+        scene.add(carriageHub);
+
+        // 8. End-Effector Group (Stem, Casing, Pins, Ports)
         const embosserGroup = new THREE.Group();
-        embosserGroup.position.set(LOWER_ARM_LEN, 0, 0);
-        rightElbowGroup.add(embosserGroup);
+        scene.add(embosserGroup);
 
-        const solenoidBody = new THREE.Mesh(new THREE.BoxGeometry(25, 80, 25), metalDark);
-        solenoidBody.position.set(0, -40, 0);
-        embosserGroup.add(solenoidBody);
+        // Stem: thin cylinder, radius 5, from Carriage Hub (Y=40) straight down to Y=12
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 28, 16), metalSilver);
+        stem.position.set(0, -14, 0); // centered at Y = -14 relative to carriage (Y=40)
+        embosserGroup.add(stem);
 
-        const limitSwitch = new THREE.Mesh(new THREE.BoxGeometry(12, 10, 12), blueIndicator);
-        limitSwitch.position.set(0, 5, 0);
-        embosserGroup.add(limitSwitch);
+        // End-effector casing: Box (40 x 12 x 20), centered at local Y = -28 (Y=12 world)
+        const casing = new THREE.Mesh(new THREE.BoxGeometry(40, 12, 20), acrylicMat);
+        casing.position.set(0, -28, 0);
+        embosserGroup.add(casing);
+
+        // Suction ports (4 flat vents, radius 1.5mm) flush with casing underside (local Y = -34)
+        const portGeo = new THREE.CylinderGeometry(1.5, 1.5, 1, 16);
+        const portsOffset = [
+            [-15, -10], [15, -10], [-15, 10], [15, 10]
+        ];
+        portsOffset.forEach(([px, pz]) => {
+            const port = new THREE.Mesh(portGeo, metalSilver);
+            port.position.set(px, -34.5, pz);
+            embosserGroup.add(port);
+        });
 
         // 6 Plunger Pins in 3D representation
         window.threeModel.pins = [];
         const pinOffsetMap = {
-            1: { dx: -4, dz: -6 },
-            2: { dx: -4, dz: 0 },
-            3: { dx: -4, dz: 6 },
-            4: { dx: 4, dz: -6 },
-            5: { dx: 4, dz: 0 },
-            6: { dx: 4, dz: 6 }
+            1: { dx: -5, dz: -10 },
+            2: { dx: -5, dz: 0 },
+            3: { dx: -5, dz: 10 },
+            4: { dx: 5, dz: -10 },
+            5: { dx: 5, dz: 0 },
+            6: { dx: 5, dz: 10 }
         };
         for (let idx = 1; idx <= 6; idx++) {
-            const pMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 1.2, 30, 8), metalSilver);
+            const pMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 24, 8), metalSilver);
             const offset = pinOffsetMap[idx];
-            pMesh.position.set(offset.dx, -80 - 15, offset.dz);
+            pMesh.position.set(offset.dx, -28, offset.dz); // rest Y position
             embosserGroup.add(pMesh);
             window.threeModel.pins.push(pMesh);
         }
-        
-        // 3D Conveyor Belts (Bridges Input -> SCARA -> Output Trays)
-        const conveyorMat = new THREE.MeshStandardMaterial({ color: 0x1e293b, roughness: 0.7 });
-        const pulleyMat = new THREE.MeshStandardMaterial({ color: 0x475569, metalness: 0.8, roughness: 0.3 });
-        
-        // Left Conveyor Belt Assembly (Input -> SCARA Bed - stops at X = -80)
-        const leftBelt = new THREE.Mesh(new THREE.BoxGeometry(60, 4, 160), conveyorMat);
-        leftBelt.position.set(-110, 8 + 2, 140);
-        scene.add(leftBelt);
-        
-        const leftPulley1 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
-        leftPulley1.rotation.x = Math.PI / 2;
-        leftPulley1.position.set(-136, 8 + 2, 140);
-        scene.add(leftPulley1);
-        
-        const leftPulley2 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
-        leftPulley2.rotation.x = Math.PI / 2;
-        leftPulley2.position.set(-84, 8 + 2, 140);
-        scene.add(leftPulley2);
-        
-        // Right Conveyor Belt Assembly (SCARA Bed -> Output - starts at X = 80)
-        const rightBelt = new THREE.Mesh(new THREE.BoxGeometry(60, 4, 160), conveyorMat);
-        rightBelt.position.set(110, 8 + 2, 140);
-        scene.add(rightBelt);
-        
-        const rightPulley1 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
-        rightPulley1.rotation.x = Math.PI / 2;
-        rightPulley1.position.set(84, 8 + 2, 140);
-        scene.add(rightPulley1);
-        
-        const rightPulley2 = new THREE.Mesh(new THREE.CylinderGeometry(4, 4, 162, 16), pulleyMat);
-        rightPulley2.rotation.x = Math.PI / 2;
-        rightPulley2.position.set(136, 8 + 2, 140);
-        scene.add(rightPulley2);
 
-        // Cache pulleys for render loop animation
-        window.threeModel.pulleys = [leftPulley1, leftPulley2, rightPulley1, rightPulley2];
-        
-        // Update function for parallel arm joint rotations
-        window.threeModel.updateArmJoints = function(t1, t1_o, t2, t2_o) {
-            leftUpperArmGroup.rotation.y = -t1;
-            rightUpperArmGroup.rotation.y = -t2;
-            leftElbowGroup.rotation.y = -(t1_o - t1);
-            rightElbowGroup.rotation.y = -(t2_o - t2);
+        // Link alignment helper function
+        function alignLink(mesh, x1, z1, x2, z2) {
+            const dx = x2 - x1;
+            const dz = z2 - z1;
+            const len = Math.sqrt(dx * dx + dz * dz);
+            const angle = Math.atan2(dz, dx);
+            
+            mesh.scale.set(len, 1, 1);
+            mesh.position.set((x1 + x2) / 2, 40, (z1 + z2) / 2);
+            mesh.rotation.y = -angle;
+        }
+
+        // Update function for parallel arm joint coordinates
+        window.threeModel.updateArmJoints = function(elbowL_x, elbowL_y, elbowR_x, elbowR_y, eeX_svg, eeY_svg) {
+            const scale = 1.2;
+            const exL = (elbowL_x - 400) * scale;
+            const ezL = (elbowL_y - 80) * scale;
+            
+            const exR = (elbowR_x - 400) * scale;
+            const ezR = (elbowR_y - 80) * scale;
+            
+            const eeX = (eeX_svg - 400) * scale;
+            const eeZ = (eeY_svg - 80) * scale;
+            
+            // Align linkages
+            alignLink(leftProxLink, -60, 0, exL, ezL);
+            alignLink(rightProxLink, 60, 0, exR, ezR);
+            alignLink(leftDistLink, exL, ezL, eeX, eeZ);
+            alignLink(rightDistLink, exR, ezR, eeX, eeZ);
+            
+            // Position Carriage Hub & End-Effector Group
+            carriageHub.position.set(eeX, 40, eeZ);
+            embosserGroup.position.set(eeX, 40, eeZ);
         };
 
         // 8. Spawning and clearing helpers
@@ -5979,7 +5948,7 @@
             const dotGeo = new THREE.CylinderGeometry(2, 2.5, 2, 8);
             const dotMat = new THREE.MeshStandardMaterial({ color: 0x9a8e6e, roughness: 0.6 });
             const dot = new THREE.Mesh(dotGeo, dotMat);
-            dot.position.set(relX, 8 + 2 + 1, 140 + relZ);
+            dot.position.set(relX, 2, 140 + relZ);
             scene.add(dot);
             window.threeModel.dots.push(dot);
         };
@@ -6026,12 +5995,7 @@
             requestAnimationFrame(animate);
             controls.update();
             
-            // Spin 3D conveyor pulleys during loading or ejecting phases
-            if (window.threeModel && window.threeModel.pulleys && (cycleState === 'roller_loading' || cycleState === 'ejecting_paper')) {
-                window.threeModel.pulleys.forEach(p => {
-                    p.rotation.y += 0.04;
-                });
-            }
+            // Pulley animation omitted in flat parallel linkage model
             
             const spherical = new THREE.Spherical().setFromVector3(camera.position);
             const degX = Math.round(90 - THREE.MathUtils.radToDeg(spherical.phi));
