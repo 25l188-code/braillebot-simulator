@@ -1395,7 +1395,7 @@
                 const box = new THREE.Box3();
                 let hasObjects = false;
                 Object.values(machineObjects).forEach(obj => {
-                    if (obj) {
+                    if (obj && obj.isObject3D) {
                         box.expandByObject(obj);
                         hasObjects = true;
                     }
