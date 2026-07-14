@@ -6232,6 +6232,18 @@
             });
         }
 
+        // Auto-play the parallel print simulation periodically
+        function triggerAutoDualPrint() {
+            if (isDualAnimating) return;
+            if (dualBtnBg) {
+                dualBtnBg.dispatchEvent(new Event('click'));
+            }
+        }
+        // Run automatically every 8 seconds (animation takes 4.4s)
+        setInterval(triggerAutoDualPrint, 8000);
+        // Initial run delay of 3 seconds on load
+        setTimeout(triggerAutoDualPrint, 3000);
+
         log("[SYS] Calibration check finished. All SCARA axes active.");
     });
     </script>
