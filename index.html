@@ -2931,7 +2931,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            background: rgba(6, 7, 10, 0.92);
+            background: #050508;
             backdrop-filter: blur(18px) saturate(1.2);
             -webkit-backdrop-filter: blur(18px) saturate(1.2);
             transition: opacity 0.6s ease-in-out;
@@ -5767,20 +5767,63 @@
         scene.add(shaftB);
 
         // 3. Linkages (5-bar parallel)
-        // Proximal links: 200mm long x 20mm wide x 8mm thick, operating at Y=40 in 3D
-        const proxLinkGeo = new THREE.BoxGeometry(1, 8, 20); // unit length in X
-        const proximalLinkA = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        // Helper to build detailed SCARA arm linkages (reused design from factory simulation)
+        function createLinkageArm(length, width, height, mainMat, accentMat) {
+            const armGroup = new THREE.Group();
+
+            // Start pivot collar
+            const startCollar = new THREE.Mesh(new THREE.CylinderGeometry(width * 1.1, width * 1.1, height * 1.4, 16), accentMat);
+            startCollar.position.set(0, 0, 0);
+            startCollar.castShadow = true;
+            armGroup.add(startCollar);
+
+            // End pivot collar
+            const endCollar = new THREE.Mesh(new THREE.CylinderGeometry(width * 1.1, width * 1.1, height * 1.4, 16), accentMat);
+            endCollar.position.set(0, 0, length); // Along Z-axis
+            endCollar.castShadow = true;
+            armGroup.add(endCollar);
+
+            // I-Beam side rails
+            const leftRail = new THREE.Mesh(new THREE.BoxGeometry(width * 0.15, height, length - width * 2), mainMat);
+            leftRail.position.set(-width / 2 + width * 0.08, 0, length / 2);
+            leftRail.castShadow = true;
+            armGroup.add(leftRail);
+
+            const rightRail = new THREE.Mesh(new THREE.BoxGeometry(width * 0.15, height, length - width * 2), mainMat);
+            rightRail.position.set(width / 2 - width * 0.08, 0, length / 2);
+            rightRail.castShadow = true;
+            armGroup.add(rightRail);
+
+            // Center thin web
+            const web = new THREE.Mesh(new THREE.BoxGeometry(width - width * 0.3, height * 0.4, length - width * 2), mainMat);
+            web.position.set(0, 0, length / 2);
+            web.castShadow = true;
+            armGroup.add(web);
+            
+            // Weight-reduction slots (simulated inserts)
+            const holeGeo = new THREE.CylinderGeometry(width * 0.25, width * 0.25, height * 0.5, 12);
+            const holeMat = new THREE.MeshStandardMaterial({ color: 0x050508, transparent: true, opacity: 0.6 });
+            for (let i = 0.3; i <= 0.7; i += 0.4) {
+                const holeIndicator = new THREE.Mesh(holeGeo, holeMat);
+                holeIndicator.position.set(0, 0, length * i);
+                holeIndicator.rotation.x = Math.PI / 2;
+                armGroup.add(holeIndicator);
+            }
+
+            return armGroup;
+        }
+
+        // 3. Linkages (5-bar parallel)
+        const proximalLinkA = createLinkageArm(240, 15, 8, acrylicMat, blueIndicator);
         scene.add(proximalLinkA);
         
-        const proximalLinkB = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        const proximalLinkB = createLinkageArm(240, 15, 8, acrylicMat, blueIndicator);
         scene.add(proximalLinkB);
 
-        // Distal links: 180mm long x 18mm wide x 8mm thick, operating at Y=40
-        const distLinkGeo = new THREE.BoxGeometry(1, 8, 18); // unit length in X
-        const distalLinkA = new THREE.Mesh(distLinkGeo, acrylicMat);
+        const distalLinkA = createLinkageArm(216, 12, 8, acrylicMat, blueIndicator);
         scene.add(distalLinkA);
         
-        const distalLinkB = new THREE.Mesh(distLinkGeo, acrylicMat);
+        const distalLinkB = createLinkageArm(216, 12, 8, acrylicMat, blueIndicator);
         scene.add(distalLinkB);
 
         // 4. Carriage Hub
@@ -5791,28 +5834,30 @@
         const embosserGroup = new THREE.Group();
         scene.add(embosserGroup);
 
-        // Stem: thin cylinder, radius 5, from Carriage Hub (Y=40) straight down to Y=12
-        const stem = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 28, 16), metalSilver);
-        stem.position.set(0, -14, 0); // centered at Y = -14 relative to carriage (Y=40)
+        // Stem: vertical carriage stem/spline connection (Brass bushing + thin cylinder stem)
+        const stem = new THREE.Mesh(new THREE.CylinderGeometry(3.0, 3.0, 20, 16), metalSilver);
+        stem.position.set(0, -10, 0); // centered at Y = -10 relative to carriage (Y=40)
+        stem.castShadow = true;
         embosserGroup.add(stem);
 
-        // End-effector casing: Box (40 x 12 x 20), centered at local Y = -28 (Y=12 world)
-        const endEffectorCasing = new THREE.Mesh(new THREE.BoxGeometry(40, 12, 20), acrylicMat);
-        endEffectorCasing.position.set(0, -28, 0);
+        const bushing = new THREE.Mesh(new THREE.CylinderGeometry(5.0, 5.0, 12, 16), blueIndicator);
+        bushing.position.set(0, -4, 0);
+        bushing.castShadow = true;
+        embosserGroup.add(bushing);
+
+        // End-effector casing: single casing representing the rigid housing
+        const endEffectorCasing = new THREE.Mesh(new THREE.CylinderGeometry(16, 16, 20, 24), acrylicMat);
+        endEffectorCasing.position.set(0, -20, 0);
+        endEffectorCasing.castShadow = true;
         embosserGroup.add(endEffectorCasing);
 
-        // Suction ports (4 flat vents, radius 1.5mm) flush with casing underside (local Y = -34)
-        const portGeo = new THREE.CylinderGeometry(1.5, 1.5, 1, 16);
-        const portsOffset = [
-            [-15, -10], [15, -10], [-15, 10], [15, 10]
-        ];
-        portsOffset.forEach(([px, pz]) => {
-            const port = new THREE.Mesh(portGeo, metalSilver);
-            port.position.set(px, -34.5, pz);
-            embosserGroup.add(port);
-        });
+        // Suction lip at bottom of casing
+        const lipMat = new THREE.MeshStandardMaterial({ color: 0x050508, transparent: true, opacity: 0.6 });
+        const lip = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 2, 24, 1, false), lipMat);
+        lip.position.set(0, -11, 0); // relative to casing center
+        endEffectorCasing.add(lip);
 
-        // 6 Plunger Pins in 3D representation
+        // 6 Plunger Pins in 3D representation (attached to embosserGroup directly for animation)
         window.threeModel.pins = [];
         const pinOffsetMap = {
             1: { dx: -5, dz: -10 },
@@ -5823,23 +5868,11 @@
             6: { dx: 5, dz: 10 }
         };
         for (let idx = 1; idx <= 6; idx++) {
-            const pMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.5, 1.5, 24, 8), metalSilver);
+            const pMesh = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, 24, 8), metalSilver);
             const offset = pinOffsetMap[idx];
             pMesh.position.set(offset.dx, -28, offset.dz); // rest Y position
             embosserGroup.add(pMesh);
             window.threeModel.pins.push(pMesh);
-        }
-
-        // Link alignment helper function
-        function alignLink(mesh, x1, z1, x2, z2) {
-            const dx = x2 - x1;
-            const dz = z2 - z1;
-            const len = Math.sqrt(dx * dx + dz * dz);
-            const angle = Math.atan2(dz, dx);
-            
-            mesh.scale.set(len, 1, 1);
-            mesh.position.set((x1 + x2) / 2, 40, (z1 + z2) / 2);
-            mesh.rotation.y = -angle;
         }
 
         // Update function for parallel arm joint coordinates
@@ -5854,11 +5887,21 @@
             const eeX = (eeX_svg - 400) * scale;
             const eeZ = (eeY_svg - 80) * scale;
             
-            // Align linkages
-            alignLink(proximalLinkA, -60, 0, exL, ezL);
-            alignLink(proximalLinkB, 60, 0, exR, ezR);
-            alignLink(distalLinkA, exL, ezL, eeX, eeZ);
-            alignLink(distalLinkB, exR, ezR, eeX, eeZ);
+            // Position and point Left Proximal Link (starts at Left Motor: -60, 40, 0)
+            proximalLinkA.position.set(-60, 40, 0);
+            proximalLinkA.lookAt(new THREE.Vector3(exL, 40, ezL));
+            
+            // Position and point Right Proximal Link (starts at Right Motor: 60, 40, 0)
+            proximalLinkB.position.set(60, 40, 0);
+            proximalLinkB.lookAt(new THREE.Vector3(exR, 40, ezR));
+            
+            // Position and point Left Distal Link (starts at Left Elbow: exL, 40, ezL)
+            distalLinkA.position.set(exL, 40, ezL);
+            distalLinkA.lookAt(new THREE.Vector3(eeX, 40, eeZ));
+            
+            // Position and point Right Distal Link (starts at Right Elbow: exR, 40, ezR)
+            distalLinkB.position.set(exR, 40, ezR);
+            distalLinkB.lookAt(new THREE.Vector3(eeX, 40, eeZ));
 
             // Rotate motor shafts to visually track the link movement
             motorA.rotation.y = -Math.atan2(ezL, exL - (-60));
@@ -6085,11 +6128,11 @@
         // Launch cinematic intro
         initIntroSequence();
 
-        // Render arm home graphics representation
-        updateArmGraphics(COORDS.home.x, COORDS.home.y);
-        
         // Initialize WebGL Three.js view
         initThreeDModel();
+
+        // Render arm home graphics representation (both SVG and 3D)
+        updateArmGraphics(COORDS.home.x, COORDS.home.y);
         
         // Render ADI Silicon cards list explorer
         renderComponentCards();
