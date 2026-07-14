@@ -3341,8 +3341,7 @@
                 <div class="pipeline-card-num">4</div>
                 <div class="pipeline-card-icon">&#129486;</div>
                 <h3>SCARA Path Plan</h3>
-                <p>ADI's ADSP-CM408F computes inverse kinematics and optimizes trajectories using trapezoidal velocity profiles.</p>
-            </div>rofiles.</p>
+                <p>ADI's MAX32672 computes inverse kinematics and optimizes trajectories using trapezoidal velocity profiles.</p>
             </div>
         </div>
 
@@ -3527,26 +3526,26 @@
                     <!-- Nodes -->
                     <g class="diagram-node" id="node-input" data-part="ADuM4160">
                         <rect x="10" y="45" width="70" height="50" rx="4" />
-                        <text x="45" y="70">USB Interface</text>
+                        <text x="45" y="70">USB Isolation</text>
                         <text x="45" y="82" fill="var(--cyan)">ADuM4160</text>
                     </g>
                     
-                    <g class="diagram-node core" id="node-mcu" data-part="ADSP-CM408F">
+                    <g class="diagram-node core" id="node-mcu" data-part="MAX32672">
                         <rect x="150" y="40" width="60" height="60" rx="4" />
-                        <text x="180" y="65">DSP Core</text>
-                        <text x="180" y="78" fill="var(--cyan)">ADSP-CM408</text>
+                        <text x="180" y="65">Main MCU</text>
+                        <text x="180" y="78" fill="var(--cyan)">MAX32672</text>
                     </g>
                     
-                    <g class="diagram-node" id="node-driver" data-part="TMC5160">
+                    <g class="diagram-node" id="node-driver" data-part="TMC5160A">
                         <rect x="280" y="45" width="60" height="50" rx="4" />
-                        <text x="310" y="70">Motor Driver</text>
-                        <text x="310" y="82" fill="var(--cyan)">TMC5160</text>
+                        <text x="310" y="70">SCARA Driver H</text>
+                        <text x="310" y="82" fill="var(--cyan)">TMC5160A</text>
                     </g>
                     
-                    <g class="diagram-node" id="node-adc" data-part="AD7606">
+                    <g class="diagram-node" id="node-adc" data-part="TMC2209">
                         <rect x="150" y="150" width="60" height="50" rx="4" />
-                        <text x="180" y="175">16-bit ADC</text>
-                        <text x="180" y="187" fill="var(--cyan)">AD7606</text>
+                        <text x="180" y="175">SCARA Driver L</text>
+                        <text x="180" y="187" fill="var(--cyan)">TMC2209</text>
                     </g>
 
                     <g class="diagram-node" id="node-pmic" data-part="ADP5054">
@@ -3555,10 +3554,10 @@
                         <text x="80" y="302" fill="var(--cyan)">ADP5054</text>
                     </g>
 
-                    <g class="diagram-node" id="node-dac" data-part="AD5685R">
+                    <g class="diagram-node" id="node-dac" data-part="MAX22200">
                         <rect x="165" y="270" width="90" height="45" rx="4" />
-                        <text x="210" y="290">Precision DAC</text>
-                        <text x="210" y="302" fill="var(--cyan)">AD5685R</text>
+                        <text x="210" y="290">Solenoid Driver</text>
+                        <text x="210" y="302" fill="var(--cyan)">MAX22200</text>
                     </g>
 
                     <g class="diagram-node" id="node-imu" data-part="ADXL355">
@@ -3587,9 +3586,9 @@
         <!-- Detail Drawer for Component Specs -->
         <div class="part-detail-box" id="partDetailBox">
             <div class="part-detail-info">
-                <h4 id="detailPartNum">ADSP-CM408F</h4>
-                <h5 id="detailPartName">Mixed-Signal Control Processor</h5>
-                <p id="detailPartDesc">Embedded ARM Cortex-M4F microcontroller optimized for high-performance motor control applications. Features built-in hardware math accelerators, precise PWMs, and dual 16-bit analog-to-digital converters to calculate real-time SCARA inverse kinematics and control loop coordinates at sub-millisecond rates.</p>
+                <h4 id="detailPartNum">MAX32672</h4>
+                <h5 id="detailPartName">Ultra-Low-Power ARM Cortex-M4F MCU</h5>
+                <p id="detailPartDesc">Highly secure, ultra-low-power 32-bit microcontroller with 1MB Flash and 384KB SRAM. Orchestrates the MAX22200 solenoid driver over SPI, TMC joint drivers, and ADXL355 diagnostics.</p>
                 <ul class="part-specs-list" id="detailSpecsList">
                     <!-- Specs injected dynamically -->
                 </ul>
@@ -3673,7 +3672,7 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-num" id="statCost">&#8377;15,000</div>
+                <div class="stat-num" id="statCost">&#8377;19,540</div>
                 <div class="stat-lbl">Projected Cost</div>
                 <p class="stat-desc">Low material cost of components and mechanical framework</p>
             </div>
@@ -3727,7 +3726,7 @@
                         <td>ADI Mixed-Signal Robot</td>
                         <td>0.08 mm Close-Loop SCARA</td>
                         <td>30 characters/sec</td>
-                        <td>&#8377;15,000</td>
+                        <td>&#8377;19,540</td>
                     </tr>
                 </tbody>
             </table>
@@ -4123,28 +4122,42 @@
 
     const ADI_COMPONENTS = [
         {
-            part: "ADSP-CM408F",
-            name: "Mixed-Signal Control Processor",
+            part: "MAX32672",
+            name: "Ultra-Low-Power ARM Cortex-M4F MCU",
             category: "Processor / DSP",
-            desc: "High-performance ARM Cortex-M4F processor running at 240 MHz. Integrates specialized dual 16-bit SAR ADCs and advanced PWM modules, enabling the exact computations needed for real-time SCARA inverse kinematics, speed trajectory mapping, and precise Closed-loop FOC control.",
+            desc: "Highly secure, ultra-low-power 32-bit microcontroller with 1MB Flash and 384KB SRAM. Orchestrates the MAX22200 solenoid driver over SPI, TMC joint drivers, and ADXL355 diagnostics.",
             specs: {
-                "Clock Speed": "240 MHz",
+                "Clock Speed": "100 MHz",
                 "Processor Core": "ARM Cortex-M4F",
-                "Flash Memory": "2 MB",
-                "ADC Resolution": "Dual 16-bit SAR",
-                "Operating Voltage": "3.3 V"
+                "Flash Memory": "1 MB",
+                "SRAM": "384 KB",
+                "Operating Voltage": "1.1 V / 1.8 V / 3.3 V"
             },
             signalFunc: (t) => 1.65 + 1.5 * Math.sin(t * 0.05) * Math.cos(t * 0.01)
         },
         {
-            part: "TMC5160",
-            name: "High-Power Stepper Controller",
+            part: "MAX22200",
+            name: "8-Channel Solenoid and Motor Driver",
+            category: "Solenoid Driver",
+            desc: "Precision 36V, 1A per channel octal solenoid driver. Integrates built-in dynamic power management (DPM) and diagnostic feedback to drive all 6 embossing needles reliably from one IC without tearing paper.",
+            specs: {
+                "Channels": "8 independent drivers",
+                "Max Output Voltage": "36 V",
+                "Peak Current": "1 A per channel",
+                "Control Interface": "SPI",
+                "Protection": "DPM, OCP, Thermal shutdown"
+            },
+            signalFunc: (t) => (t % 50 < 10) ? 3.0 : 0.2
+        },
+        {
+            part: "TMC5160A",
+            name: "High-Power Stepper Controller & Driver",
             category: "Motor Driver",
-            desc: "Premium driver and controller IC designed for multi-phase stepper motors. Uses StealthChop2&trade; for near-silent operation and SpreadCycle&trade; for dynamic torque delivery, providing the SCARA arm with extremely smooth step coordinates and zero noise.",
+            desc: "Premium stepper driver IC designed for external MOSFETs. Uses StealthChop2&trade; for silent joint rotation and StallGuard4&trade; for sensorless load measurement on the highest-torque SCARA axis.",
             specs: {
                 "Microsteps": "Up to 256 per step",
                 "Supply Voltage": "8V to 60V DC",
-                "RMS Phase Current": "Up to 20A",
+                "External MOSFETs": "Supported up to 20A",
                 "Features": "StealthChop2&trade;, StallGuard4&trade;",
                 "Interface": "SPI / UART"
             },
@@ -4155,23 +4168,23 @@
         },
         {
             part: "TMC2209",
-            name: "Low-Noise Stepper Driver",
+            name: "Low-Noise 2-Phase Stepper Driver",
             category: "Motor Driver",
-            desc: "Highly integrated stepper driver using StallGuard4&trade; for sensorless homing and load detection. Integrated into the document loading feed tray to control the roller step feed with high efficiency and thermal defense.",
+            desc: "Highly integrated stepper driver with internal power MOSFETs. Controls the secondary SCARA linkage joint and the document feed roller axis with sensorless homing (StallGuard4&trade;).",
             specs: {
                 "Microsteps": "Up to 256",
                 "Supply Voltage": "4.75V to 28V",
-                "RMS Phase Current": "1.4A continuous",
-                "Homing Method": "Sensorless (StallGuard)",
+                "RMS Current": "1.4A continuous",
+                "Homing Method": "Sensorless (StallGuard4&trade;)",
                 "Interface": "UART / Step-Dir"
             },
             signalFunc: (t) => 1.5 + 1.0 * Math.sin(t * 0.2)
         },
         {
             part: "ADXL355",
-            name: "Low-Noise MEMS Accelerometer",
+            name: "Low-Noise Precision MEMS Accelerometer",
             category: "MEMS Sensor",
-            desc: "Ultra-low noise, high-stability 3-axis accelerometer used on the end-effector to analyze stamp resonance. Detects structural vibrations during embossing, feeding diagnostic telemetry back to the controller to confirm dot quality.",
+            desc: "High-resolution, ultra-low noise 3-axis accelerometer. Positioned on the single-casing end-effector to record strike impacts, verifying embossing height and dot quality.",
             specs: {
                 "Resolution": "20-bit digital output",
                 "Noise Density": "22 &mu;g/&radic;Hz",
@@ -4182,96 +4195,34 @@
             signalFunc: (t) => 1.65 + 0.15 * (Math.random() - 0.5) + (Math.floor(t / 30) % 4 === 0 ? 0.8 * Math.sin(t * 0.8) : 0)
         },
         {
-            part: "AD7606",
-            name: "8-Channel Data Acquisition System",
-            category: "Precision ADC",
-            desc: "16-bit simultaneous-sampling ADC with internal digital filters. Monitors multi-channel feedback from joint encoders and the force load cell on the embossing pin simultaneously, eliminating signal skew.",
+            part: "ADP5054",
+            name: "Integrated Power Management Unit",
+            category: "Power Regulation",
+            desc: "High-density quad buck regulator. Transforms bulk 24V supply input down to stable 12V (solenoids), 5V (sensors), 3.3V (MCU & logic rails) with high efficiency.",
             specs: {
-                "Resolution": "16-bit",
-                "Throughput": "200 kSPS",
-                "Input Impedance": "1 M&Omega; analog buffer",
-                "Analog Inputs": "8 bipolar channels",
-                "Sampling Mode": "Simultaneous"
+                "Regulators": "4 integrated bucks",
+                "Input Voltage": "4.5V to 15V",
+                "Switching Freq": "250 kHz to 1.4 MHz",
+                "Max Output Current": "Up to 6A per channel",
+                "Protection": "Thermal, UVLO, Overcurrent"
             },
-            signalFunc: (t) => 1.65 + 1.2 * Math.sin(t * 0.1)
-        },
-        {
-            part: "AD5685R",
-            name: "Quad 14-Bit nanoDAC+",
-            category: "Precision DAC",
-            desc: "Quad channel high relative accuracy voltage output DAC. Provides precise analog references to set current limits on drivers and dictate the exact voltage vectors driving the embossing solenoid magnet.",
-            specs: {
-                "Resolution": "14-bit",
-                "Relative Accuracy": "&plusmn;1 LSB max INL",
-                "Reference Noise": "0.1 Hz to 10 Hz: 6 &mu;V p-p",
-                "Interface": "SPI (50 MHz)",
-                "Output Channels": "4 buffered channels"
-            },
-            signalFunc: (t) => {
-                const cycle = t % 100;
-                if (cycle < 20) return 0.5;
-                if (cycle < 40) return 2.8;
-                return 1.65;
-            }
+            signalFunc: (t) => 3.3 + 0.02 * Math.sin(t * 0.3)
         },
         {
             part: "ADuM4160",
-            name: "USB Port Digital Isolator",
+            name: "Isolated USB 2.0 Port Isolator",
             category: "Digital Isolator",
-            desc: "Industrial grade USB 2.0 digital isolator using iCoupler&reg; technology. Protects control electronics and laptops from power spikes or motor noise generated by high-power solenoid pulses.",
+            desc: "USB 2.0 digital isolator utilizing iCoupler&reg; technology. Isolates the USB link, protecting control logic and connected programming laptops from solenoid EMF spikes.",
             specs: {
                 "Isolation Voltage": "Up to 5000V rms",
                 "USB Speed": "1.5 Mbps & 12 Mbps",
                 "ESD Protection": "Enhanced system-level",
-                "Power Support": "Bidirectional control paths",
                 "Standard": "USB 2.0 compliant"
             },
             signalFunc: (t) => {
                 const burst = Math.floor(t / 8) % 3 === 0;
                 return burst ? (Math.random() > 0.5 ? 2.5 : 0.8) : 0.8;
             }
-        },
-        {
-            part: "ADP5054",
-            name: "Integrated Power Management Unit",
-            category: "Power Regulation",
-            desc: "Quad buck regulator with LDO supply controllers. Directs bulk 24V supply input down to stable 12V (solenoids), 5V (sensors), 3.3V (MCU & DSP logic), and cleaner analog reference rails.",
-            specs: {
-                "Buck Regulators": "4 integrated channels",
-                "Input Voltage": "4.5V to 15V",
-                "Switching Freq": "250 kHz to 1.4 MHz",
-                "Protection": "Thermal, UVLO, Overcurrent",
-                "Max Current": "Up to 6A output"
-            },
-            signalFunc: (t) => 3.3 + 0.02 * Math.sin(t * 0.3)
-        },
-        {
-            part: "LT3045",
-            name: "Ultra-Low Noise LDO Regulator",
-            category: "Power Regulation",
-            desc: "Linear regulator offering PSRR performance above 76dB. Cleans power inputs feeding the 16-bit analog sampling channels of the AD7606 ADC, ensuring precise sensor tracking.",
-            specs: {
-                "Noise Density": "0.8 nV/&radic;Hz",
-                "PSRR": "76dB at 1 MHz",
-                "Dropout Voltage": "260 mV typical",
-                "Output Current": "500 mA maximum",
-                "Stability": "Ceramic output capacitors"
-            },
-            signalFunc: (t) => 5.0 + 0.002 * Math.sin(t * 0.5)
-        },
-        {
-            part: "ADT7420",
-            name: "16-Bit Digital Temperature Sensor",
-            category: "Thermal Sensor",
-            desc: "Digital temperature sensor with &plusmn;0.2&deg;C accuracy. Positioned directly near high-power MOSFETs and driver packages to dynamically throttle speeds if thermal boundaries are crossed.",
-            specs: {
-                "Accuracy": "&plusmn;0.25&deg;C max",
-                "Resolution": "16-bit",
-                "Temperature Range": "-40&deg;C to +150&deg;C",
-                "Interface": "I2C",
-                "Power Consumption": "70 &mu;W micro-power"
-            },
-            signalFunc: (t) => 25.0 + 5.0 * Math.sin(t * 0.01)
         }
     ];
 
@@ -5390,27 +5341,27 @@
         member1: {
             name: "Lead Motion Engineer",
             role: "Motion & Kinematics",
-            bio: "Designed and implemented the Inverse Kinematics (IK) motion engine on the ADSP-CM408F processor, mapping cartesian dot coordinates into smooth joint angles. Configured the TMC5160 drivers to run high-torque stepper motors silently using StealthChop2â„¢.",
+            bio: "Designed and implemented the Inverse Kinematics (IK) motion engine on the MAX32672 processor, mapping cartesian dot coordinates into smooth joint angles. Configured the TMC5160A and TMC2209 drivers to run high-torque stepper motors silently.",
             subsystem: "Motion Planning & Control",
-            parts: "ADSP-CM408F, TMC5160",
+            parts: "MAX32672, TMC5160A, TMC2209",
             task: "Trajectory & Kinematics Code",
             initials: "ME"
         },
         member2: {
             name: "Hardware Architect",
             role: "Circuit Design & PMIC",
-            bio: "Created the power distribution board splitting a 24V supply into regulated system voltages. Designed clean sensor power filters using LT3045 LDOs to feed the AD7606 simultaneous ADC channels.",
+            bio: "Created the power distribution board splitting a 24V supply into regulated system voltages. Designed clean sensor filters and the solenoid control array driven by the MAX22200 driver with built-in fault sensing.",
             subsystem: "Power & Signal Conditioning",
-            parts: "ADP5054, LT3045, AD7606",
+            parts: "ADP5054, MAX22200, ADXL355",
             task: "PCB Design & Noise Filtering",
             initials: "HW"
         },
         member3: {
             name: "Software Lead",
             role: "UI & Translation Engine",
-            bio: "Developed the localized Grade 1 Hindi and English translation libraries. Created the coordinate matrix mapping engines and programmed the real-time interactive SVG browser interface.",
+            bio: "Developed the localized Grade 1 Hindi and English translation libraries. Created the coordinate matrix mapping engines, UART telemetry links, and programmed the real-time interactive SVG browser interface.",
             subsystem: "Software & Localization",
-            parts: "ADuM4160, ADT7420",
+            parts: "ADuM4160, MAX32672",
             task: "Grade 1 Translation & Telemetry",
             initials: "SW"
         }
@@ -5471,7 +5422,7 @@
     // Simulated Social Impact Counter animators on load
     function animateCounters() {
         const counters = [
-            { id: 'statCost', endVal: 15000, prefix: '\u20B9', suffix: '' },
+            { id: 'statCost', endVal: 19540, prefix: '\u20B9', suffix: '' },
             { id: 'statCheaper', endVal: 97, prefix: '', suffix: '%' },
             { id: 'statUsers', endVal: 7.6, prefix: '', suffix: 'M' }
         ];
