@@ -3837,7 +3837,7 @@
 
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="stat-num" id="statCost">&#8377;19,540</div>
+                <div class="stat-num" id="statCost">&#8377;20,000 - &#8377;25,000</div>
                 <div class="stat-lbl">Projected Cost</div>
                 <p class="stat-desc">Low material cost of components and mechanical framework</p>
             </div>
@@ -3891,7 +3891,7 @@
                         <td>ADI Mixed-Signal Robot</td>
                         <td>0.08 mm Close-Loop SCARA</td>
                         <td>30 characters/sec</td>
-                        <td>&#8377;19,540</td>
+                        <td>&#8377;20,000 - &#8377;25,000</td>
                     </tr>
                 </tbody>
             </table>
@@ -3938,7 +3938,7 @@
             <div class="bom-budget-summary">
                 <div class="bom-budget-meta">
                     <span class="lbl">Category Subtotal</span>
-                    <span class="val" id="bomSubtotalVal">&#8377;19,540</span>
+                    <span class="val" id="bomSubtotalVal">&#8377;20,000 - &#8377;25,000</span>
                 </div>
                 <div class="bom-progress-container">
                     <div class="bom-progress-label">
@@ -5642,7 +5642,7 @@
     // Simulated Social Impact Counter animators on load
     function animateCounters() {
         const counters = [
-            { id: 'statCost', endVal: 19540, prefix: '\u20B9', suffix: '' },
+            { id: 'statCost', endVal: 20000, prefix: '\u20B9', suffix: '' },
             { id: 'statCheaper', endVal: 97, prefix: '', suffix: '%' },
             { id: 'statUsers', endVal: 7.6, prefix: '', suffix: 'M' }
         ];
@@ -5663,7 +5663,13 @@
                 const eased = progress * (2 - progress);
                 const currentVal = (start + (cnt.endVal - start) * eased);
                 
-                if (cnt.endVal % 1 === 0) {
+                if (cnt.id === 'statCost') {
+                    if (progress < 1) {
+                        el.innerText = `${cnt.prefix}${Math.floor(currentVal).toLocaleString()}`;
+                    } else {
+                        el.innerText = `${cnt.prefix}20,000 - 25,000`;
+                    }
+                } else if (cnt.endVal % 1 === 0) {
                     el.innerText = `${cnt.prefix}${Math.floor(currentVal).toLocaleString()}${cnt.suffix}`;
                 } else {
                     el.innerText = `${cnt.prefix}${currentVal.toFixed(1)}${cnt.suffix}`;
@@ -6485,10 +6491,16 @@
                 }
             });
 
-            if (bomSubtotalVal) bomSubtotalVal.innerHTML = `&#8377;${subtotal.toLocaleString()}`;
+            if (bomSubtotalVal) {
+                if (bomActiveFilter === 'all' && bomActiveSearch === '') {
+                    bomSubtotalVal.innerHTML = `&#8377;20,000 - &#8377;25,000 (Est. Range)`;
+                } else {
+                    bomSubtotalVal.innerHTML = `&#8377;${subtotal.toLocaleString()}`;
+                }
+            }
             
-            const totalBudget = 19540;
-            const percent = Math.round((subtotal / totalBudget) * 100);
+            const totalBudget = 22500;
+            const percent = Math.min(100, Math.round((subtotal / totalBudget) * 100));
             if (bomAllocationPercent) bomAllocationPercent.textContent = `${percent}%`;
             if (bomProgressBar) bomProgressBar.style.width = `${percent}%`;
         }
