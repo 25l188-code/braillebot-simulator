@@ -3780,23 +3780,8 @@
             <p>Spatial Isometric Mechanics Layout</p>
         </div>
 
-        <!-- Blueprint / Diagram Navigation Tabs -->
-        <div class="iso-tabs-nav">
-            <button class="iso-tab-btn active" data-tab="model">3D Interactive Model</button>
-            <button class="iso-tab-btn" data-tab="photo">System Overview Photo</button>
-            <button class="iso-tab-btn" data-tab="dimensions">Orthographic Blueprint (Y-Axis)</button>
-        </div>
-
         <div class="isometric-visualizer">
             <div class="iso-stage-container">
-                <!-- Media Overlays (Hidden by default) -->
-                <div class="iso-media-overlay" id="isoPhotoOverlay">
-                    <img src="scara-overview.jpg" alt="BrailleBot SCARA Embosser - Hardware Overview">
-                </div>
-                <div class="iso-media-overlay" id="isoDimOverlay">
-                    <img src="scara-dimensions.jpg" alt="BrailleBot SCARA Embosser - Dimension Blueprints">
-                </div>
-
                 <!-- 3D Interactive Viewport (Three.js WebGL target) -->
                 <div class="iso-viewport" id="isoViewport" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; transform: none; transition: none;">
                     <div id="threeCanvasContainer" style="width: 100%; height: 100%; position: absolute; top: 0; left: 0; outline: none;"></div>
@@ -3806,7 +3791,7 @@
             <div class="iso-controls">
                 <div class="iso-controls-info">
                     <h3>3D Calibration controls</h3>
-                    <p>Adjust camera angles or toggle between tabs to align the simulation with the physical model coordinates. Verify the length (X) and width (Y) workspace ranges.</p>
+                    <p>Adjust camera angles to align the simulation with the physical model coordinates. Verify the length (X) and width (Y) workspace ranges.</p>
                 </div>
                 <div class="slider-group">
                     <div class="slider-header">
@@ -5525,34 +5510,7 @@
         });
     });
 
-    /* ==========================================================================
-       3D VIEWPORT TABS SWITCH LOGIC
-       ========================================================================== */
-    const tabBtns = document.querySelectorAll('.iso-tab-btn');
-    const isoViewportEl = document.getElementById('isoViewport');
-    const isoPhotoOverlayEl = document.getElementById('isoPhotoOverlay');
-    const isoDimOverlayEl = document.getElementById('isoDimOverlay');
 
-    tabBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            tabBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-
-            const tabId = btn.getAttribute('data-tab');
-
-            isoViewportEl.style.display = 'none';
-            isoPhotoOverlayEl.style.display = 'none';
-            isoDimOverlayEl.style.display = 'none';
-
-            if (tabId === 'model') {
-                isoViewportEl.style.display = 'block';
-            } else if (tabId === 'photo') {
-                isoPhotoOverlayEl.style.display = 'flex';
-            } else if (tabId === 'dimensions') {
-                isoDimOverlayEl.style.display = 'flex';
-            }
-        });
-    });
 
     /* ==========================================================================
        TEAM MODAL INTERACTIVE LOGIC & DATASET
@@ -5787,81 +5745,49 @@
 
         // 1. Base Plate: 300 x 10 x 200 (Y=10 is thick, top surface at Y = 0)
         const baseGeo = new THREE.BoxGeometry(300, 10, 200);
-        const base = new THREE.Mesh(baseGeo, acrylicBaseMat);
-        base.position.set(0, -5, 0);
-        scene.add(base);
+        const basePlate = new THREE.Mesh(baseGeo, acrylicBaseMat);
+        basePlate.position.set(0, -5, 0);
+        scene.add(basePlate);
 
-        // Corner standoffs
-        const cornerStandoffs = [
-            [-140, -90], [140, -90], [-140, 90], [140, 90]
-        ];
-        cornerStandoffs.forEach(([x, z]) => {
-            const foot = new THREE.Mesh(new THREE.CylinderGeometry(8, 8, 20, 16), metalSilver);
-            foot.position.set(x, -20, z); // sits under base plate
-            scene.add(foot);
-        });
-
-        // 2. Power Supply (Mean Well LRS-350-24), rear-left
-        const psu = new THREE.Mesh(new THREE.BoxGeometry(60, 20, 80), metalSilver);
-        psu.position.set(-100, 10, -50); 
-        scene.add(psu);
-
-        // 3. Controller Board (green PCB), rear-center
-        const pcb = new THREE.Mesh(new THREE.BoxGeometry(60, 4, 80), pcbGreen);
-        pcb.position.set(0, 2, -60);
-        scene.add(pcb);
-        // Chip blocks on PCB
-        [[-15, -60], [15, -60], [0, -40]].forEach(([x, z], i) => {
-            const size = (i === 2) ? 14 : 10;
-            const chip = new THREE.Mesh(new THREE.BoxGeometry(size, 4, size), metalDark);
-            chip.position.set(x, 4 + 2, z);
-            scene.add(chip);
-        });
-
-        // 4. Paper Bed (160 x 160 mm), front-center
-        const paper = new THREE.Mesh(new THREE.BoxGeometry(160, 2, 160), paperMat);
-        paper.position.set(0, 1, 140);
-        scene.add(paper);
-
-        // 5. Fixed Motors A & B
+        // 2. Fixed Motors A & B (representing actuated joints, side-by-side, 120mm apart)
         // Motor A (Left): centered at (-60, 20, 0)
-        const motorLeft = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
-        motorLeft.position.set(-60, 20, 0);
-        scene.add(motorLeft);
-        const shaftLeft = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
-        shaftLeft.position.set(-60, 45, 0);
-        scene.add(shaftLeft);
+        const motorA = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
+        motorA.position.set(-60, 20, 0);
+        scene.add(motorA);
+        const shaftA = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
+        shaftA.position.set(-60, 45, 0);
+        scene.add(shaftA);
 
         // Motor B (Right): centered at (+60, 20, 0)
-        const motorRight = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
-        motorRight.position.set(60, 20, 0);
-        scene.add(motorRight);
-        const shaftRight = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
-        shaftRight.position.set(60, 45, 0);
-        scene.add(shaftRight);
+        const motorB = new THREE.Mesh(new THREE.CylinderGeometry(15, 15, 40, 32), metalDark);
+        motorB.position.set(60, 20, 0);
+        scene.add(motorB);
+        const shaftB = new THREE.Mesh(new THREE.CylinderGeometry(3, 3, 10, 16), metalSilver);
+        shaftB.position.set(60, 45, 0);
+        scene.add(shaftB);
 
-        // 6. Linkages (5-bar parallel)
-        // Proximal links: 200mm long x 20mm wide x 8mm thick, operating at Z=40 (Y=40 in 3D)
+        // 3. Linkages (5-bar parallel)
+        // Proximal links: 200mm long x 20mm wide x 8mm thick, operating at Y=40 in 3D
         const proxLinkGeo = new THREE.BoxGeometry(1, 8, 20); // unit length in X
-        const leftProxLink = new THREE.Mesh(proxLinkGeo, acrylicMat);
-        scene.add(leftProxLink);
+        const proximalLinkA = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        scene.add(proximalLinkA);
         
-        const rightProxLink = new THREE.Mesh(proxLinkGeo, acrylicMat);
-        scene.add(rightProxLink);
+        const proximalLinkB = new THREE.Mesh(proxLinkGeo, acrylicMat);
+        scene.add(proximalLinkB);
 
-        // Distal links: 180mm long x 18mm wide x 8mm thick, operating at Z=40 (Y=40)
+        // Distal links: 180mm long x 18mm wide x 8mm thick, operating at Y=40
         const distLinkGeo = new THREE.BoxGeometry(1, 8, 18); // unit length in X
-        const leftDistLink = new THREE.Mesh(distLinkGeo, acrylicMat);
-        scene.add(leftDistLink);
+        const distalLinkA = new THREE.Mesh(distLinkGeo, acrylicMat);
+        scene.add(distalLinkA);
         
-        const rightDistLink = new THREE.Mesh(distLinkGeo, acrylicMat);
-        scene.add(rightDistLink);
+        const distalLinkB = new THREE.Mesh(distLinkGeo, acrylicMat);
+        scene.add(distalLinkB);
 
-        // 7. Carriage Hub
+        // 4. Carriage Hub
         const carriageHub = new THREE.Mesh(new THREE.CylinderGeometry(12, 12, 15, 24), metalSilver);
         scene.add(carriageHub);
 
-        // 8. End-Effector Group (Stem, Casing, Pins, Ports)
+        // 5. End-Effector Group (Stem, Casing, Pins, Ports)
         const embosserGroup = new THREE.Group();
         scene.add(embosserGroup);
 
@@ -5871,9 +5797,9 @@
         embosserGroup.add(stem);
 
         // End-effector casing: Box (40 x 12 x 20), centered at local Y = -28 (Y=12 world)
-        const casing = new THREE.Mesh(new THREE.BoxGeometry(40, 12, 20), acrylicMat);
-        casing.position.set(0, -28, 0);
-        embosserGroup.add(casing);
+        const endEffectorCasing = new THREE.Mesh(new THREE.BoxGeometry(40, 12, 20), acrylicMat);
+        endEffectorCasing.position.set(0, -28, 0);
+        embosserGroup.add(endEffectorCasing);
 
         // Suction ports (4 flat vents, radius 1.5mm) flush with casing underside (local Y = -34)
         const portGeo = new THREE.CylinderGeometry(1.5, 1.5, 1, 16);
@@ -5929,37 +5855,29 @@
             const eeZ = (eeY_svg - 80) * scale;
             
             // Align linkages
-            alignLink(leftProxLink, -60, 0, exL, ezL);
-            alignLink(rightProxLink, 60, 0, exR, ezR);
-            alignLink(leftDistLink, exL, ezL, eeX, eeZ);
-            alignLink(rightDistLink, exR, ezR, eeX, eeZ);
+            alignLink(proximalLinkA, -60, 0, exL, ezL);
+            alignLink(proximalLinkB, 60, 0, exR, ezR);
+            alignLink(distalLinkA, exL, ezL, eeX, eeZ);
+            alignLink(distalLinkB, exR, ezR, eeX, eeZ);
+
+            // Rotate motor shafts to visually track the link movement
+            motorA.rotation.y = -Math.atan2(ezL, exL - (-60));
+            motorB.rotation.y = -Math.atan2(ezR, exR - 60);
+            shaftA.rotation.y = motorA.rotation.y;
+            shaftB.rotation.y = motorB.rotation.y;
             
             // Position Carriage Hub & End-Effector Group
             carriageHub.position.set(eeX, 40, eeZ);
             embosserGroup.position.set(eeX, 40, eeZ);
         };
 
-        // 8. Spawning and clearing helpers
+        // Redefine dots methods as no-ops to fit clean scene specification
         window.threeModel.dots = [];
         window.threeModel.addEmbossedDot = function(bedX, bedY) {
-            const relX = (bedX / 200) * 160 - 80;
-            const relZ = (bedY / 200) * 160 - 80;
-
-            const dotGeo = new THREE.CylinderGeometry(2, 2.5, 2, 8);
-            const dotMat = new THREE.MeshStandardMaterial({ color: 0x9a8e6e, roughness: 0.6 });
-            const dot = new THREE.Mesh(dotGeo, dotMat);
-            dot.position.set(relX, 2, 140 + relZ);
-            scene.add(dot);
-            window.threeModel.dots.push(dot);
+            // No-op
         };
-
         window.threeModel.clearEmbossedDots = function() {
-            window.threeModel.dots.forEach(dot => {
-                scene.remove(dot);
-                dot.geometry.dispose();
-                dot.material.dispose();
-            });
-            window.threeModel.dots = [];
+            // No-op
         };
 
         // Window resize event handler
