@@ -3816,36 +3816,96 @@
             <div class="enhancement-card card-scara">
                 <div class="enhancement-visual">
                     <svg viewBox="0 0 200 120" xmlns="http://www.w3.org/2000/svg">
-                        <!-- SCARA base -->
-                        <rect x="80" y="90" width="40" height="15" rx="3" fill="#3a221d" stroke="#d35400" stroke-width="1.5" />
-                        <!-- Central spline -->
-                        <line x1="100" y1="90" x2="100" y2="40" stroke="#888" stroke-width="3" />
-                        <!-- Central motor hub -->
-                        <circle cx="100" cy="40" r="10" fill="#4e2c25" stroke="#d35400" stroke-width="2" />
+                        <!-- Paper sheets background -->
+                        <rect x="15" y="70" width="70" height="40" rx="3" fill="#150a06" stroke="#d35400" stroke-width="1" stroke-dasharray="2 2" />
+                        <rect x="115" y="70" width="70" height="40" rx="3" fill="#150a06" stroke="#d35400" stroke-width="1" stroke-dasharray="2 2" />
+                        
+                        <!-- Printed dots representation (underneath heads) -->
+                        <g id="dualLeftDots" opacity="0.3">
+                            <circle cx="30" cy="80" r="1.5" fill="#555" />
+                            <circle cx="35" cy="80" r="1.5" fill="#555" />
+                            <circle cx="30" cy="86" r="1.5" fill="#555" />
+                            <circle cx="35" cy="86" r="1.5" fill="#555" />
+                            <circle cx="30" cy="92" r="1.5" fill="#555" />
+                            <circle cx="35" cy="92" r="1.5" fill="#555" />
+                            
+                            <circle cx="55" cy="80" r="1.5" fill="#555" />
+                            <circle cx="60" cy="80" r="1.5" fill="#555" />
+                            <circle cx="55" cy="86" r="1.5" fill="#555" />
+                            <circle cx="60" cy="86" r="1.5" fill="#555" />
+                            <circle cx="55" cy="92" r="1.5" fill="#555" />
+                            <circle cx="60" cy="92" r="1.5" fill="#555" />
+                        </g>
+                        <g id="dualRightDots" opacity="0.3">
+                            <circle cx="140" cy="80" r="1.5" fill="#555" />
+                            <circle cx="145" cy="80" r="1.5" fill="#555" />
+                            <circle cx="140" cy="86" r="1.5" fill="#555" />
+                            <circle cx="145" cy="86" r="1.5" fill="#555" />
+                            <circle cx="140" cy="92" r="1.5" fill="#555" />
+                            <circle cx="145" cy="92" r="1.5" fill="#555" />
+                            
+                            <circle cx="165" cy="80" r="1.5" fill="#555" />
+                            <circle cx="170" cy="80" r="1.5" fill="#555" />
+                            <circle cx="165" cy="86" r="1.5" fill="#555" />
+                            <circle cx="170" cy="86" r="1.5" fill="#555" />
+                            <circle cx="165" cy="92" r="1.5" fill="#555" />
+                            <circle cx="170" cy="92" r="1.5" fill="#555" />
+                        </g>
+
+                        <!-- Active embossed highlights -->
+                        <!-- Cell 1 Left ('A': dot 1) -->
+                        <circle id="embossDotL1" cx="30" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <!-- Cell 2 Left ('B': dot 1, 2) -->
+                        <circle id="embossDotL2" cx="55" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <circle id="embossDotL3" cx="55" cy="86" r="2.2" fill="#e67e22" opacity="0" />
+                        
+                        <!-- Cell 1 Right ('C': dot 1, 4) -->
+                        <circle id="embossDotR1" cx="140" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <circle id="embossDotR2" cx="145" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <!-- Cell 2 Right ('D': dot 1, 4, 5) -->
+                        <circle id="embossDotR3" cx="165" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <circle id="embossDotR4" cx="170" cy="80" r="2.2" fill="#e67e22" opacity="0" />
+                        <circle id="embossDotR5" cx="170" cy="86" r="2.2" fill="#e67e22" opacity="0" />
+
+                        <!-- SCARA Main Stand -->
+                        <rect x="92" y="10" width="16" height="30" fill="#2c1a17" stroke="#d35400" stroke-width="1.2" />
+                        <circle cx="100" cy="25" r="7" fill="#4e2c25" stroke="#d35400" stroke-width="1.5" />
+
+                        <!-- Arms Linkage Lines -->
                         <!-- Left Arm -->
-                        <line x1="90" y1="40" x2="45" y2="65" stroke="#d35400" stroke-width="2.5" />
-                        <line x1="45" y1="65" x2="25" y2="65" stroke="#888" stroke-width="1.5" stroke-dasharray="2 2" />
-                        <rect x="15" y="55" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
-                        <circle cx="20" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="25" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="30" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="20" cy="69" r="1.5" fill="#d35400" />
-                        <circle cx="25" cy="69" r="1.5" fill="#d35400" />
-                        <circle cx="30" cy="69" r="1.5" fill="#d35400" />
-                        <path d="M 10 65 L 5 65" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" />
-                        <path d="M 8 61 L 5 65 L 8 69" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                        <line id="dualArmL1" x1="100" y1="25" x2="65" y2="40" stroke="#d35400" stroke-width="3" stroke-linecap="round" />
+                        <line id="dualArmL2" x1="65" y1="40" x2="35" y2="70" stroke="#888" stroke-width="2.2" stroke-linecap="round" />
                         <!-- Right Arm -->
-                        <line x1="110" y1="40" x2="155" y2="65" stroke="#d35400" stroke-width="2.5" />
-                        <line x1="155" y1="65" x2="175" y2="65" stroke="#888" stroke-width="1.5" stroke-dasharray="2 2" />
-                        <rect x="165" y="55" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
-                        <circle cx="170" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="175" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="180" cy="61" r="1.5" fill="#d35400" />
-                        <circle cx="170" cy="69" r="1.5" fill="#d35400" />
-                        <circle cx="175" cy="69" r="1.5" fill="#d35400" />
-                        <circle cx="180" cy="69" r="1.5" fill="#d35400" />
-                        <path d="M 190 65 L 195 65" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" />
-                        <path d="M 192 61 L 195 65 L 192 69" stroke="#d35400" stroke-width="1.5" stroke-linecap="round" fill="none" />
+                        <line id="dualArmR1" x1="100" y1="25" x2="135" y2="40" stroke="#d35400" stroke-width="3" stroke-linecap="round" />
+                        <line id="dualArmR2" x1="135" y1="40" x2="165" y2="70" stroke="#888" stroke-width="2.2" stroke-linecap="round" />
+
+                        <!-- Print Head Carriages -->
+                        <!-- Left Carriage -->
+                        <g id="dualHeadL" transform="translate(25, 60)" style="transition: transform 0.8s ease-in-out;">
+                            <rect x="0" y="0" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
+                            <!-- 6 pins light indicators -->
+                            <circle id="pinL1" cx="6" cy="6" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinL4" cx="14" cy="6" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinL2" cx="6" cy="10" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinL5" cx="14" cy="10" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinL3" cx="6" cy="14" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinL6" cx="14" cy="14" r="2" fill="#555" style="transition: fill 0.2s;" />
+                        </g>
+                        <!-- Right Carriage -->
+                        <g id="dualHeadR" transform="translate(155, 60)" style="transition: transform 0.8s ease-in-out;">
+                            <rect x="0" y="0" width="20" height="20" rx="3" fill="#2c1611" stroke="#d35400" stroke-width="1.5" />
+                            <!-- 6 pins light indicators -->
+                            <circle id="pinR1" cx="6" cy="6" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinR4" cx="14" cy="6" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinR2" cx="6" cy="10" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinR5" cx="14" cy="10" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinR3" cx="6" cy="14" r="2" fill="#555" style="transition: fill 0.2s;" />
+                            <circle id="pinR6" cx="14" cy="14" r="2" fill="#555" style="transition: fill 0.2s;" />
+                        </g>
+
+                        <!-- Overlay Interactive Trigger Button -->
+                        <rect id="dualBtnBg" x="50" y="5" width="100" height="16" rx="4" fill="#2c1a17" stroke="#e67e22" stroke-width="1.2" style="cursor: pointer; transition: fill 0.2s;" />
+                        <text id="dualBtnText" x="100" y="16" font-family="sans-serif" font-size="7" font-weight="bold" fill="#e67e22" text-anchor="middle" style="cursor: pointer; pointer-events: none;">DEMO PARALLEL PRINT</text>
                     </svg>
                 </div>
                 <h4 class="enhancement-title">Dual-arm SCARA, 30 pins</h4>
@@ -6021,6 +6081,154 @@
             hmiBtnPlus.addEventListener('click', () => {
                 hmiLines = Math.min(40, hmiLines + 1);
                 updateHmiDisplay();
+            });
+        }
+
+        // Dual SCARA Parallel Printing simulator
+        const dualBtnBg = document.getElementById('dualBtnBg');
+        const dualBtnText = document.getElementById('dualBtnText');
+        const dualHeadL = document.getElementById('dualHeadL');
+        const dualHeadR = document.getElementById('dualHeadR');
+        const dualArmL1 = document.getElementById('dualArmL1');
+        const dualArmL2 = document.getElementById('dualArmL2');
+        const dualArmR1 = document.getElementById('dualArmR1');
+        const dualArmR2 = document.getElementById('dualArmR2');
+        
+        // Pins elements
+        const pinL1 = document.getElementById('pinL1');
+        const pinL2 = document.getElementById('pinL2');
+        const pinR1 = document.getElementById('pinR1');
+        const pinR4 = document.getElementById('pinR4');
+        const pinR5 = document.getElementById('pinR5');
+        
+        // Embossed dots elements
+        const embossDotL1 = document.getElementById('embossDotL1');
+        const embossDotL2 = document.getElementById('embossDotL2');
+        const embossDotL3 = document.getElementById('embossDotL3');
+        const embossDotR1 = document.getElementById('embossDotR1');
+        const embossDotR2 = document.getElementById('embossDotR2');
+        const embossDotR3 = document.getElementById('embossDotR3');
+        const embossDotR4 = document.getElementById('embossDotR4');
+        const embossDotR5 = document.getElementById('embossDotR5');
+        
+        let isDualAnimating = false;
+        
+        function setDualArmCoordinates(xL, yL, xR, yR, jointAngleLeft, jointAngleRight) {
+            // Translate head carriage positions
+            if (dualHeadL) dualHeadL.setAttribute('transform', `translate(${xL - 10}, ${yL - 10})`);
+            if (dualHeadR) dualHeadR.setAttribute('transform', `translate(${xR - 10}, ${yR - 10})`);
+            
+            // Adjust linkages
+            // Left arm
+            const radL = (jointAngleLeft * Math.PI) / 180;
+            const jxL = 100 + 35 * Math.cos(radL);
+            const jyL = 25 + 35 * Math.sin(radL);
+            if (dualArmL1) {
+                dualArmL1.setAttribute('x2', jxL);
+                dualArmL1.setAttribute('y2', jyL);
+            }
+            if (dualArmL2) {
+                dualArmL2.setAttribute('x1', jxL);
+                dualArmL2.setAttribute('y1', jyL);
+                dualArmL2.setAttribute('x2', xL);
+                dualArmL2.setAttribute('y2', yL);
+            }
+            
+            // Right arm
+            const radR = (jointAngleRight * Math.PI) / 180;
+            const jxR = 100 + 35 * Math.cos(radR);
+            const jyR = 25 + 35 * Math.sin(radR);
+            if (dualArmR1) {
+                dualArmR1.setAttribute('x2', jxR);
+                dualArmR1.setAttribute('y2', jyR);
+            }
+            if (dualArmR2) {
+                dualArmR2.setAttribute('x1', jxR);
+                dualArmR2.setAttribute('y1', jyR);
+                dualArmR2.setAttribute('x2', xR);
+                dualArmR2.setAttribute('y2', yR);
+            }
+        }
+        
+        if (dualBtnBg) {
+            dualBtnBg.addEventListener('click', () => {
+                if (isDualAnimating) return;
+                isDualAnimating = true;
+                
+                // Set button state
+                dualBtnBg.setAttribute('fill', '#4e2c25');
+                if (dualBtnText) {
+                    dualBtnText.textContent = "PRINTING...";
+                    dualBtnText.setAttribute('fill', '#fff');
+                }
+                
+                // Clear any previous emboss dots
+                const dots = [embossDotL1, embossDotL2, embossDotL3, embossDotR1, embossDotR2, embossDotR3, embossDotR4, embossDotR5];
+                dots.forEach(d => { if (d) d.setAttribute('opacity', '0'); });
+                
+                // Sequence of parallel actions:
+                // Move to Position 1: Cell 1 Left ('A') & Cell 1 Right ('C')
+                setTimeout(() => {
+                    setDualArmCoordinates(30, 80, 142, 80, 170, 10);
+                }, 100);
+                
+                // Emboss 1: Pins flash, dots appear
+                setTimeout(() => {
+                    if (pinL1) pinL1.setAttribute('fill', '#e67e22');
+                    if (pinR1) pinR1.setAttribute('fill', '#e67e22');
+                    if (pinR4) pinR4.setAttribute('fill', '#e67e22');
+                    
+                    if (embossDotL1) embossDotL1.setAttribute('opacity', '1');
+                    if (embossDotR1) embossDotR1.setAttribute('opacity', '1');
+                    if (embossDotR2) embossDotR2.setAttribute('opacity', '1');
+                }, 1000);
+                
+                // Release 1: Pins return to idle
+                setTimeout(() => {
+                    if (pinL1) pinL1.setAttribute('fill', '#555');
+                    if (pinR1) pinR1.setAttribute('fill', '#555');
+                    if (pinR4) pinR4.setAttribute('fill', '#555');
+                }, 1500);
+                
+                // Move to Position 2: Cell 2 Left ('B') & Cell 2 Right ('D')
+                setTimeout(() => {
+                    setDualArmCoordinates(55, 80, 168, 80, 140, -20);
+                }, 2200);
+                
+                // Emboss 2: Pins flash, dots appear
+                setTimeout(() => {
+                    if (pinL1) pinL1.setAttribute('fill', '#e67e22');
+                    if (pinL2) pinL2.setAttribute('fill', '#e67e22');
+                    if (pinR1) pinR1.setAttribute('fill', '#e67e22');
+                    if (pinR4) pinR4.setAttribute('fill', '#e67e22');
+                    if (pinR5) pinR5.setAttribute('fill', '#e67e22');
+                    
+                    if (embossDotL2) embossDotL2.setAttribute('opacity', '1');
+                    if (embossDotL3) embossDotL3.setAttribute('opacity', '1');
+                    if (embossDotR3) embossDotR3.setAttribute('opacity', '1');
+                    if (embossDotR4) embossDotR4.setAttribute('opacity', '1');
+                    if (embossDotR5) embossDotR5.setAttribute('opacity', '1');
+                }, 3100);
+                
+                // Release 2: Pins return to idle
+                setTimeout(() => {
+                    if (pinL1) pinL1.setAttribute('fill', '#555');
+                    if (pinL2) pinL2.setAttribute('fill', '#555');
+                    if (pinR1) pinR1.setAttribute('fill', '#555');
+                    if (pinR4) pinR4.setAttribute('fill', '#555');
+                    if (pinR5) pinR5.setAttribute('fill', '#555');
+                }, 3600);
+                
+                // Return to Home Position & Reset Button
+                setTimeout(() => {
+                    setDualArmCoordinates(35, 70, 165, 70, 150, 30);
+                    dualBtnBg.setAttribute('fill', '#2c1a17');
+                    if (dualBtnText) {
+                        dualBtnText.textContent = "DEMO PARALLEL PRINT";
+                        dualBtnText.setAttribute('fill', '#e67e22');
+                    }
+                    isDualAnimating = false;
+                }, 4400);
             });
         }
 
